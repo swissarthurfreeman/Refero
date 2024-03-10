@@ -1,0 +1,48 @@
+<ul class="list-group">
+    <div class="row">
+        <div class="col">
+            <h4>Columns</h4>
+        </div>
+        <div class="col">
+            <h4>Values</h4>
+        </div>
+        <div class="col">
+            <h4>Inject From</h4>
+        </div>
+    </div>
+    <hr>
+    @for (key of keys; track key; let  i = $index) {  
+        <div class="row" >
+            <div class="col">
+                <h1>{{key}}</h1>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <input type="email" class="form-control" 
+                    id="exampleInputEmail1" aria-describedby="emailHelp" 
+                    placeholder="{{vals[i]}}">
+                </div>
+            </div>
+            <div class="col">
+                @if (i == 0) {
+                <div class="form-group">
+                    <select class="form-select" id="exampleSelect1">
+                      <option>REF_OFS_REE_DATA</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </div>     
+                }           
+            </div>
+        </div>
+    }
+    <hr>
+    <div class="row">
+        <div class="bs-component">
+            <button type="button" class="btn btn-primary btn-lg float-end m-1">Save</button>
+            <button type="button" class="btn btn-primary btn-lg float-end m-1">Delete</button>
+        </div>
+    </div>
+</ul>

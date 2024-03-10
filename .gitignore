@@ -1,0 +1,30 @@
+# IDE Config
+.idea/
+*.iml
+
+# Maven
+MANIFEST.MF
+/.mvn/
+
+# Dist files
+target
+out
+classes
+dist
+
+# Dev config
+*dev.yaml
+*dev.properties
+# File created by flatten-maven-plugin
+.flattened-pom.xml
+
+# applications log files
+app_log/
+*.log
+*.gz
+
+
+#Certificate file
+*.pem
+
+.vscode/*

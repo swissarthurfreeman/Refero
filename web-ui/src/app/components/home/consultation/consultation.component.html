@@ -1,0 +1,42 @@
+
+<!-- Consultation of a Referential View, columns and lines -->
+<br>
+<h1>Viewing : {{refId}}</h1>
+<div class="container">
+    @for (column of columnsToDisplay; track $index) {
+        <div class="row">
+            <div class="col">
+            <div class="input-group mb-3">
+                <span class="input-group-text">{{column}}</span>
+                <input type="text" class="form-control">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            </div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    }
+</div>
+
+<table mat-table [dataSource]="myDataArray">    <!-- Define a material table's column headers (not visible) -->
+
+    @for (column of columns; track $index) {
+        <ng-container [matColumnDef]="column">  
+            <th mat-header-cell *matHeaderCellDef> {{column}} </th>             <!-- Define the header string -->
+            <td mat-cell *matCellDef="let line"> {{ line[column] }} </td>       <!-- Define the data to display for each line -->
+        </ng-container>
+    }
+    
+    <!-- Tell material angular to render these previously defined columns  -->
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    
+    <!-- 
+        Tell material angular to actually render the rows myRowData is a property 
+        of material table, which represents any row in the data source, which we
+        render the columnsToDisplay of, the latter being a property of the component.
+        (click) allows navigating to detail view with the row uid  
+    -->
+    <tr mat-row (click)="viewRecord(myRowData.uid)"
+    *matRowDef="let myRowData; columns: columnsToDisplay">  
+    </tr>
+</table>

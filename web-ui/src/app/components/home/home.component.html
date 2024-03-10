@@ -1,0 +1,58 @@
+
+<!-- View of the Referential Selection Screen -->
+<h1>Refero</h1>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="input-group mb-3">
+        <span class="input-group-text">Nom</span>
+        <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </div>
+    </div>
+    <div class="col">
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col">
+      <div class="input-group mb-3">
+        <span class="input-group-text">Code</span>
+        <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </div>
+    </div>
+    <div class="col">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="input-group mb-3">
+        <span class="input-group-text">Description</span>
+        <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </div>
+    </div>
+    <div class="col">
+      <button class="btn btn-secondary my-2 my-sm-0 float-end" type="submit">Create New Referential</button>
+    </div>
+  </div>
+</div>
+
+<table class="table table-hover">
+  <thead>
+    <tr class="table-light">
+      <th scope="col">Nom</th>
+      <th scope="col">Description</th>
+      <th scope="col">Code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let ref of refs" class="table-light" (click)="selectReferential(ref.name)">
+        <th scope="row">{{ref.name}}</th>
+        <td>{{ref.description}}</td>
+        <td>{{ref.code}}</td>
+    </tr>
+  </tbody>
+</table>
