@@ -1,6 +1,7 @@
 <!-- Consultation of a Referential View, columns and lines -->
 <h1>Viewing : {{refId}}</h1>
 <div class="container">
+    <!-- Render evey search field -->
     @for (column of searchColumns; track $index) {
     <div class="row">
         <div class="col">
@@ -17,7 +18,7 @@
     <div class="row">
         <div class="col">
             <mat-form-field>
-                <mat-label>Add Column</mat-label>
+                <mat-label>Add Search Field</mat-label>
                 <mat-select [(value)]="searchFieldToAdd">
                 @for (column of nonAddedSearchColumns; track $index) {
                   <mat-option [value]="column">{{column}}</mat-option>
@@ -25,29 +26,47 @@
                 </mat-select>
               </mat-form-field>
               <button mat-button color="primary" (click)="addSearchField(searchFieldToAdd)">Add</button>
+
+              <mat-form-field>
+                <mat-label>Add Table Column</mat-label>
+                <mat-select [(value)]="viewColumnToAdd">
+                @for (column of nonViewedColumns; track $index) {
+                <mat-option [value]="column">{{column}}</mat-option>
+                }
+                </mat-select>
+            </mat-form-field>
+            <button mat-button color="primary" (click)="addViewColumn(viewColumnToAdd)">Add</button>
         </div>
     </div>
 </div>
 
-<table mat-table [dataSource]="myDataArray">    <!-- Define a material table's column headers (not visible) -->
+<div class="container">
+    <div class="col">
+        <table mat-table [dataSource]="myDataArray">    <!-- Define a material table's column headers (not visible) -->
 
-    @for (column of columns; track $index) {
-        <ng-container [matColumnDef]="column">  
-            <th mat-header-cell *matHeaderCellDef> {{column}} </th>             <!-- Define the header string -->
-            <td mat-cell *matCellDef="let line"> {{ line[column] }} </td>       <!-- Define the data to display for each line -->
-        </ng-container>
-    }
-    
-    <!-- Tell material angular to render these previously defined columns  -->
-    <tr mat-header-row *matHeaderRowDef="viewColumnsToDisplay"></tr>
-    
-    <!-- 
-        Tell material angular to actually render the rows myRowData is a property 
-        of material table, which represents any row in the data source, which we
-        render the columnsToDisplay of, the latter being a property of the component.
-        (click) allows navigating to detail view with the row uid  
-    -->
-    <tr mat-row (click)="viewRecord(myRowData.uid)"
-    *matRowDef="let myRowData; columns: viewColumnsToDisplay">  
-    </tr>
-</table>
+            @for (column of columns; track $index) {
+                <ng-container [matColumnDef]="column">  
+                    <th mat-header-cell *matHeaderCellDef> {{column}}  
+                        <button mat-mini-fab color="primary" (click)="removeViewColumn(column)">
+                            <mat-icon>remove</mat-icon>
+                        </button>
+                    </th>             <!-- Define the header string -->
+                    <td mat-cell *matCellDef="let line"> {{ line[column] }} </td>       <!-- Define the data to display for each line -->
+                </ng-container>
+            }
+            
+            <!-- Tell material angular to render these previously defined columns  -->
+            <tr mat-header-row *matHeaderRowDef="viewColumnsToDisplay"></tr>
+            
+            <!-- 
+                Tell material angular to actually render the rows myRowData is a property 
+                of material table, which represents any row in the data source, which we
+                render the columnsToDisplay of, the latter being a property of the component.
+                (click) allows navigating to detail view with the row uid  
+            -->
+            <tr mat-row (click)="viewRecord(myRowData.uid)"
+            *matRowDef="let myRowData; columns: viewColumnsToDisplay">  
+            </tr>
+        </table>
+    </div>
+</div>

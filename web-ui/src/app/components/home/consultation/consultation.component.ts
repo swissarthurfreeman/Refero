@@ -32,7 +32,7 @@ export class ConsultationComponent {
   columns = ['REE_N_OFS', 'REE_NOM', 'C_ALPHA_NEW', 'ADRESSE']
   viewColumnsToDisplay = ['REE_N_OFS', 'REE_NOM'];    // can add 'C_ALPHA_NEW' to view it too
   nonViewedColumns: Array<string> = this.columns.filter(item => this.viewColumnsToDisplay.indexOf(item) < 0);
-  
+  viewColumnToAdd = this.nonViewedColumns[0];
   
   searchColumns = ['REE_N_OFS']
   nonAddedSearchColumns: Array<string> = this.columns.filter(item => this.searchColumns.indexOf(item) < 0);
@@ -58,5 +58,9 @@ export class ConsultationComponent {
   addViewColumn(column: string) {
     this.viewColumnsToDisplay.push(column);
     this.nonViewedColumns = this.columns.filter(item => this.viewColumnsToDisplay.indexOf(item) < 0);
+  }
+
+  removeViewColumn(column: string) {
+    this.viewColumnsToDisplay = this.viewColumnsToDisplay.filter(item => item != column);
   }
 }
