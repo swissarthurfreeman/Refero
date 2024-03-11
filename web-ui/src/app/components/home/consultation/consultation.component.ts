@@ -1,11 +1,16 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import {MatIconModule} from '@angular/material/icon';
+import {MatDividerModule} from '@angular/material/divider';
 
 @Component({
   selector: 'app-consultation',
   standalone: true,
-  imports: [MatTableModule],
+  imports: [MatTableModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule],
   templateUrl: './consultation.component.html'
 })
 export class ConsultationComponent {
@@ -21,10 +26,13 @@ export class ConsultationComponent {
     {'uid': 4096, 'REE_N_OFS': 102868, 'REE_NOM': "Faculté des Sciences", 'C_ALPHA_NEW': 'S', 'ADRESSE': 'Quai Ernest Ansermet 32'},
     {'uid': 2404, 'REE_N_OFS': 103225, 'REE_NOM': "Unige FSS", 'C_ALPHA_NEW': 'UNACI', 'ADRESSE': 'Rue de Montbrilland 64'}
   ];
+
+
   
   columns = ['REE_N_OFS', 'REE_NOM', 'C_ALPHA_NEW', 'ADRESSE']
   columnsToDisplay = ['REE_N_OFS', 'REE_NOM'];    // can add 'C_ALPHA_NEW' to view it too
-
+  nonDisplayedColumns: Array<string> = this.columns.filter(item => this.columnsToDisplay.indexOf(item) < 0);
+  searchFieldToAdd = this.columns[0]; 
 
   @Input()        
   set RefId(refId: string) {      // get the referential ID from the home component
@@ -34,5 +42,9 @@ export class ConsultationComponent {
   viewRecord(uid: string) {
     this.router.navigate([`${uid}`], {relativeTo: this.route})
     console.log(uid); 
+  }
+
+  addSearchField(column: string) {
+    this.columnsToDisplay.push(column);
   }
 }

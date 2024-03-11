@@ -1,21 +1,32 @@
-
 <!-- Consultation of a Referential View, columns and lines -->
-<br>
 <h1>Viewing : {{refId}}</h1>
 <div class="container">
     @for (column of columnsToDisplay; track $index) {
-        <div class="row">
-            <div class="col">
-            <div class="input-group mb-3">
-                <span class="input-group-text">{{column}}</span>
-                <input type="text" class="form-control">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-            </div>
-            </div>
-            <div class="col">
-            </div>
+    <div class="row">
+        <div class="col">
+        <div class="input-group mb-3">
+            <span class="input-group-text">{{column}}</span>
+            <input type="text" class="form-control">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
         </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
     }
+    <div class="row">
+        <div class="col">
+            <mat-form-field>
+                <mat-label>Add Column</mat-label>
+                <mat-select [(value)]="searchFieldToAdd">
+                @for (column of nonDisplayedColumns; track $index) {
+                  <mat-option [value]="column">{{column}}</mat-option>
+                }
+                </mat-select>
+              </mat-form-field>
+              <button mat-button color="primary" (click)="addSearchField(searchFieldToAdd)">Add</button>
+        </div>
+    </div>
 </div>
 
 <table mat-table [dataSource]="myDataArray">    <!-- Define a material table's column headers (not visible) -->
