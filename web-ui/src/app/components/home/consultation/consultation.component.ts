@@ -30,9 +30,15 @@ export class ConsultationComponent {
 
   
   columns = ['REE_N_OFS', 'REE_NOM', 'C_ALPHA_NEW', 'ADRESSE']
-  columnsToDisplay = ['REE_N_OFS', 'REE_NOM'];    // can add 'C_ALPHA_NEW' to view it too
-  nonDisplayedColumns: Array<string> = this.columns.filter(item => this.columnsToDisplay.indexOf(item) < 0);
-  searchFieldToAdd = this.columns[0]; 
+  viewColumnsToDisplay = ['REE_N_OFS', 'REE_NOM'];    // can add 'C_ALPHA_NEW' to view it too
+  nonViewedColumns: Array<string> = this.columns.filter(item => this.viewColumnsToDisplay.indexOf(item) < 0);
+  
+  
+  searchColumns = ['REE_N_OFS']
+  nonAddedSearchColumns: Array<string> = this.columns.filter(item => this.searchColumns.indexOf(item) < 0);
+  searchFieldToAdd = this.searchColumns[0];
+
+
 
   @Input()        
   set RefId(refId: string) {      // get the referential ID from the home component
@@ -45,6 +51,12 @@ export class ConsultationComponent {
   }
 
   addSearchField(column: string) {
-    this.columnsToDisplay.push(column);
+    this.searchColumns.push(column)
+    this.nonAddedSearchColumns = this.columns.filter(item => this.searchColumns.indexOf(item) < 0);
+  }
+
+  addViewColumn(column: string) {
+    this.viewColumnsToDisplay.push(column);
+    this.nonViewedColumns = this.columns.filter(item => this.viewColumnsToDisplay.indexOf(item) < 0);
   }
 }

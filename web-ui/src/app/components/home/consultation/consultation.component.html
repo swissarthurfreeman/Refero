@@ -1,7 +1,7 @@
 <!-- Consultation of a Referential View, columns and lines -->
 <h1>Viewing : {{refId}}</h1>
 <div class="container">
-    @for (column of columnsToDisplay; track $index) {
+    @for (column of searchColumns; track $index) {
     <div class="row">
         <div class="col">
         <div class="input-group mb-3">
@@ -19,7 +19,7 @@
             <mat-form-field>
                 <mat-label>Add Column</mat-label>
                 <mat-select [(value)]="searchFieldToAdd">
-                @for (column of nonDisplayedColumns; track $index) {
+                @for (column of nonAddedSearchColumns; track $index) {
                   <mat-option [value]="column">{{column}}</mat-option>
                 }
                 </mat-select>
@@ -39,7 +39,7 @@
     }
     
     <!-- Tell material angular to render these previously defined columns  -->
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-header-row *matHeaderRowDef="viewColumnsToDisplay"></tr>
     
     <!-- 
         Tell material angular to actually render the rows myRowData is a property 
@@ -48,6 +48,6 @@
         (click) allows navigating to detail view with the row uid  
     -->
     <tr mat-row (click)="viewRecord(myRowData.uid)"
-    *matRowDef="let myRowData; columns: columnsToDisplay">  
+    *matRowDef="let myRowData; columns: viewColumnsToDisplay">  
     </tr>
 </table>
