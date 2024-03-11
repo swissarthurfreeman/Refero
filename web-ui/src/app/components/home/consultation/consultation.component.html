@@ -2,10 +2,13 @@
 <h1>Viewing : {{refId}}</h1>
 <div class="container">
     <!-- Render evey search field -->
-    @for (column of searchColumns; track $index) {
+    @for (column of searchCols; track $index) {
     <div class="row">
         <div class="col">
         <div class="input-group mb-3">
+            <button mat-mini-fab color="primary" (click)="removeSearchField(column)">
+                <mat-icon>remove</mat-icon>
+            </button>
             <span class="input-group-text">{{column}}</span>
             <input type="text" class="form-control">
             <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
@@ -19,23 +22,23 @@
         <div class="col">
             <mat-form-field>
                 <mat-label>Add Search Field</mat-label>
-                <mat-select [(value)]="searchFieldToAdd">
-                @for (column of nonAddedSearchColumns; track $index) {
+                <mat-select [(value)]="searchAddOpt">
+                @for (column of nSearchCols; track $index) {
                   <mat-option [value]="column">{{column}}</mat-option>
                 }
                 </mat-select>
               </mat-form-field>
-              <button mat-button color="primary" (click)="addSearchField(searchFieldToAdd)">Add</button>
+              <button mat-button color="primary" (click)="addSearchField(searchAddOpt)">Add</button>
 
               <mat-form-field>
                 <mat-label>Add Table Column</mat-label>
-                <mat-select [(value)]="viewColumnToAdd">
-                @for (column of nonViewedColumns; track $index) {
+                <mat-select [(value)]="dispAddOpt">
+                @for (column of nDispCols; track $index) {
                 <mat-option [value]="column">{{column}}</mat-option>
                 }
                 </mat-select>
             </mat-form-field>
-            <button mat-button color="primary" (click)="addViewColumn(viewColumnToAdd)">Add</button>
+            <button mat-button color="primary" (click)="addViewColumn(dispAddOpt)">Add</button>
         </div>
     </div>
 </div>
@@ -44,7 +47,7 @@
     <div class="col">
         <table mat-table [dataSource]="myDataArray">    <!-- Define a material table's column headers (not visible) -->
 
-            @for (column of columns; track $index) {
+            @for (column of cols; track $index) {
                 <ng-container [matColumnDef]="column">  
                     <th mat-header-cell *matHeaderCellDef> {{column}}  
                         <button mat-mini-fab color="primary" (click)="removeViewColumn(column)">
@@ -56,7 +59,7 @@
             }
             
             <!-- Tell material angular to render these previously defined columns  -->
-            <tr mat-header-row *matHeaderRowDef="viewColumnsToDisplay"></tr>
+            <tr mat-header-row *matHeaderRowDef="dispCols"></tr>
             
             <!-- 
                 Tell material angular to actually render the rows myRowData is a property 
@@ -65,7 +68,7 @@
                 (click) allows navigating to detail view with the row uid  
             -->
             <tr mat-row (click)="viewRecord(myRowData.uid)"
-            *matRowDef="let myRowData; columns: viewColumnsToDisplay">  
+            *matRowDef="let myRowData; columns: dispCols">  
             </tr>
         </table>
     </div>
