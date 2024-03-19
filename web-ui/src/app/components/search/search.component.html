@@ -1,0 +1,19 @@
+<!-- Render Search Field -->
+<div class="row">
+    <div class="col">
+        @for (column of viewService.SearchCols; track $index) {
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <button mat-mini-fab color="primary" (click)="viewService.removeSearchCol(column)">
+                        <mat-icon>remove</mat-icon>
+                    </button>
+                    <span class="input-group-text">{{column}}</span>
+                    <input type="text" class="form-control">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

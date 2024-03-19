@@ -1,0 +1,32 @@
+<div class="col">
+    <table mat-table [dataSource]="dataService.RefData"> <!-- Define a material table's column headers (not visible) -->
+        @for (column of viewService.Cols; track $index) {
+        <ng-container [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef> {{column}}
+                <button mat-mini-fab color="primary" (click)="viewService.removeDispCol(column)">
+                    <mat-icon>remove</mat-icon>
+                </button>
+            </th> <!-- Define the header string -->
+            <td mat-cell *matCellDef="let line"> {{ line[column] }} </td>
+            <!-- Define the data to display for each line -->
+        </ng-container>
+        }
+
+        <!-- Tell material angular to render these previously defined columns  -->
+        <tr mat-header-row *matHeaderRowDef="viewService.DispCols"></tr>
+
+        <!-- 
+            Tell material angular to actually render the rows, let myRowData is a property 
+            of material table, which represents any row in the data source, which we
+            render the columnsToDisplay of, the latter being a property of the component.
+            (click) allows navigating to detail view with the row uid  
+        -->
+        @if (!simpleView) {
+        <tr mat-row (click)="viewRecord(myRowData.uid)" *matRowDef="let myRowData; columns: viewService.DispCols"></tr>
+        }
+
+        @if (simpleView) {
+        <tr mat-row *matRowDef="let myRowData; columns: viewService.DispCols"></tr>
+        }
+    </table>
+</div>

@@ -1,0 +1,34 @@
+
+<div class="d-flex">
+    <div class="p-2 me-auto">
+        <mat-form-field>
+            <mat-label>Inject Record from :</mat-label>
+            <mat-select [(value)]="sourceRef">
+                <mat-option [value]="">REF_OFS</mat-option>
+                <mat-option [value]="">REF_NOGA</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="p-2">
+        <button mat-raised-button color="primary" style="height:4em; width: 6em;">Save</button>
+    </div>
+    <div class="p-2">
+        <button mat-raised-button color="primary" style="height:4em; width: 6em;">Delete</button>
+    </div>
+</div>
+<hr>
+<mat-grid-list cols="5" rowHeight="8em">
+    <mat-grid-tile colspan="1" [rowspan]="vals.length">
+        <form>  <!-- This can be arbitrarily long -->
+            @for (key of keys; track key; let i = $index) {
+                 <!-- if foreign key, add multichoice select here -->
+                <mat-form-field class="example-full-width">
+                    <mat-label>{{key}}</mat-label>
+                    <input matInput value="{{vals[i]}}">
+                </mat-form-field>}
+        </form>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="4" rowspan="6" style="background: grey;">
+        <app-consultation [SimpleView]="true" RefId="REF_OFS_NOGA" style="width: 100%;"></app-consultation>
+    </mat-grid-tile>
+</mat-grid-list>

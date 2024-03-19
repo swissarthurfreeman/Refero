@@ -1,0 +1,33 @@
+ <div class="container">
+    
+    <h1>Viewing : {{refId}}</h1>
+
+    <mat-grid-list cols="3" rowHeight="19em">
+        <mat-grid-tile colspan="2">
+            <app-view-editor></app-view-editor>
+        </mat-grid-tile>
+        <!-- New Record, Import, Injection... Buttons -->
+        @if (!simpleView) {
+        <mat-grid-tile colspan="1">
+            <div class="d-flex align-items-end flex-column">
+                <div class="p-2">
+                    <button mat-raised-button color="primary" style="width: 14em;">Configurer</button>
+                </div>
+                <div class="p-2">
+                    <button mat-raised-button color="primary" style="width: 14em;">New Record</button>
+                </div>
+                <div class="p-2">
+                    <button mat-raised-button color="primary" style="width: 14em;">Export</button>
+                </div>
+                <div class="p-2">
+                    <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;">ImportFile</button>
+                </div>
+            </div>
+        </mat-grid-tile>
+        }
+    </mat-grid-list>
+    <hr>
+    <app-search></app-search>
+    <app-table></app-table>
+</div>
+

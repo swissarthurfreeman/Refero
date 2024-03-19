@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Referential } from '../../model/referential.model';
 import { CommonModule } from '@angular/common'
@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common'
   standalone: true,
   imports: [CommonModule],
   templateUrl: './home.component.html',
+  providers: []
 })
 export class HomeComponent implements OnInit {
   constructor(
@@ -29,7 +30,10 @@ export class HomeComponent implements OnInit {
     )
   }
 
+  
+  
   selectReferential(refId: string): void {
+    //this.contextService.CurrentRefId = refId;
     this.router.navigate([`/${refId}`], {relativeTo: this.route})
   }
 }
