@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatGridListModule} from '@angular/material/grid-list';
@@ -10,17 +11,18 @@ import {MatInputModule} from '@angular/material/input';
 import { ViewEditorComponent } from "../view-editor/view-editor.component";
 import { SearchComponent } from "../search/search.component";
 import { TableComponent } from "../table/table.component";
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RefDataService } from '../../service/ref-data.service';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ColConfigComponent } from "../col-config/col-config.component";
 
 @Component({
     selector: 'app-ref-creation',
     standalone: true,
     templateUrl: './ref-creation.component.html',
-    imports: [CommonModule, MatTableModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule, MatGridListModule, MatInputModule, ViewEditorComponent, SearchComponent, TableComponent]
+    imports: [CommonModule, MatTableModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule, MatGridListModule, MatInputModule, ViewEditorComponent, SearchComponent, TableComponent, ColConfigComponent]
 })
 export class RefCreationComponent implements OnInit {
-[x: string]: any;
   RefConfigForm = this.fb.group({
       columns: this.fb.array([])
   });
@@ -44,7 +46,7 @@ export class RefCreationComponent implements OnInit {
       FileCol: ['' || name ],
       DateFormat: [''],
       Required: ["true"],
-      KeyType: [''],
+      KeyType: ['None'],
       PointedRef: [''],
       PointedCol: [''],
       LabelCol: ['']
