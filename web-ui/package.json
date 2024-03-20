@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:web-ui": "node dist/web-ui/server/server.mjs",
-    "service": "ng generate component ColConfig"
+    "service": "ng generate service ColControl"
   },
   "private": true,
   "dependencies": {

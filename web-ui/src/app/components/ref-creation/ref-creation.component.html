@@ -1,19 +1,88 @@
-<p>ref-creation works!</p>
-
-<form>
-<!-- Imported File Columns -->
-@for (refCol of fileHeader; track $index) {
-    <app-col-config FileColName="{{refCol}}"></app-col-config>
-}
-
-<!-- User added columns -->
-@for (refCol of newHeader; track $index) {
-    <app-col-config FileColName="{{refCol}}"></app-col-config>
-}
-
-<button mat-raised-button color="primary" style="width: 14em;" type="button" (click)="AddCol($event)">Add Column</button>
-
-<hr>
-<button mat-raised-button color="primary" style="width: 14em;" type="submit">Create</button>
-
-</form>
+<div class="add-columns-form" [formGroup]="RefConfigForm">
+    <ng-container formArrayName="columns">
+        <ng-container *ngFor="let ColForm of columns.controls; let i = index">
+            <div class="p-3 mb-2 bg-primary text-white">
+                <div [formGroup]="$any(ColForm)">
+                    <div class="d-flex flex-row">
+                        <div class="p-1">
+                            <mat-form-field>
+                                <mat-label>File Col.</mat-label>
+                                <input matInput formControlName="FileCol">
+                            </mat-form-field>
+                        </div>
+                        <div class="p-1">
+                            <mat-form-field>
+                                <mat-label>Ref Col.</mat-label>
+                                <input matInput formControlName="RefCol">
+                            </mat-form-field>
+                        </div>
+                        <div class="p-1">
+                            <mat-form-field>
+                                <mat-label>Date Format</mat-label>
+                                <input matInput formControlName="DateFormat">
+                            </mat-form-field> 
+                        </div>
+                        <div class="p-1">
+                            <mat-form-field style="width: 8em;">
+                                <mat-label>Key Type</mat-label>
+                                <mat-select formControlName="KeyType">
+                                    <mat-option value="FK">FK</mat-option>
+                                    <mat-option value="BK">BK</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="p-1">
+                            <mat-form-field style="width: 8em;">
+                                <mat-label>Required</mat-label>
+                                <mat-select formControlName="Required">
+                                    <mat-option value="true">Yes</mat-option>
+                                    <mat-option value="false">No</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <mat-icon class="delete-btn" (click)="deleteColumn(i)">delete_forever</mat-icon>
+                    </div>
+                    <div class="d-flex flex-row">    
+                        @if (ColForm.get("KeyType")!.value=='FK') {
+                            <div class="p-1">
+                                <mat-form-field style="width: 16em;">
+                                    <mat-label>Pointed Ref.</mat-label>
+                                    <mat-select formControlName="PointedRef">
+                                        <mat-option value="REF_OFS_STATUT">REF_OFS_STATUT</mat-option>
+                                        <mat-option value="REF_OFS_NOGA">REF_OFS_STATUT</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="p-1">
+                                <mat-form-field style="width: 16em;">
+                                    <mat-label>Pointed Col.</mat-label>
+                                    <mat-select formControlName="PointedCol">
+                                        <mat-option value="CODE">CODE</mat-option>
+                                        <mat-option value="PARENT">PARENT</mat-option>
+                                        <mat-option value="LEVEL">LEVEL</mat-option>
+                                        <mat-option value="NAME_FR">NAME_FR</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="p-1">
+                                <mat-form-field style="width: 16em;">
+                                    <mat-label>Label Col.</mat-label>
+                                    <mat-select formControlName="LabelCol">
+                                        <mat-option value="CODE">CODE</mat-option>
+                                        <mat-option value="PARENT">PARENT</mat-option>
+                                        <mat-option value="LEVEL">LEVEL</mat-option>
+                                        <mat-option value="NAME_FR">NAME_FR</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+    <button mat-mini-fab (click)="AddCol()">
+        <mat-icon class="add-course-btn">add</mat-icon>
+    </button>
+</div>
+<button (click)="Debug()">Debug</button>
