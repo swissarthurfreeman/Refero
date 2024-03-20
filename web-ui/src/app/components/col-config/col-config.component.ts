@@ -21,8 +21,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-col-config',
   standalone: true,
   imports: [ReactiveFormsModule, FormsModule, CommonModule, MatTableModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule, MatGridListModule, MatInputModule, ViewEditorComponent, SearchComponent, TableComponent, ColConfigComponent],
-  templateUrl: './col-config.component.html',
-  styleUrl: './col-config.component.scss'
+  templateUrl: './col-config.component.html'
 })
 export class ColConfigComponent {
   @Input()
