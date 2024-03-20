@@ -1,25 +1,25 @@
 <div [formGroup]="$any(FormControl)">
     <div class="d-flex flex-row">
         <div class="p-1">
-            <mat-form-field>
+            <mat-form-field subscriptSizing="dynamic">
                 <mat-label>File Col.</mat-label>
                 <input matInput formControlName="FileCol">
             </mat-form-field>
         </div>
         <div class="p-1">
-            <mat-form-field>
+            <mat-form-field subscriptSizing="dynamic">
                 <mat-label>Ref Col.</mat-label>
                 <input matInput formControlName="RefCol">
             </mat-form-field>
         </div>
         <div class="p-1">
-            <mat-form-field>
+            <mat-form-field subscriptSizing="dynamic">
                 <mat-label>Date Format</mat-label>
                 <input matInput formControlName="DateFormat">
             </mat-form-field> 
         </div>
         <div class="p-1">
-            <mat-form-field style="width: 8em;">
+            <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
                 <mat-label>Key Type</mat-label>
                 <mat-select formControlName="KeyType">
                     <mat-option value="None">None</mat-option>
@@ -29,7 +29,7 @@
             </mat-form-field>
         </div>
         <div class="p-1">
-            <mat-form-field style="width: 8em;">
+            <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
                 <mat-label>Required</mat-label>
                 <mat-select formControlName="Required">
                     <mat-option value="true">Yes</mat-option>
@@ -41,7 +41,7 @@
     <div class="d-flex flex-row">    
         @if (FormControl.get("KeyType")!.value=='FK') {
             <div class="p-1">
-                <mat-form-field style="width: 16em;">
+                <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
                     <mat-label>Pointed Ref.</mat-label>
                     <mat-select formControlName="PointedRef">
                         <mat-option value="REF_OFS_STATUT">REF_OFS_STATUT</mat-option>
@@ -50,7 +50,7 @@
                 </mat-form-field>
             </div>
             <div class="p-1">
-                <mat-form-field style="width: 16em;">
+                <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
                     <mat-label>Pointed Col.</mat-label>
                     <mat-select formControlName="PointedCol">
                         <mat-option value="CODE">CODE</mat-option>
@@ -61,7 +61,7 @@
                 </mat-form-field>
             </div>
             <div class="p-1">
-                <mat-form-field style="width: 16em;">
+                <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
                     <mat-label>Label Col.</mat-label>
                     <mat-select formControlName="LabelCol">
                         <mat-option value="CODE">CODE</mat-option>

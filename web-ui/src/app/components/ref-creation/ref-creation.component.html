@@ -15,9 +15,13 @@
     </div>
     <ng-container formArrayName="columns">
         <ng-container *ngFor="let ColForm of columns.controls; let i = index">
-            <div class="p-3 mb-2 bg-primary text-white">
-                <mat-icon class="delete-btn" (click)="deleteColumn(i)">delete_forever</mat-icon>
-                <app-col-config [FormControl]="$any(ColForm)"></app-col-config>
+            <div class="d-flex bg-primary m-2">
+                <div class="p-2">
+                    <mat-icon class="delete-btn" (click)="deleteColumn(i)">delete_forever</mat-icon>
+                </div>
+                <div class="p-2">
+                    <app-col-config [FormControl]="$any(ColForm)"></app-col-config>
+                </div>
             </div>
         </ng-container>
     </ng-container>
