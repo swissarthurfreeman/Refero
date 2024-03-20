@@ -1,4 +1,18 @@
 <div class="add-columns-form" [formGroup]="RefConfigForm">
+    <div class="d-flex">
+        <div class="p-2">
+            <mat-form-field>
+                <mat-label>Ref. Name</mat-label>
+                <input matInput formControlName="name">
+            </mat-form-field>
+        </div>
+        <div class="p-2">
+            <mat-form-field>
+                <mat-label>Ref Description.</mat-label>
+                <input matInput formControlName="description">
+            </mat-form-field>
+        </div>
+    </div>
     <ng-container formArrayName="columns">
         <ng-container *ngFor="let ColForm of columns.controls; let i = index">
             <div class="p-3 mb-2 bg-primary text-white">

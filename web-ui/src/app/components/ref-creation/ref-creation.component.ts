@@ -24,6 +24,8 @@ import { ColConfigComponent } from "../col-config/col-config.component";
 })
 export class RefCreationComponent implements OnInit {
   RefConfigForm = this.fb.group({
+      name: this.fb.control(''),
+      description: this.fb.control(''),
       columns: this.fb.array([])
   });
 
@@ -59,6 +61,6 @@ export class RefCreationComponent implements OnInit {
   }
 
   Debug() {
-    console.log(this.RefConfigForm.getRawValue());
+    console.log(JSON.stringify(this.RefConfigForm.getRawValue()));
   }
 }
