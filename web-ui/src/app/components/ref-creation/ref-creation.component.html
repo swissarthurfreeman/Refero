@@ -1,0 +1,19 @@
+<p>ref-creation works!</p>
+
+<form>
+<!-- Imported File Columns -->
+@for (refCol of fileHeader; track $index) {
+    <app-col-config FileColName="{{refCol}}"></app-col-config>
+}
+
+<!-- User added columns -->
+@for (refCol of newHeader; track $index) {
+    <app-col-config FileColName="{{refCol}}"></app-col-config>
+}
+
+<button mat-raised-button color="primary" style="width: 14em;" type="button" (click)="AddCol($event)">Add Column</button>
+
+<hr>
+<button mat-raised-button color="primary" style="width: 14em;" type="submit">Create</button>
+
+</form>

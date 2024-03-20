@@ -1,0 +1,49 @@
+<div class="d-flex flex-row">
+    @if(fileSelected) {
+    <div class="p-1">
+        <mat-form-field style="width: 6em;">
+            <mat-label>Keep</mat-label>
+            <mat-select [(value)]="ColSelected">
+                <mat-option value="true">Yes</mat-option>
+                <mat-option value="false">No</mat-option>
+            </mat-select>
+        </mat-form-field>        
+    </div>
+    <div class="p-1">
+        <mat-form-field >
+            <mat-label>File Col.</mat-label>
+            <input matInput value="{{FileColName}}">
+        </mat-form-field>
+    </div>
+    }
+    <div class="p-1">
+        <mat-form-field>
+            <mat-label>Ref Col.</mat-label>
+            <input matInput value="{{FileColName.toUpperCase()}}">
+        </mat-form-field>
+    </div>
+    <div class="p-1">
+        <mat-form-field>
+            <mat-label>Date Format</mat-label>
+            <input matInput>
+        </mat-form-field>
+    </div>
+    <div class="p-1">
+        <mat-form-field style="width: 8em;">
+            <mat-label>Key Type</mat-label>
+            <mat-select [(value)]="KeyType">
+                <mat-option value="FK">FK</mat-option>
+                <mat-option value="BK">BK</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="p-1">
+        <mat-form-field style="width: 8em;">
+            <mat-label>Required</mat-label>
+            <mat-select [(value)]="Required">
+                <mat-option value="true">Yes</mat-option>
+                <mat-option value="false">No</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
