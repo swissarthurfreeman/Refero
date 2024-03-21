@@ -1,11 +1,15 @@
 export class Referential {
-    name: string;
-    code: string
+    id: string;
     description: string;
-    
-    constructor(name: string, description: string, code: string) {
-        this.name = name;
+    lines: Array<Object>;
+
+    get header(): Array<string> {
+        return Object.keys(this.lines[0]);
+    }
+
+    constructor(refId: string, description: string, lines: Array<Object>) {
+        this.id = refId;
         this.description = description;
-        this.code = code;
+        this.lines = lines;
     }
 }

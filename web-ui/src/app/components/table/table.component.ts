@@ -28,6 +28,14 @@ export class TableComponent {
 
   dataService = inject(RefDataService);
 
+  // TODO : add   
+  /*@Input()
+  refId!: string;
+  set RefId(refId: string) {      // get the referential ID from the home component
+    this.refId = refId;
+  }*/
+  RefId: string = 'REF_OFS_REE_DATA';
+  
   viewRecord(uid: string) {
     this.router.navigate([`${uid}`], {relativeTo: this.route})
     console.log(uid); 

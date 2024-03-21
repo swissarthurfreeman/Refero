@@ -1,11 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { UtilsService } from './utils.service';
+import { RefDataService } from './ref-data.service';
+
+interface Dictionary<T> {
+  [Key: string]: T;
+}
 
 /**
- * Manages the current Referential View's active columns,
- * active search fields and filters.
- * Exposes visible Columns and Search Fields, as well as 
- * interfaces to add or remove them. 
+ * Manages the Views of Referentials : active search fields, filters and columns.
+ * Exposes visible Columns and Search Fields, as well as interfaces to add or 
+ * remove them for specific referentials. 
  */
 @Injectable({
   providedIn: 'root'
@@ -13,84 +17,85 @@ import { UtilsService } from './utils.service';
 export class RefViewService {
 
   utils = inject(UtilsService);
+  ds = inject(RefDataService);
 
-  constructor() {
-    this._dispCols = ['REE_N_OFS', 'REE_NOM'];
-    this._nDispCols = this.utils.difference(this._cols, this._dispCols);
-    this._dispAddOpt = this._nDispCols[0];
-    
-    this._searchCols = ['REE_N_OFS'];
-    this._nSearchCols = this.utils.difference(this._cols, this._searchCols);
-    this._searchAddOpt = this._nSearchCols[0];
-  }
-
-  // 'Add Column' select field value binding
-  _dispAddOpt: string;
-  get DispAddOpt() {
-    return this._dispAddOpt;
-  }  
-
-  // referential table header 
-  _cols: Array<string> = ['REE_N_OFS', 'REE_NOM', 'C_ALPHA_NEW', 'ADRESSE'];
-  get Cols(): Array<string> {
-    return this._cols;
-  }
-
-  // active table columns, displayed on screen
-  _dispCols: Array<string> = ['REE_N_OFS', 'REE_NOM'];  
-  get DispCols(): Array<String> {
-    return this._dispCols;
-  }
-
-  // inactive table columns, e.g. not displayed on screen
-  // get/set are not primarily used to get and set variables. 
-  // They are, however, used to execute code upon the getting 
-  // or setting of a variable.
-  _nDispCols: Array<string>;       
-  get nDispCols(): Array<string> {
-    return this._nDispCols;
-  }
+  // keyable by refId, viewId and dispCols, nDispCols, searchCols, nSearchCols
+  private _viewDict: Dictionary<Dictionary<Dictionary<Array<string>>>> = {};
+  public dispAddOpt!: string;      // only defined in consultation view
+  public searchAddOpt!: string;    // views may only be changed or saved in consultation view.
   
+  constructor() {
+    this._viewDict = {}
+    
+    for (let ref of this.ds.getRefs()) {
+      this._viewDict[ref.id] = {}
+      this._viewDict[ref.id]['DEFAULT_VIEW'] = {
+        'header': ref.header,
+        'dispCols': [ref.header[0], ref.header[1], ref.header[2]],      // by default, show first three columns
+        'searchCols': [ref.header[0], ref.header[1], ref.header[2]],    // and search fields on them
+      }
+
+      // inactive search fields
+      this._viewDict[ref.id]['DEFAULT_VIEW']['nSearchCols'] = this.utils.difference(
+        ref.header, this._viewDict[ref.id]['DEFAULT_VIEW']['searchCols']);
+
+      // inactive table columns, e.g. not displayed on screen
+      this._viewDict[ref.id]['DEFAULT_VIEW']['nDispCols'] = this.utils.difference(
+        ref.header, this._viewDict[ref.id]['DEFAULT_VIEW']['dispCols']);
+    }
+  }
+
+  getViewsOf(refId: string): string[] {
+    return Object.keys(this._viewDict[refId]);
+  }
+
   // remove a column from the table view, must be removed from displayed
   // columns and added to non displayed columns. 
-  removeDispCol(column: string) {
-    this._dispCols = this._dispCols.filter(item => item != column);
-    this._nDispCols.push(column);
+  removeDispCol(refId: string, viewId: string, col: string) {
+    let view = this._viewDict[refId][viewId];
+    view['dispCols'] = view['dispCols'].filter(item => item != col);
+    view['nDispCols'].push(col);
   }
 
-  addDispCol(column: string) {
-    this._dispCols.push(column);
-    this._nDispCols = this.utils.difference(this._cols, this._dispCols);
-    if (this._nDispCols[0].length > 0) {      // if there's still columns we can add
-      this._dispAddOpt = this._nDispCols[0];
+  addDispCol(refId: string, viewId: string, col: string) {
+    let view = this._viewDict[refId][viewId];
+    view['dispCols'].push(col);
+    view['nDispCols'] = this.utils.difference(view['header'], view['dispCols']);
+
+    if (view['nDispCols'].length > 0) {      // if there's still columns we can add
+      this.dispAddOpt = view['nDispCols'][0];
     }
   }
 
-  _searchAddOpt: string;           // 'Add Search' select field value binding
-  get SearchAddOpt() {
-    return this._searchAddOpt;
-  }
+  addSearchCol(refId: string, viewId: string, col: string) {
+    let view = this._viewDict[refId][viewId];
+    view['searchCols'].push(col);
+    view['nSearchCols'] = this.utils.difference(view['header'], view['searchCols']);
 
-  _searchCols: Array<string>;      // active search fields
-  get SearchCols() {
-    return this._searchCols;
-  }
-
-  _nSearchCols: Array<string>;     // unactive search fields
-  get nSearchCols() {
-    return this._nSearchCols;
-  }
-
-  addSearchCol(column: string) {
-    this._searchCols.push(column)
-    this._nSearchCols = this.utils.difference(this._cols, this._searchCols);
-    if(this._nSearchCols.length > 0) {
-      this._searchAddOpt = this._nSearchCols[0];
+    if(view['nSearchCols'].length > 0) {
+      this.searchAddOpt = view['nSearchCols'][0];
     }
   }
 
-  removeSearchCol(column: string) {
-    this._searchCols = this._searchCols.filter(item => item != column);
-    this._nSearchCols.push(column);
+  removeSearchCol(refId: string, viewId: string, col: string) {
+    let view = this._viewDict[refId][viewId];
+    view['searchCols'] = view['searchCols'].filter(item => item != col);
+    view['nSearchCols'].push(col);
+  }
+  
+  getSearchCols(refId: string, viewId: string) {
+    return this._viewDict[refId][viewId]['searchCols'];
+  }
+
+  getNSearchCols(refId: string, viewId: string) {
+    return this._viewDict[refId][viewId]['nSearchCols'];
+  }
+
+  getDispCol(refId: string, viewId: string) {
+    return this._viewDict[refId][viewId]['dispCols'];
+  }
+
+  getNDispCol(refId: string, viewId: string) {
+    return this._viewDict[refId][viewId]['nDispCols'];
   }
 }

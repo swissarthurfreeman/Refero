@@ -11,7 +11,6 @@ import {MatInputModule} from '@angular/material/input';
 import { ViewEditorComponent } from "../view-editor/view-editor.component";
 import { SearchComponent } from "../search/search.component";
 import { TableComponent } from "../table/table.component";
-import { RefDataService } from '../../service/ref-data.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ColConfigComponent } from "../col-config/col-config.component";

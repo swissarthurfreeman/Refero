@@ -25,11 +25,12 @@ export class ConsultationComponent {
     private route: ActivatedRoute
   ) {}
   
-  refId: string | undefined;
-  @Input()        
+  /*refId: string | undefined;
+  @Input()                        // this input is able to retrive :refId from url thanks to config in app.routes.ts
   set RefId(refId: string) {      // get the referential ID from the home component
     this.refId = refId;
-  }  
+  } */
+  RefId = 'REF_OFS_REE_DATA'; 
   
   simpleView: boolean = false;
   @Input()

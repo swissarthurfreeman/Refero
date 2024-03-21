@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -18,6 +18,16 @@ import { RefViewService } from '../../service/ref-view.service';
 export class ViewEditorComponent {
   constructor() {}
   viewService = inject(RefViewService);
+
+  /*
+  @Input()
+  refId!: string;
+  set RefId(refId: string) {      // get the referential ID from the home component
+    this.refId = refId;
+  }
+  */
+  RefId: string = 'REF_OFS_REE_DATA';
+  viewId: string = 'DEFAULT_VIEW';
 }
 
 

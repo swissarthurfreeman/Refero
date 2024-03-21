@@ -2,10 +2,11 @@
 <div class="d-flex align-items-start flex-column">
     <div class="mb-auto p-2">
         <mat-form-field>
-            <mat-label>VIEW_NICOLAS</mat-label>
-            <mat-select>
-                <mat-option>VIEW_VERO</mat-option>
-                <mat-option>VIEW_ARTHUR</mat-option>
+            <mat-label>Ref. View</mat-label>
+            <mat-select [(value)]="viewId">
+                @for (viewId of viewService.getViewsOf(RefId); track $index) {
+                    <mat-option [value]="viewId">{{viewId}}</mat-option>
+                }
             </mat-select>
         </mat-form-field>
     </div>
@@ -22,28 +23,28 @@
         <div class="p-2">
             <mat-form-field>
                 <mat-label>Add Search Field</mat-label>
-                <mat-select [(value)]="viewService.SearchAddOpt">
-                    @for (column of viewService.nSearchCols; track $index) {
+                <mat-select [(value)]="viewService.searchAddOpt">
+                    @for (column of viewService.getNSearchCols(this.RefId, this.viewId); track $index) {
                     <mat-option [value]="column">{{column}}</mat-option>
                     }
                 </mat-select>
             </mat-form-field>
         </div>
         <div class="p-2">
-            <button mat-raised-button color="primary" style="height:4em; width: 6em;" (click)="viewService.addSearchCol(viewService.SearchAddOpt)">Add</button>
+            <button mat-raised-button color="primary" style="height:4em; width: 6em;" (click)="viewService.addSearchCol(this.RefId, this.viewId, this.viewService.searchAddOpt)">Add</button>
         </div>
         <div class="p-2">
             <mat-form-field>
                 <mat-label>Add Table Column</mat-label>
-                <mat-select [(value)]="viewService.DispAddOpt">
-                    @for (column of viewService.nDispCols; track $index) {
+                <mat-select [(value)]="viewService.dispAddOpt">
+                    @for (column of viewService.getNDispCol(this.RefId, this.viewId); track $index) {
                     <mat-option [value]="column">{{column}}</mat-option>
                     }
                 </mat-select>
             </mat-form-field>
         </div>
         <div class="p-2">                             <!-- Backend dev that does front-end solution. This will break on mobile. -->
-            <button mat-raised-button color="primary" style="height:4em; width: 6em; margin-right: auto;" (click)="viewService.addDispCol(viewService.DispAddOpt)">Add</button>
+            <button mat-raised-button color="primary" style="height:4em; width: 6em; margin-right: auto;" (click)="viewService.addDispCol(this.RefId, this.viewId, viewService.dispAddOpt)">Add</button>
         </div>
     </div>
 </div>

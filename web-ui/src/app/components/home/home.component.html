@@ -50,10 +50,9 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let ref of refs" class="table-light" (click)="selectReferential(ref.name)">
-        <th scope="row">{{ref.name}}</th>
+    <tr *ngFor="let ref of ds.getRefs()" class="table-light" (click)="selectReferential(ref.id)">
+        <th scope="row">{{ref.id}}</th>
         <td>{{ref.description}}</td>
-        <td>{{ref.code}}</td>
     </tr>
   </tbody>
 </table>

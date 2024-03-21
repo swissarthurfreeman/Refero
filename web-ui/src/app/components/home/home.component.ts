@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Referential } from '../../model/referential.model';
 import { CommonModule } from '@angular/common'
 import { MatButtonModule } from '@angular/material/button';
+import { RefDataService } from '../../service/ref-data.service';
 
 @Component({
   selector: 'app-home',
@@ -11,30 +12,14 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './home.component.html',
   providers: []
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   constructor(
     private router: Router, 
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public ds: RefDataService
   ) {}
   
-  refs: Referential[] = [];
-
-  ngOnInit(): void {
-    this.refs = []
-    this.refs.push(new Referential(
-      "REF_OFS_NOGA", "Nomenclature des Activités Économiques", "4"))
-    this.refs.push(new Referential(
-      "REF_UNIGE_REE_DATA_V2", "Registre des Entreprises et Etablissements de l'Unige", "5")
-    )
-    this.refs.push(new Referential(
-      "Default Referential", "Blablablbalalalalalal", "10")
-    )
-  }
-
-  
-  
   selectReferential(refId: string): void {
-    //this.contextService.CurrentRefId = refId;
     this.router.navigate([`/${refId}`], {relativeTo: this.route});
   }
 

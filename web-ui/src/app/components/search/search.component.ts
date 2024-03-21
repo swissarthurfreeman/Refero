@@ -19,6 +19,16 @@ import { RefViewService } from '../../service/ref-view.service';
 export class SearchComponent {
 
   viewService = inject(RefViewService);
+
+  /*
+  @Input()
+  refId!: string;
+  set RefId(refId: string) {      // get the referential ID from the home component
+    this.refId = refId;
+  }*/
+
+  RefId = 'REF_OFS_REE_DATA'
+  
   constructor() {}
 
 }
