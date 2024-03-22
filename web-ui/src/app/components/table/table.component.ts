@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -18,7 +18,7 @@ import { RefDataService } from '../../service/ref-data.service';
     MatDividerModule, MatIconModule, MatGridListModule, MatInputModule],
   templateUrl: './table.component.html',
 })
-export class TableComponent {
+export class TableComponent implements OnInit {
   
   simpleView: boolean = false;
   
@@ -28,16 +28,22 @@ export class TableComponent {
 
   dataService = inject(RefDataService);
 
-  // TODO : add   
-  /*@Input()
-  refId!: string;
-  set RefId(refId: string) {      // get the referential ID from the home component
-    this.refId = refId;
-  }*/
-  RefId: string = 'REF_OFS_REE_DATA';
+  @Input()
+  ParentConfig: any;
   
   viewRecord(uid: string) {
     this.router.navigate([`${uid}`], {relativeTo: this.route})
     console.log(uid); 
+  }
+
+
+  ngOnInit(): void {
+    console.log("Table Params", this.ParentConfig.RefId, this.ParentConfig.ViewId);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log("Table detected change");
+    this.ParentConfig = changes['ParentConfig'].currentValue;
+    console.log(changes);     
   }
 }

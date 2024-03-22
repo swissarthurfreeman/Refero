@@ -20,7 +20,7 @@ export class HomeComponent {
   ) {}
   
   selectReferential(refId: string): void {
-    this.router.navigate([`/${refId}`], {relativeTo: this.route});
+    this.router.navigate([`${refId}`, `DEFAULT_VIEW`], {relativeTo: this.route});
   }
 
   createReferential(): void {

@@ -1,11 +1,11 @@
 <!-- Render Search Field -->
 <div class="row">
     <div class="col">
-        @for (column of viewService.getSearchCols(RefId, 'DEFAULT_VIEW'); track $index) {
+        @for (column of viewService.getSearchCols(ParentConfig.RefId, ParentConfig.ViewId); track $index) {
         <div class="row">
             <div class="col">
                 <div class="input-group mb-3">
-                    <button mat-mini-fab color="primary" (click)="viewService.removeSearchCol(RefId, 'DEFAULT_VIEW', column)">
+                    <button mat-mini-fab color="primary" (click)="viewService.removeSearchCol(ParentConfig.RefId, ParentConfig.ViewId, column)">
                         <mat-icon>remove</mat-icon>
                     </button>
                     <span class="input-group-text">{{column}}</span>
