@@ -8,10 +8,8 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatInputModule} from '@angular/material/input';
-import { RefViewService } from '../../service/ref-view.service';
 import { RefDataService } from '../../service/ref-data.service';
 import { Referential } from '../../model/referential.model';
-import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-table',
@@ -26,16 +24,15 @@ export class TableComponent implements OnInit {
   
   constructor(private router: Router, private route: ActivatedRoute) {}
 
-  viewService = inject(RefViewService);
-
   dataService = inject(RefDataService);
+  @Input() RefUid!: string;
+  // when the view gets swapped the change isn't being detected, for some reason. 
+  // the table compontn doesn't call ngOnChanges when a new view is selected, and for some reason
+  // when saving a new view, it makes the table white with undefined references all over the place. 
+  //@Input() ViewUid!: string;  
 
-  @Input()
-  ParentConfig: any = {};
-  
-  @Input() // TODO : clean this shit up 
-  Ref: Referential = new Referential(uuidv4(), '', '', [], {});
-  
+  Ref!: Referential;
+
   viewRecord(uid: string) {
     this.router.navigate([`${uid}`], {relativeTo: this.route})
     console.log(uid); 
@@ -43,14 +40,10 @@ export class TableComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // if no ref was provided, then we're directly accessing by the url, read from there
-    console.log(this.Ref)
-    if(this.Ref.lines.length == 0) {
-      this.Ref = this.dataService.getRefDataBy(this.ParentConfig.RefUid);
-    }
+    this.Ref = this.dataService.getRefDataBy(this.RefUid);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.ParentConfig = changes['ParentConfig'].currentValue;
+    console.log("Table Changes :", changes)
   }
 }

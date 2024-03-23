@@ -8,6 +8,6 @@ export const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'home', component: HomeComponent},
     {path: 'create', component: RefCreationComponent},
-    {path: ':RefUid/:ViewId', component: ConsultationComponent}, // Same name as @Inject decorated function, consult ref with ViewId 
-    {path: ':RefUid/:ViewId/:RecId', component: RecordComponent}
+    {path: ':RefUid', component: ConsultationComponent}, // Same name as @Inject decorated function, consult ref with ViewId 
+    {path: ':RefUid/:RecId', component: RecordComponent}
 ];

@@ -3,7 +3,7 @@
         @for (colId of Ref.headerIds; track $index) {
             <ng-container [matColumnDef]="colId">
                 <th mat-header-cell *matHeaderCellDef> {{Ref.getColumnById(colId)}}
-                    <button mat-mini-fab color="primary" (click)="viewService.removeDispCol(Ref.uid, Ref.viewId, colId)">
+                    <button mat-mini-fab color="primary" (click)="Ref.currView.removeDispCol(colId)">
                         <mat-icon>remove</mat-icon>
                     </button>
                 </th> <!-- Define the header string -->
@@ -13,7 +13,7 @@
         }
 
         <!-- Tell material angular to render these previously defined columns  -->
-        <tr mat-header-row *matHeaderRowDef="viewService.getDispCol(Ref.uid, Ref.viewId)"></tr>
+        <tr mat-header-row *matHeaderRowDef="Ref.currView.dispCols"></tr>
 
         <!-- 
             Tell material angular to actually render the rows, let myRowData is a property 
@@ -22,11 +22,11 @@
             (click) allows navigating to detail view with the row uid  
         -->
         @if (!simpleView) {
-        <tr mat-row (click)="viewRecord(myRowData.uid)" *matRowDef="let myRowData; columns: viewService.getDispCol(Ref.uid, Ref.viewId)"></tr>
+        <tr mat-row (click)="viewRecord(myRowData.uid)" *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
         }
 
         @if (simpleView) {
-        <tr mat-row *matRowDef="let myRowData; columns: viewService.getDispCol(Ref.uid, Ref.viewId)"></tr>
+        <tr mat-row *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
         }
     </table>
 </div>

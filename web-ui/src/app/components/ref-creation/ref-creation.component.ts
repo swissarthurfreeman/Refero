@@ -17,7 +17,6 @@ import Papa from 'papaparse';
 import { Referential, Dictionary } from '../../model/referential.model';
 import { v4 as uuidv4 } from 'uuid';
 import { RefDataService } from '../../service/ref-data.service';
-import { RefViewService } from '../../service/ref-view.service';
 
 /**
  * This component manages a FormArray : every column config component is a form, 
@@ -71,9 +70,8 @@ export class RefCreationComponent {
   }
 
   dataService = inject(RefDataService);
-  viewService = inject(RefViewService);
 
-  newRef: Referential = new Referential(uuidv4(), '', '', [], {}); 
+  newRef: Referential = new Referential('', '', [], {}); 
 
   upload(event: any) {
     let file: File = event.target.files[0];
@@ -83,11 +81,10 @@ export class RefCreationComponent {
         let parsedCSV = Papa.parse(value, {header: true});
         let header = parsedCSV.meta.fields!;  // TODO : Deal with case where no header is provided.
         let lines = parsedCSV.data as Dictionary<string>[];
-        this.newRef = new Referential(uuidv4(), file.name, "", lines,  this.dataService.getHeaderConfig(header));
-        this.viewService.registerRef(this.newRef);
+        this.newRef = new Referential(file.name, "", lines,  this.dataService.getHeaderConfig(header));
         
-        for(let colId of Object.keys(this.newRef._header)) {
-          this.AddColToFormArray(this.newRef._header[colId], colId);
+        for(let colId of Object.keys(this.newRef.header)) {
+          this.AddColToFormArray(this.newRef.header[colId], colId);
         }
     });
   }

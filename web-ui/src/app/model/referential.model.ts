@@ -1,51 +1,65 @@
+import { View } from "./view.model";
+import { v4 as uuidv4 } from 'uuid';
+
 export interface Dictionary<T> {
     [Key: string]: T;
 }
-  
+
 export class Referential {
+    uid: string;
     name: string;
     description: string;
-    // array of {colId: value...} objects
-    lines: Array<Dictionary<string>>;
-    public uid: string;
-    /*headerId: name key pair collection*/
-    _header: Dictionary<string> = {};
+    ref!: Referential;
 
-    // TODO : create array of views and work with that, create new view type 
-    viewIds: Array<string> = [];
-    viewId: string = "DEFAULT_VIEW";
+    header: Dictionary<string> = {};    // { colId: colName...} object
+    lines: Array<Dictionary<string>>;   // array of {colId: value...} objects
     
-    set header(header: Dictionary<string>) {
-        this._header = header;
+    views: Dictionary<View> = {};           // { viewId: View...} object
+    currView: View;                         // currently selected view
+
+    setCurrViewTo(viewId: string) {
+        this.currView = this.views[viewId];
     }
 
-    get header(): Dictionary<string> {
-        return this._header;
+    get ViewIds() {
+        return Object.keys(this.views);
     }
 
     get headerIds(): Array<string> {
-        return Object.keys(this._header);
+        return Object.keys(this.header);
     }
 
+    /**
+     * 
+     * @param colId id of the column
+     * @returns the name of the column
+     */
     getColumnById(colId: string): string {
-        return this._header[colId];    
+        return this.header[colId];    
     }
 
-    constructor(uid: string, name: string, description: string, lines: Array<Dictionary<string>>, header: Dictionary<string>) {
+    constructor(name: string, description: string, 
+        lines: Array<Dictionary<string>>, header: Dictionary<string>) {
+        
         this.name = name;
         this.description = description;
-        this.uid = uid;
-        this._header = header;
+        this.uid = uuidv4();
+        this.header = header;
         
-        // lines with { colId1: value ...} objects
+        // convert lines from {colName: value...} to { colId1: value ...}
         let nLines: Array<Dictionary<string>> = [];
         for(let line of lines) {
             let nLine: Dictionary<string> = {}
-            for(let colId of Object.keys(this._header)) {
-                nLine[colId] = line[this._header[colId]]; 
+            for(let colId of Object.keys(this.header)) {
+                nLine[colId] = line[this.header[colId]]; 
             } 
             nLines.push(nLine);
         }
         this.lines = nLines;
+
+        // create default view, store it in view dictionary.
+        let defView = new View("DEFAULT_VIEW", this);
+        this.views[defView.uid] = defView;
+        this.currView = defView;
     }
 }

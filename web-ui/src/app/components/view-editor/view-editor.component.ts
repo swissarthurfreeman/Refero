@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { ApplicationRef, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -7,11 +7,11 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatInputModule} from '@angular/material/input';
 import {MatGridListModule} from '@angular/material/grid-list';
-import { RefViewService } from '../../service/ref-view.service';
-import { Location } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RefDataService } from '../../service/ref-data.service';
+import { View } from '../../model/view.model';
+import { Referential } from '../../model/referential.model';
 
 @Component({
   selector: 'app-view-editor',
@@ -21,32 +21,28 @@ import { RefDataService } from '../../service/ref-data.service';
 })
 export class ViewEditorComponent implements OnInit {
   constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute
+    private appRef: ApplicationRef
   ) {}
   
-  ngOnInit(): void {}
+  Ref!: Referential;
+  ngOnInit(): void {
+    this.Ref = this.dataService.getRefDataBy(this.RefUid);
+  }
   
-  viewService = inject(RefViewService);
   dataService = inject(RefDataService);
-
-  @Input() ParentConfig: any;
+  @Input() RefUid!: string;
   
   newViewId = new FormControl('AWESOME_VIEW');
 
   SaveCurrentView() {
-    this.viewService.saveVisibleViewAs(
-      this.ParentConfig.RefUid, 
-      this.ParentConfig.ViewId, 
-      this.newViewId.value!
-    );
+    this.dataService.getRefDataBy(this.RefUid).currView.save(this.newViewId.value!);
   }
 
-  SelectView(viewId: any) {
-    const qp : Params = {'RefUid': this.ParentConfig.RefUid, 'ViewId': viewId}; 
-    this.router.navigate([this.ParentConfig.RefUid, viewId], 
-      qp
-    );
+  SelectView(viewId: string) {
+    console.log("View Editor Event :", viewId);
+    this.dataService.getRefDataBy(this.RefUid).setCurrViewTo(viewId);
+    this.Ref = this.dataService.getRefDataBy(this.RefUid);  // this ref is shared by search and table, they should update to it changing
+    this.appRef.tick();
   }
 }
 

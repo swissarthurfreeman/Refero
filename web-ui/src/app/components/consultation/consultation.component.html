@@ -4,7 +4,7 @@
 
     <mat-grid-list cols="3" rowHeight="19em">
         <mat-grid-tile colspan="2">
-            <app-view-editor [ParentConfig]="this.config"></app-view-editor>
+            <app-view-editor [RefUid]="RefUid"></app-view-editor>
         </mat-grid-tile>
         <!-- New Record, Import, Injection... Buttons -->
         @if (!simpleView) {
@@ -27,7 +27,7 @@
         }
     </mat-grid-list>
     <hr>
-    <app-search [ParentConfig]="this.config"></app-search>
-    <app-table [ParentConfig]="this.config"></app-table>
+    <app-search [RefUid]="RefUid"></app-search>
+    <app-table [RefUid]="RefUid"></app-table>
 </div>
 

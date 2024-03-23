@@ -13,6 +13,7 @@ import { SearchComponent } from "../search/search.component";
 import { TableComponent } from "../table/table.component";
 import { Observable } from 'rxjs';
 import { RefDataService } from '../../service/ref-data.service';
+import { Referential } from '../../model/referential.model';
 
 @Component({
     selector: 'app-consultation',
@@ -24,44 +25,24 @@ export class ConsultationComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute
-  ) {
-    this.route.params.subscribe(params => {
-      // Update input properties here
-      console.log("Update Params to", params);
-      this.config.RefUid = params['RefUid'];
-      this.config.ViewId = params['ViewId'];
-      console.log(this.config);
-    });
-  }
+  ) {}
 
   dataService = inject(RefDataService);
   
-  config: any = { RefUid: '', ViewId: ''};
-
+  Ref!: Referential; 
+  
   ngOnInit(): void {
-    this.config.RefUid = this._RefUid;
-    this.config.ViewId = this._viewId;
-    console.log(this.config);
+    this.Ref = this.dataService.getRefDataBy(this.RefUid);
   }
   
   private _RefUid!: string;
   @Input()                        // this input is able to retrive :RefUid from url thanks to config in app.routes.ts
-  set RefUid(RefUid: string) {      // get the referential ID from the home component
+  set RefUid(RefUid: string) {    // get the referential ID from the home component
     this._RefUid = RefUid;
   }
 
   get RefUid() {
     return this._RefUid;
-  }
-
-  private _viewId!: string; 
-  @Input()
-  set ViewId(viewId: string) {
-    this._viewId = viewId;
-  }
-
-  get ViewId(): string {
-    return this._viewId;
   }
 
   simpleView: boolean = false;
