@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { UtilsService } from './utils.service';
 import { RefDataService } from './ref-data.service';
+import { Referential } from '../model/referential.model';
 
 interface Dictionary<T> {
   [Key: string]: T;
@@ -31,28 +32,32 @@ export class RefViewService {
     this._savedViewDict = {}
       
     for (let ref of this.ds.getRefs()) {
-      this._viewDict[ref.uid] = {}
-
-      /*Allows restoring default view*/
-      this._viewDict[ref.uid]['DEFAULT_VIEW'] = {
-        'headerIds': ref.headerIds,
-        'dispCols': [ref.headerIds[0], ref.headerIds[1], ref.headerIds[2]],      // by default, show first three columns
-        'searchCols': [ref.headerIds[0], ref.headerIds[1], ref.headerIds[2]],    // and search fields on them
-      }
-      
-      // inactive search fields
-      this._viewDict[ref.uid]['DEFAULT_VIEW']['nSearchCols'] = this.utils.difference(
-        ref.headerIds, this._viewDict[ref.uid]['DEFAULT_VIEW']['searchCols']);
-      
-      // inactive table columns, e.g. not displayed on screen
-      this._viewDict[ref.uid]['DEFAULT_VIEW']['nDispCols'] = this.utils.difference(
-        ref.headerIds, this._viewDict[ref.uid]['DEFAULT_VIEW']['dispCols']);
-
-      // save before any user modifications, this is the server source of truth
-      this._savedViewDict[ref.uid] = {}
-      
-      this._savedViewDict[ref.uid]['DEFAULT_VIEW'] = JSON.parse(JSON.stringify(this._viewDict[ref.uid]['DEFAULT_VIEW']));
+      this.registerRef(ref);
     }
+  }
+
+  registerRef(ref: Referential) {
+    this._viewDict[ref.uid] = {}
+
+    /*Allows restoring default view*/
+    this._viewDict[ref.uid]['DEFAULT_VIEW'] = {
+      'headerIds': ref.headerIds,
+      'dispCols': [ref.headerIds[0], ref.headerIds[1], ref.headerIds[2]],      // by default, show first three columns
+      'searchCols': [ref.headerIds[0], ref.headerIds[1], ref.headerIds[2]],    // and search fields on them
+    }
+    
+    // inactive search fields
+    this._viewDict[ref.uid]['DEFAULT_VIEW']['nSearchCols'] = this.utils.difference(
+      ref.headerIds, this._viewDict[ref.uid]['DEFAULT_VIEW']['searchCols']);
+    
+    // inactive table columns, e.g. not displayed on screen
+    this._viewDict[ref.uid]['DEFAULT_VIEW']['nDispCols'] = this.utils.difference(
+      ref.headerIds, this._viewDict[ref.uid]['DEFAULT_VIEW']['dispCols']);
+
+    // save before any user modifications, this is the server source of truth
+    this._savedViewDict[ref.uid] = {}
+    
+    this._savedViewDict[ref.uid]['DEFAULT_VIEW'] = JSON.parse(JSON.stringify(this._viewDict[ref.uid]['DEFAULT_VIEW']));
   }
 
   getViewsOf(RefUid: string): string[] {

@@ -1,4 +1,4 @@
-interface Dictionary<T> {
+export interface Dictionary<T> {
     [Key: string]: T;
 }
   
@@ -11,6 +11,10 @@ export class Referential {
     /*headerId: name key pair collection*/
     _header: Dictionary<string> = {};
 
+    // TODO : create array of views and work with that, create new view type 
+    viewIds: Array<string> = [];
+    viewId: string = "DEFAULT_VIEW";
+    
     set header(header: Dictionary<string>) {
         this._header = header;
     }

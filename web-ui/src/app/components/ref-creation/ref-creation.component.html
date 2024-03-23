@@ -30,17 +30,13 @@
             </div>
         </ng-container>
     </ng-container>
-    <button mat-mini-fab (click)="AddCol()">
+    <button mat-mini-fab (click)="AddColToFormArray()">
         <mat-icon class="add-course-btn">add</mat-icon>
     </button>
 </div>
 <button (click)="Debug()">Debug</button>
 
-<!-- TODO : 
-    - Add table rendering, re-use table component, 
-    - revamp table to use @Input to receive it's data instead of DataService
-    - Make DataService manage a set of referentials instead of just one
-    - Make ViewService manage a set of views instead of just one
-    - Make ViewService an aggregate property of DataService, e.g. DataService.Views.
--->
-
+<!-- If data was uploaded, render it underneath -->
+@if (newRef.lines.length > 0) {
+    <app-table [Ref]="newRef"></app-table>
+}

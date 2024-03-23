@@ -1,9 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatGridListModule} from '@angular/material/grid-list';
@@ -11,50 +10,54 @@ import {MatInputModule} from '@angular/material/input';
 import { ViewEditorComponent } from "../view-editor/view-editor.component";
 import { SearchComponent } from "../search/search.component";
 import { TableComponent } from "../table/table.component";
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ColConfigComponent } from "../col-config/col-config.component";
 import Papa from 'papaparse';
-import { Referential } from '../../model/referential.model';
+import { Referential, Dictionary } from '../../model/referential.model';
 import { v4 as uuidv4 } from 'uuid';
 import { RefDataService } from '../../service/ref-data.service';
+import { RefViewService } from '../../service/ref-view.service';
 
+/**
+ * This component manages a FormArray : every column config component is a form, 
+ * and there is an unknown arbitrary amount of them to be specified by the user.
+ * 
+ * Members of note are `RefConfigForm` which is a form group that contains the
+ * new referential name, description and defined columns. `AddCol()` which adds
+ * a column configuration component to the view and `upload()` which allows the
+ * uploading of a csv file. 
+ */
 @Component({
     selector: 'app-ref-creation',
     standalone: true,
     templateUrl: './ref-creation.component.html',
     imports: [CommonModule, MatTableModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule, MatGridListModule, MatInputModule, ViewEditorComponent, SearchComponent, TableComponent, ColConfigComponent]
 })
-export class RefCreationComponent implements OnInit {
+export class RefCreationComponent {
   RefConfigForm = this.fb.group({
       name: this.fb.control(''),
       description: this.fb.control(''),
       columns: this.fb.array([])
   });
 
-  constructor(private fb:FormBuilder) {}
-  
-  FileCols: Array<string> = ['Code', 'Parent', 'Level', 'Name_fr', 'Desc_fr'];
-  ngOnInit(): void {
-    for(let col of this.FileCols) {
-      this.AddCol(col);
-    }
-  }
+  constructor(private fb: FormBuilder) {}
 
   get columns() {
     return this.RefConfigForm.controls["columns"] as FormArray;
   }
 
-  AddCol(name?: string) {
+  AddColToFormArray(colName?: string, colId?: string) {
     const ColForm = this.fb.group({
-      RefCol: ['' || name?.toUpperCase(), Validators.required],
-      FileCol: ['' || name ],
+      RefCol: ['' || colName?.toUpperCase(), Validators.required],
+      FileCol: ['' || colName ],
       DateFormat: [''],
       Required: ["true"],
       KeyType: ['None'],
       PointedRef: [''],
       PointedCol: [''],
-      LabelCol: ['']
+      LabelCol: [''],
+      ColId: [''|| colId] // this value is needed to be able to associate column config to ColId of referential under creation 
     });
     this.columns.push(ColForm);
   }
@@ -67,23 +70,25 @@ export class RefCreationComponent implements OnInit {
     console.log(JSON.stringify(this.RefConfigForm.getRawValue()));
   }
 
-  selectedFiles!: NodeList;
-  selectFile(event: any) {
-    this.selectedFiles = event.target.files;
-  }
-
   dataService = inject(RefDataService);
+  viewService = inject(RefViewService);
 
-  upload(event: any){
+  newRef: Referential = new Referential(uuidv4(), '', '', [], {}); 
+
+  upload(event: any) {
     let file: File = event.target.files[0];
 
     file.text().then(
       value => {
         let parsedCSV = Papa.parse(value, {header: true});
         let header = parsedCSV.meta.fields!;  // TODO : Deal with case where no header is provided.
-        let lines = parsedCSV.data as Object[];
-        //let ref = new Referential(uuidv4(), file.name, "", lines,  this.dataService.getHeaderConfig(header));
+        let lines = parsedCSV.data as Dictionary<string>[];
+        this.newRef = new Referential(uuidv4(), file.name, "", lines,  this.dataService.getHeaderConfig(header));
+        this.viewService.registerRef(this.newRef);
+        
+        for(let colId of Object.keys(this.newRef._header)) {
+          this.AddColToFormArray(this.newRef._header[colId], colId);
+        }
     });
-    
- }
+  }
 }

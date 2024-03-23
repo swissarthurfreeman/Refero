@@ -11,6 +11,7 @@ import {MatInputModule} from '@angular/material/input';
 import { RefViewService } from '../../service/ref-view.service';
 import { RefDataService } from '../../service/ref-data.service';
 import { Referential } from '../../model/referential.model';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-table',
@@ -30,9 +31,10 @@ export class TableComponent implements OnInit {
   dataService = inject(RefDataService);
 
   @Input()
-  ParentConfig: any;
+  ParentConfig: any = {};
   
-  ref!: Referential;
+  @Input() // TODO : clean this shit up 
+  Ref: Referential = new Referential(uuidv4(), '', '', [], {});
   
   viewRecord(uid: string) {
     this.router.navigate([`${uid}`], {relativeTo: this.route})
@@ -41,7 +43,11 @@ export class TableComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.ref = this.dataService.getRefDataBy(this.ParentConfig.RefUid);
+    // if no ref was provided, then we're directly accessing by the url, read from there
+    console.log(this.Ref)
+    if(this.Ref.lines.length == 0) {
+      this.Ref = this.dataService.getRefDataBy(this.ParentConfig.RefUid);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
