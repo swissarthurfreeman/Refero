@@ -11,6 +11,7 @@ import { RefViewService } from '../../service/ref-view.service';
 import { Location } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { RefDataService } from '../../service/ref-data.service';
 
 @Component({
   selector: 'app-view-editor',
@@ -23,10 +24,11 @@ export class ViewEditorComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) {}
-  ngOnInit(): void {
-    console.log("ViewEditorComponent", this.ParentConfig);
-  }
+  
+  ngOnInit(): void {}
+  
   viewService = inject(RefViewService);
+  dataService = inject(RefDataService);
 
   @Input() ParentConfig: any;
   
@@ -34,15 +36,15 @@ export class ViewEditorComponent implements OnInit {
 
   SaveCurrentView() {
     this.viewService.saveVisibleViewAs(
-      this.ParentConfig.RefId, 
+      this.ParentConfig.RefUid, 
       this.ParentConfig.ViewId, 
       this.newViewId.value!
     );
   }
 
   SelectView(viewId: any) {
-    const qp : Params = {'RefId': this.ParentConfig.RefId, 'ViewId': viewId}; 
-    this.router.navigate([this.ParentConfig.RefId, viewId], 
+    const qp : Params = {'RefUid': this.ParentConfig.RefUid, 'ViewId': viewId}; 
+    this.router.navigate([this.ParentConfig.RefUid, viewId], 
       qp
     );
   }

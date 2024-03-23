@@ -24,7 +24,7 @@ interface keyable {
 export class RecordComponent implements OnInit {
   ngOnInit(): void {}
 
-  @Input() refId!: string;    // when viewing a record, ref and line ids are 
+  @Input() RefUid!: string;    // when viewing a record, ref and line ids are 
   @Input() recId!: string;    
   sourceRef: string = '';
   record: Object = {

@@ -19,8 +19,8 @@ export class HomeComponent {
     public ds: RefDataService
   ) {}
   
-  selectReferential(refId: string): void {
-    this.router.navigate([`${refId}`, `DEFAULT_VIEW`], {relativeTo: this.route});
+  selectReferential(RefUid: string): void {
+    this.router.navigate([`${RefUid}`, `DEFAULT_VIEW`], {relativeTo: this.route});
   }
 
   createReferential(): void {

@@ -14,6 +14,10 @@ import { TableComponent } from "../table/table.component";
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ColConfigComponent } from "../col-config/col-config.component";
+import Papa from 'papaparse';
+import { Referential } from '../../model/referential.model';
+import { v4 as uuidv4 } from 'uuid';
+import { RefDataService } from '../../service/ref-data.service';
 
 @Component({
     selector: 'app-ref-creation',
@@ -62,4 +66,24 @@ export class RefCreationComponent implements OnInit {
   Debug() {
     console.log(JSON.stringify(this.RefConfigForm.getRawValue()));
   }
+
+  selectedFiles!: NodeList;
+  selectFile(event: any) {
+    this.selectedFiles = event.target.files;
+  }
+
+  dataService = inject(RefDataService);
+
+  upload(event: any){
+    let file: File = event.target.files[0];
+
+    file.text().then(
+      value => {
+        let parsedCSV = Papa.parse(value, {header: true});
+        let header = parsedCSV.meta.fields!;  // TODO : Deal with case where no header is provided.
+        let lines = parsedCSV.data as Object[];
+        //let ref = new Referential(uuidv4(), file.name, "", lines,  this.dataService.getHeaderConfig(header));
+    });
+    
+ }
 }

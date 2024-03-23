@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -12,6 +12,7 @@ import { ViewEditorComponent } from "../view-editor/view-editor.component";
 import { SearchComponent } from "../search/search.component";
 import { TableComponent } from "../table/table.component";
 import { Observable } from 'rxjs';
+import { RefDataService } from '../../service/ref-data.service';
 
 @Component({
     selector: 'app-consultation',
@@ -27,28 +28,30 @@ export class ConsultationComponent implements OnInit {
     this.route.params.subscribe(params => {
       // Update input properties here
       console.log("Update Params to", params);
-      this.config.RefId = params['RefId'];
+      this.config.RefUid = params['RefUid'];
       this.config.ViewId = params['ViewId'];
       console.log(this.config);
     });
   }
 
-  config: any = { RefId: '', ViewId: ''};
+  dataService = inject(RefDataService);
+  
+  config: any = { RefUid: '', ViewId: ''};
 
   ngOnInit(): void {
-    this.config.RefId = this._refId;
+    this.config.RefUid = this._RefUid;
     this.config.ViewId = this._viewId;
     console.log(this.config);
   }
   
-  private _refId!: string;
-  @Input()                        // this input is able to retrive :refId from url thanks to config in app.routes.ts
-  set RefId(refId: string) {      // get the referential ID from the home component
-    this._refId = refId;
+  private _RefUid!: string;
+  @Input()                        // this input is able to retrive :RefUid from url thanks to config in app.routes.ts
+  set RefUid(RefUid: string) {      // get the referential ID from the home component
+    this._RefUid = RefUid;
   }
 
-  get RefId() {
-    return this._refId;
+  get RefUid() {
+    return this._RefUid;
   }
 
   private _viewId!: string; 

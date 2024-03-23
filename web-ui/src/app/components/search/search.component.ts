@@ -9,6 +9,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatInputModule} from '@angular/material/input';
 import { RefViewService } from '../../service/ref-view.service';
+import { RefDataService } from '../../service/ref-data.service';
 
 @Component({
   selector: 'app-search',
@@ -19,18 +20,17 @@ import { RefViewService } from '../../service/ref-view.service';
 export class SearchComponent implements OnInit {
 
   viewService = inject(RefViewService);
+  dataService = inject(RefDataService);
 
   @Input()
   ParentConfig: any;
 
   constructor() {}
   ngOnInit(): void {
-    console.log("Search Params", this.ParentConfig.RefId, this.ParentConfig.ViewId);
+    console.log("Search Params", this.ParentConfig.RefUid, this.ParentConfig.ViewId);
   }
   
   ngOnChanges(changes: SimpleChanges) {
-    console.log("Search detected change");
     this.ParentConfig = changes['ParentConfig'].currentValue;
-    console.log(changes);     
   }
 }

@@ -1,4 +1,8 @@
 <div class="add-columns-form" [formGroup]="RefConfigForm">
+    <div (click)="uploadFile.click()">
+        <button mat-raised-button color="primary">Choose File</button>
+        <input #uploadFile (change)="upload($event)" type='file' style="display:none"/> 
+    </div>
     <div class="d-flex">
         <div class="p-2">
             <mat-form-field subscriptSizing="dynamic">
@@ -20,6 +24,7 @@
                     <mat-icon class="delete-btn" (click)="deleteColumn(i)">delete_forever</mat-icon>
                 </div>
                 <div class="p-2">
+                    <!-- render column configuration fields -->
                     <app-col-config [FormControl]="$any(ColForm)"></app-col-config>
                 </div>
             </div>
@@ -38,3 +43,4 @@
     - Make ViewService manage a set of views instead of just one
     - Make ViewService an aggregate property of DataService, e.g. DataService.Views.
 -->
+

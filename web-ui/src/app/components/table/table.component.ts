@@ -10,6 +10,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatInputModule} from '@angular/material/input';
 import { RefViewService } from '../../service/ref-view.service';
 import { RefDataService } from '../../service/ref-data.service';
+import { Referential } from '../../model/referential.model';
 
 @Component({
   selector: 'app-table',
@@ -31,6 +32,8 @@ export class TableComponent implements OnInit {
   @Input()
   ParentConfig: any;
   
+  ref!: Referential;
+  
   viewRecord(uid: string) {
     this.router.navigate([`${uid}`], {relativeTo: this.route})
     console.log(uid); 
@@ -38,12 +41,10 @@ export class TableComponent implements OnInit {
 
 
   ngOnInit(): void {
-    console.log("Table Params", this.ParentConfig.RefId, this.ParentConfig.ViewId);
+    this.ref = this.dataService.getRefDataBy(this.ParentConfig.RefUid);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("Table detected change");
     this.ParentConfig = changes['ParentConfig'].currentValue;
-    console.log(changes);     
   }
 }

@@ -1,19 +1,19 @@
 <div class="col">
-    <table mat-table [dataSource]="dataService.getRefDataBy(ParentConfig.RefId).lines"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
-        @for (column of dataService.getRefDataBy(ParentConfig.RefId).header; track $index) {
-            <ng-container [matColumnDef]="column">
-                <th mat-header-cell *matHeaderCellDef> {{column}}
-                    <button mat-mini-fab color="primary" (click)="viewService.removeDispCol(ParentConfig.RefId, ParentConfig.ViewId, column)">
+    <table mat-table [dataSource]="ref.lines"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
+        @for (colId of ref.headerIds; track $index) {
+            <ng-container [matColumnDef]="colId">
+                <th mat-header-cell *matHeaderCellDef> {{ref.getColumnById(colId)}}
+                    <button mat-mini-fab color="primary" (click)="viewService.removeDispCol(ParentConfig.RefUid, ParentConfig.ViewId, colId)">
                         <mat-icon>remove</mat-icon>
                     </button>
                 </th> <!-- Define the header string -->
-                <td mat-cell *matCellDef="let line"> {{ line[column] }} </td>
+                <td mat-cell *matCellDef="let line"> {{ line[colId] }} </td>
                 <!-- Define the data to display for each line -->
             </ng-container>
         }
 
         <!-- Tell material angular to render these previously defined columns  -->
-        <tr mat-header-row *matHeaderRowDef="viewService.getDispCol(ParentConfig.RefId, ParentConfig.ViewId)"></tr>
+        <tr mat-header-row *matHeaderRowDef="viewService.getDispCol(ParentConfig.RefUid, ParentConfig.ViewId)"></tr>
 
         <!-- 
             Tell material angular to actually render the rows, let myRowData is a property 
@@ -22,11 +22,11 @@
             (click) allows navigating to detail view with the row uid  
         -->
         @if (!simpleView) {
-        <tr mat-row (click)="viewRecord(myRowData.uid)" *matRowDef="let myRowData; columns: viewService.getDispCol(ParentConfig.RefId, ParentConfig.ViewId)"></tr>
+        <tr mat-row (click)="viewRecord(myRowData.uid)" *matRowDef="let myRowData; columns: viewService.getDispCol(ParentConfig.RefUid, ParentConfig.ViewId)"></tr>
         }
 
         @if (simpleView) {
-        <tr mat-row *matRowDef="let myRowData; columns: viewService.getDispCol(ParentConfig.RefId, ParentConfig.ViewId)"></tr>
+        <tr mat-row *matRowDef="let myRowData; columns: viewService.getDispCol(ParentConfig.RefUid, ParentConfig.ViewId)"></tr>
         }
     </table>
 </div>
