@@ -24,14 +24,9 @@ export class TableComponent implements OnInit {
   
   constructor(private router: Router, private route: ActivatedRoute) {}
 
-  dataService = inject(RefDataService);
-  @Input() RefUid!: string;
-  // when the view gets swapped the change isn't being detected, for some reason. 
-  // the table compontn doesn't call ngOnChanges when a new view is selected, and for some reason
-  // when saving a new view, it makes the table white with undefined references all over the place. 
-  //@Input() ViewUid!: string;  
+  dataService = inject(RefDataService);;  
 
-  Ref!: Referential;
+  @Input() Ref!: Referential; // this works, changes to the ref's view by the view-editor are updated in the table.
 
   viewRecord(uid: string) {
     this.router.navigate([`${uid}`], {relativeTo: this.route})
@@ -40,7 +35,7 @@ export class TableComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.Ref = this.dataService.getRefDataBy(this.RefUid);
+    //this.Ref = this.dataService.getRefDataBy(this.RefUid);
   }
 
   ngOnChanges(changes: SimpleChanges) {

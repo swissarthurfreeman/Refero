@@ -19,16 +19,16 @@ import { Referential } from '../../model/referential.model';
 export class SearchComponent implements OnInit {
   dataService = inject(RefDataService);
 
-  @Input() RefUid!: string;
-  Ref!: Referential;
+  //@Input() RefUid!: string;
+  @Input() Ref!: Referential;
   
   constructor() {}
   ngOnInit(): void {
-    this.Ref = this.dataService.getRefDataBy(this.RefUid);
+    // this.Ref = this.dataService.getRefDataBy(this.RefUid);
   }
   
   ngOnChanges(changes: SimpleChanges) {
     console.log("Search Changes :", changes)
-    this.Ref = this.dataService.getRefDataBy(this.RefUid);
+    // this.Ref = this.dataService.getRefDataBy(this.RefUid);
   }
 }

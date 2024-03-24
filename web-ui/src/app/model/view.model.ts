@@ -90,7 +90,7 @@ export class View {
             this.ref.views[view.uid] = view;    // associate view to ref
 
             this.dispCols = this._dispCols.slice(0);
-            this.searchCols = this.searchCols.slice(0);
+            this.searchCols = this._searchCols.slice(0);
 
             this._initChoices()
             // TODO : POST TO DATABASE
