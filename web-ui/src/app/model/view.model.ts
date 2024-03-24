@@ -45,8 +45,9 @@ export class View {
     }
 
     addDispCol(newCol: string) {
+        console.log("Adding Column", newCol, this.ref.getColumnById(newCol));
         this.dispCols.push(newCol);
-        this.dispCols = this.difference(this.ref.headerIds, this.dispCols);
+        this.nDispCols = this.difference(this.ref.headerIds, this.dispCols);
 
         if (this.nDispCols.length > 0) {      // if there's still columns we can add
             this.dispAddOpt = this.nDispCols[0];
