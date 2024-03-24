@@ -1,3 +1,4 @@
+import { RefDataService } from "../service/ref-data.service";
 import { View } from "./view.model";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -39,12 +40,12 @@ export class Referential {
     }
 
     constructor(name: string, description: string, 
-        lines: Array<Dictionary<string>>, header: Dictionary<string>) {
+        lines: Array<Dictionary<string>>, header: Array<string>) {
         
         this.name = name;
         this.description = description;
         this.uid = uuidv4();
-        this.header = header;
+        this.header = Referential.getHeaderConfig(header);
         
         // convert lines from {colName: value...} to { colId1: value ...}
         let nLines: Array<Dictionary<string>> = [];
@@ -57,9 +58,26 @@ export class Referential {
         }
         this.lines = nLines;
 
+        // upper case column names
+        for(let colId of Object.keys(this.header)) {
+            this.header[colId] = this.header[colId].toUpperCase();  
+        }
+
         // create default view, store it in view dictionary.
         let defView = new View("DEFAULT_VIEW", this);
         this.views[defView.uid] = defView;
         this.currView = defView;
+    }
+
+    /**
+     * From a line {colName: value...} yield the header configuration
+     * as {colId: colName...}.  
+     */
+    static getHeaderConfig(line: Array<string>): Dictionary<string> {
+        let headerConfig: Dictionary<string> = {}
+        for (let colName of line) {
+            headerConfig[uuidv4()] = colName; 
+        }
+        return headerConfig;
     }
 }

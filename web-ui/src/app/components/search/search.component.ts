@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,19 +16,10 @@ import { Referential } from '../../model/referential.model';
   imports: [MatTableModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule, MatGridListModule, MatInputModule],
   templateUrl: './search.component.html',
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent {
   dataService = inject(RefDataService);
 
-  //@Input() RefUid!: string;
   @Input() Ref!: Referential;
   
   constructor() {}
-  ngOnInit(): void {
-    // this.Ref = this.dataService.getRefDataBy(this.RefUid);
-  }
-  
-  ngOnChanges(changes: SimpleChanges) {
-    console.log("Search Changes :", changes)
-    // this.Ref = this.dataService.getRefDataBy(this.RefUid);
-  }
 }

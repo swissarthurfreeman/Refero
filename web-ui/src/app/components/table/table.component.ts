@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,9 +16,10 @@ import { Referential } from '../../model/referential.model';
   standalone: true,
   imports: [MatTableModule, MatFormFieldModule, MatSelectModule, MatButtonModule, 
     MatDividerModule, MatIconModule, MatGridListModule, MatInputModule],
+  styleUrl: './table.component.scss',
   templateUrl: './table.component.html',
 })
-export class TableComponent implements OnInit {
+export class TableComponent {
   
   simpleView: boolean = false;
   
@@ -31,14 +32,5 @@ export class TableComponent implements OnInit {
   viewRecord(uid: string) {
     this.router.navigate([`${uid}`], {relativeTo: this.route})
     console.log(uid); 
-  }
-
-
-  ngOnInit(): void {
-    //this.Ref = this.dataService.getRefDataBy(this.RefUid);
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log("Table Changes :", changes)
   }
 }

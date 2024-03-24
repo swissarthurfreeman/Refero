@@ -97,6 +97,17 @@ export class View {
         }
     }
 
+    /**
+     * Add all header columns to display columns.
+     * This function does not save the modifications,
+     * `save()` needs to be called seperately. 
+     */
+    setDispColsToAllCols() {
+        for(let nDispCol of this.nDispCols) {
+            this.addDispCol(nDispCol);
+        }
+    }
+
     difference(arr1: Array<string>, arr2: Array<string>): Array<string> {
         return arr1.filter(item => arr2.indexOf(item) < 0);
     }

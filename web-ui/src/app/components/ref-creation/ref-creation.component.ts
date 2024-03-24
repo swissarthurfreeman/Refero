@@ -30,6 +30,7 @@ import { RefDataService } from '../../service/ref-data.service';
 @Component({
     selector: 'app-ref-creation',
     standalone: true,
+    styleUrl: './ref-creation.component.scss',
     templateUrl: './ref-creation.component.html',
     imports: [CommonModule, MatTableModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule, MatGridListModule, MatInputModule, ViewEditorComponent, SearchComponent, TableComponent, ColConfigComponent]
 })
@@ -71,7 +72,7 @@ export class RefCreationComponent {
 
   dataService = inject(RefDataService);
 
-  newRef: Referential = new Referential('', '', [], {}); 
+  newRef: Referential = new Referential('', '', [], []); 
 
   upload(event: any) {
     let file: File = event.target.files[0];
@@ -81,8 +82,9 @@ export class RefCreationComponent {
         let parsedCSV = Papa.parse(value, {header: true});
         let header = parsedCSV.meta.fields!;  // TODO : Deal with case where no header is provided.
         let lines = parsedCSV.data as Dictionary<string>[];
-        this.newRef = new Referential(file.name, "", lines,  this.dataService.getHeaderConfig(header));
-        
+        this.newRef = new Referential(file.name, "", lines,  header);
+        this.newRef.currView.setDispColsToAllCols();
+
         for(let colId of Object.keys(this.newRef.header)) {
           this.AddColToFormArray(this.newRef.header[colId], colId);
         }
