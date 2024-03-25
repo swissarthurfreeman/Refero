@@ -39,6 +39,10 @@ export class Referential {
         return this.header[colId];    
     }
 
+    getRecordById(recId: string): Dictionary<string> {
+        return this.lines.filter((line) => line['uid'] != recId)[0];    // we know lines are unique by uid.
+    }
+
     constructor(name: string, description: string, 
         lines: Array<Dictionary<string>>, header: Array<string>) {
         
@@ -48,12 +52,14 @@ export class Referential {
         this.header = Referential.getHeaderConfig(header);
         
         // convert lines from {colName: value...} to { colId1: value ...}
+        // every line has a uid.
         let nLines: Array<Dictionary<string>> = [];
         for(let line of lines) {
             let nLine: Dictionary<string> = {}
             for(let colId of Object.keys(this.header)) {
                 nLine[colId] = line[this.header[colId]]; 
             } 
+            nLine['uid'] = uuidv4();
             nLines.push(nLine);
         }
         this.lines = nLines;

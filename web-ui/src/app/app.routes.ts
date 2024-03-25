@@ -9,5 +9,5 @@ export const routes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'create', component: RefCreationComponent},
     {path: ':RefUid', component: ConsultationComponent}, // Same name as @Inject decorated function, consult ref with ViewId 
-    {path: ':RefUid/:RecId', component: RecordComponent}
+    {path: ':RefUid/:RecUid', component: RecordComponent}
 ];

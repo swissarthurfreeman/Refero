@@ -1,33 +1,37 @@
  <div class="container">
-    <button (click)="Debug()">Debug</button> 
-    <h1>Viewing : {{dataService.getRefDataBy(RefUid).name}}</h1>
+    @if (!simpleView) {
+        <h1>Viewing : {{dataService.getRefDataBy(RefUid).name}}</h1>
+        <mat-grid-list cols="3" rowHeight="19em">
+            <mat-grid-tile colspan="2">
+                <app-view-editor [Ref]="Ref" [simple]="simpleView"></app-view-editor>
+            </mat-grid-tile>
+            <!-- New Record, Import, Injection... Buttons -->
+            @if (!simpleView) {
+            <mat-grid-tile colspan="1">
+                <div class="d-flex align-items-end flex-column">
+                    <div class="p-2">
+                        <button mat-raised-button color="primary" style="width: 14em;">Configurer</button>
+                    </div>
+                    <div class="p-2">
+                        <button mat-raised-button color="primary" style="width: 14em;">New Record</button>
+                    </div>
+                    <div class="p-2">
+                        <button mat-raised-button color="primary" style="width: 14em;">Export</button>
+                    </div>
+                    <div class="p-2">
+                        <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;">ImportFile</button>
+                    </div>
+                </div>
+            </mat-grid-tile>
+            }
+        </mat-grid-list>    
+    }
 
-    <mat-grid-list cols="3" rowHeight="19em">
-        <mat-grid-tile colspan="2">
-            <app-view-editor [Ref]="Ref"></app-view-editor>
-        </mat-grid-tile>
-        <!-- New Record, Import, Injection... Buttons -->
-        @if (!simpleView) {
-        <mat-grid-tile colspan="1">
-            <div class="d-flex align-items-end flex-column">
-                <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em;">Configurer</button>
-                </div>
-                <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em;">New Record</button>
-                </div>
-                <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em;">Export</button>
-                </div>
-                <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;">ImportFile</button>
-                </div>
-            </div>
-        </mat-grid-tile>
-        }
-    </mat-grid-list>
+    @if (simpleView) {
+        <app-view-editor [Ref]="Ref" [simple]="simpleView"></app-view-editor>
+    }
     <hr>
-    <app-search [Ref]="Ref"></app-search>
-    <app-table [Ref]="Ref"></app-table>
+    <app-search [Ref]="Ref" [simple]="this.simpleView"></app-search>
+    <app-table [Ref]="Ref" [simple]="this.simpleView"></app-table>
 </div>
 

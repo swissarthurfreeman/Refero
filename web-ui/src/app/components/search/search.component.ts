@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -20,6 +20,6 @@ export class SearchComponent {
   dataService = inject(RefDataService);
 
   @Input() Ref!: Referential;
-  
+  @Input() simple: boolean = false;
   constructor() {}
 }

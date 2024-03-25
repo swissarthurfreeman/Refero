@@ -1,5 +1,5 @@
 <div class="col">
-    <div style="max-width:100%;">
+    <div style="max-width:100%">
         <table mat-table [dataSource]="Ref.lines"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
             @for (colId of Ref.headerIds; track $index) {
                 <ng-container [matColumnDef]="colId">

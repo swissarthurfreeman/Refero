@@ -3,9 +3,10 @@
     <div class="p-2 me-auto">
         <mat-form-field>
             <mat-label>Inject Record from :</mat-label>
-            <mat-select [(value)]="sourceRef">
-                <mat-option [value]="">REF_OFS</mat-option>
-                <mat-option [value]="">REF_NOGA</mat-option>
+            <mat-select [(value)]="SourceRefUid">
+                @for (ref of dataService.getRefs(); track $index) {
+                    <mat-option [value]="ref.uid">{{ref.name}}</mat-option>
+                }
             </mat-select>
         </mat-form-field>
     </div>
@@ -17,18 +18,22 @@
     </div>
 </div>
 <hr>
-<mat-grid-list cols="5" rowHeight="8em">
-    <mat-grid-tile colspan="1" [rowspan]="vals.length">
-        <form>  <!-- This can be arbitrarily long -->
-            @for (key of keys; track key; let i = $index) {
-                 <!-- if foreign key, add multichoice select here -->
+<mat-grid-list cols="5" rowHeight="6em">
+    <mat-grid-tile colspan="1" [rowspan]="DestinationRef.headerIds.length">
+        <form> 
+            @for (colId of DestinationRef.headerIds; track $index) {
                 <mat-form-field class="example-full-width">
-                    <mat-label>{{key}}</mat-label>
-                    <input matInput value="{{vals[i]}}">
-                </mat-form-field>}
+                    <mat-label>{{DestinationRef.header[colId]}}</mat-label>
+                    <input matInput value="{{DestinationRecord[colId]}}">
+                </mat-form-field>
+            }
         </form>
     </mat-grid-tile>
-    <mat-grid-tile colspan="4" rowspan="6" style="background: grey;">
-        <app-consultation [SimpleView]="true" RefUid="REF_OFS_NOGA" style="width: 100%;"></app-consultation>
-    </mat-grid-tile>
+    @if(this.SourceRefUid != '') {
+        <mat-grid-tile colspan="4" [rowspan]="DestinationRef.headerIds.length" style="background: grey;">
+            <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
+                <app-consultation [RefUid]="SourceRefUid" [SimpleView]="true"></app-consultation>
+            </div>
+        </mat-grid-tile>
+    }
 </mat-grid-list>

@@ -22,6 +22,7 @@ export class ViewEditorComponent {
     private appRef: ApplicationRef
   ) {}
   
+  @Input() simple: boolean = false;
   @Input() Ref!: Referential;
   
   dataService = inject(RefDataService);
