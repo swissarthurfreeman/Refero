@@ -10,13 +10,12 @@ import {MatInputModule} from '@angular/material/input';
 import { ViewEditorComponent } from "../view-editor/view-editor.component";
 import { SearchComponent } from "../search/search.component";
 import { TableComponent } from "../table/table.component";
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ColConfigComponent } from "../col-config/col-config.component";
 import Papa from 'papaparse';
 import { Referential, Dictionary } from '../../model/referential.model';
-import { v4 as uuidv4 } from 'uuid';
 import { RefDataService } from '../../service/ref-data.service';
+import { ColConfigComponent } from '../col-config/col-config.component';
 
 /**
  * This component manages a FormArray : every column config component is a form, 
@@ -32,17 +31,23 @@ import { RefDataService } from '../../service/ref-data.service';
     standalone: true,
     styleUrl: './ref-creation.component.scss',
     templateUrl: './ref-creation.component.html',
-    imports: [CommonModule, MatTableModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule, MatGridListModule, MatInputModule, ViewEditorComponent, SearchComponent, TableComponent, ColConfigComponent]
+    imports: [CommonModule, MatTableModule, ReactiveFormsModule,
+       MatFormFieldModule, MatSelectModule, MatButtonModule, 
+       MatDividerModule, MatIconModule, MatGridListModule, 
+       MatInputModule, ViewEditorComponent, SearchComponent, 
+       TableComponent, ColConfigComponent]
 })
 export class RefCreationComponent {
-  RefConfigForm = this.fb.group({
-      name: this.fb.control(''),
-      description: this.fb.control(''),
+  
+  RefConfigForm: FormGroup;
+  constructor(private fb: FormBuilder) {
+    this.RefConfigForm = this.fb.group({
+      name: this.fb.control(this.newRef.name),
+      description: this.fb.control(this.newRef.description),
       columns: this.fb.array([])
-  });
-
-  constructor(private fb: FormBuilder) {}
-
+    });
+  }
+  
   get columns() {
     return this.RefConfigForm.controls["columns"] as FormArray;
   }
@@ -70,23 +75,31 @@ export class RefCreationComponent {
     console.log(JSON.stringify(this.RefConfigForm.getRawValue()));
   }
 
+  CreateReferential() {
+    console.log("Creating Ref");
+    this.dataService.createRef(this.newRef);
+  }
+
   dataService = inject(RefDataService);
+  file: File | undefined = undefined;
 
   newRef: Referential = new Referential('', '', [], []); 
 
   upload(event: any) {
     let file: File = event.target.files[0];
-
+    this.file = file;
     file.text().then(
       value => {
         let parsedCSV = Papa.parse(value, {header: true});
-        let header = parsedCSV.meta.fields!;  // TODO : Deal with case where no header is provided.
+        // TODO : Deal with case where no header is provided
+        let header = parsedCSV.meta.fields!;                  // these are the original column names
         let lines = parsedCSV.data as Dictionary<string>[];
-        this.newRef = new Referential(file.name, "", lines,  header);
+        this.newRef = new Referential(file.name.toUpperCase(), "", lines,  header);
         this.newRef.currView.setDispColsToAllCols();
-
-        for(let colId of Object.keys(this.newRef.header)) {
-          this.AddColToFormArray(this.newRef.header[colId], colId);
+        
+        let refHeaderIds = Object.keys(this.newRef.header); // everything is uppercased by default
+        for(let i=0; i < refHeaderIds.length; i++) {
+          this.AddColToFormArray(header[i], refHeaderIds[i]);
         }
     });
   }

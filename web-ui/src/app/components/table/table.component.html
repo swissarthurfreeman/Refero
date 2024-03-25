@@ -4,9 +4,11 @@
             @for (colId of Ref.headerIds; track $index) {
                 <ng-container [matColumnDef]="colId">
                     <th mat-header-cell *matHeaderCellDef> {{Ref.getColumnById(colId)}}
+                        @if (!this.simple) {
                         <button mat-mini-fab color="primary" (click)="Ref.currView.removeDispCol(colId)">
                             <mat-icon>remove</mat-icon>
                         </button>
+                        }
                     </th> <!-- Define the header string -->
                     <td mat-cell *matCellDef="let line"> {{ line[colId] }} </td>
                     <!-- Define the data to display for each line -->
@@ -22,12 +24,12 @@
                 render the columnsToDisplay of, the latter being a property of the component.
                 (click) allows navigating to detail view with the row uid  
             -->
-            @if (!simpleView) {
-            <tr mat-row (click)="viewRecord(myRowData.uid)" *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
+            @if (!this.simple) {
+                <tr mat-row (click)="viewRecord(myRowData.uid)" *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
             }
 
-            @if (simpleView) {
-            <tr mat-row *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
+            @if (this.simple) {
+                <tr mat-row *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
             }
         </table>
     </div>

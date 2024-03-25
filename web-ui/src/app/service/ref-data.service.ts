@@ -36,4 +36,15 @@ export class RefDataService {
   getRefs(): Array<Referential> {
     return Object.values(this._refData);
   }
+
+  createRef(newRef: Referential) {
+    this._refData[newRef.uid] = newRef;
+    console.log(this._refData);
+    // TODO: POST newRef to the backend
+  }
+
+  updateRef(ref: Referential) {
+    // TODO : PUT Ref to backend, will probably
+    // also need a method to update records
+  }
 }

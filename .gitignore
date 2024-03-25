@@ -1,7 +1,7 @@
 # IDE Config
 .idea/
 *.iml
-
+*.CSV
 # Maven
 MANIFEST.MF
 /.mvn/
@@ -11,6 +11,8 @@ target
 out
 classes
 dist
+
+pastebin.json
 
 # Dev config
 *dev.yaml

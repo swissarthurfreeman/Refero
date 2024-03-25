@@ -11,6 +11,7 @@ import {MatInputModule} from '@angular/material/input';
 import { RefDataService } from '../../service/ref-data.service';
 import { Referential } from '../../model/referential.model';
 
+
 @Component({
   selector: 'app-table',
   standalone: true,
@@ -21,7 +22,8 @@ import { Referential } from '../../model/referential.model';
 })
 export class TableComponent {
   
-  simpleView: boolean = false;
+  @Input()
+  simple: boolean = false;
   
   constructor(private router: Router, private route: ActivatedRoute) {}
 
@@ -31,6 +33,5 @@ export class TableComponent {
 
   viewRecord(uid: string) {
     this.router.navigate([`${uid}`], {relativeTo: this.route})
-    console.log(uid); 
   }
 }
