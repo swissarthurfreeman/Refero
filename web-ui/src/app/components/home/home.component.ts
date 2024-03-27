@@ -12,12 +12,16 @@ import { RefDataService } from '../../service/ref-data.service';
   templateUrl: './home.component.html',
   providers: []
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   constructor(
     private router: Router, 
     private route: ActivatedRoute,
     public ds: RefDataService
   ) {}
+
+  ngOnInit(): void {
+    this.ds.setCurrentRef(new Referential("", "", [], []));
+  }
   
   selectReferential(RefUid: string): void {
     this.router.navigate([`${RefUid}`], {relativeTo: this.route});

@@ -12,11 +12,12 @@ export class Referential {
     description: string;
     ref!: Referential;
 
-    header: Dictionary<string> = {};    // { colId: colName...} object
-    lines: Array<Dictionary<string>>;   // array of {colId: value...} objects
+    header: Dictionary<string> = {};         // { colId: colName...} object
+    originalHeader: Dictionary<string> = {}; // {colId: originalName} object
+    lines: Array<Dictionary<string>>;        // array of {colId: value...} objects
     
-    views: Dictionary<View> = {};           // { viewId: View...} object
-    currView: View;                         // currently selected view
+    views: Dictionary<View> = {};            // { viewId: View...} object
+    currView: View;                          // currently selected view
 
     setCurrViewTo(viewId: string) {
         this.currView = this.views[viewId];
@@ -50,6 +51,7 @@ export class Referential {
         this.description = description;
         this.uid = uuidv4();
         this.header = Referential.getHeaderConfig(header);
+        console.log("here", Object.values(this.header));
         
         // convert lines from {colName: value...} to { colId1: value ...}
         // every line has a uid.
@@ -66,7 +68,8 @@ export class Referential {
 
         // upper case column names
         for(let colId of Object.keys(this.header)) {
-            this.header[colId] = this.header[colId].toUpperCase();  
+            this.originalHeader[colId] = this.header[colId];        // keep track of file original columns
+            this.header[colId] = this.header[colId].toUpperCase();
         }
 
         // create default view, store it in view dictionary.

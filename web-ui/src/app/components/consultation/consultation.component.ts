@@ -53,5 +53,12 @@ export class ConsultationComponent implements OnInit {
 
   Debug() {
     console.log(this.route.snapshot);
+
   }
+
+  consultationToEditView() {
+    this.dataService.setCurrentRef(this.Ref);
+    this.router.navigate(['/create']);
+  }
+
 }

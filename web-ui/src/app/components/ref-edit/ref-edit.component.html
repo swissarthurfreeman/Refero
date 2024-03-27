@@ -21,7 +21,7 @@
         <div class="p-2" style="width: 30%;">
             <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
                 <mat-label>Ref. Name</mat-label>
-                <input matInput formControlName="name" [value]="newRef.name">
+                <input matInput formControlName="name" [value]="Ref.name">
             </mat-form-field>
         </div>
         <div class="p-2 flex-grow-1">
@@ -51,7 +51,7 @@
 </div>
 <button (click)="Debug()">Debug</button>
 
-@if (newRef.lines.length > 0) {
-    <app-table [Ref]="newRef" [simple]="true"></app-table>
+@if (Ref.lines.length > 0) {
+    <app-table [Ref]="Ref" [simple]="true"></app-table>
 }
 

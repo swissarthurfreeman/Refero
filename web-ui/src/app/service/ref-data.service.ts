@@ -47,4 +47,14 @@ export class RefDataService {
     // TODO : PUT Ref to backend, will probably
     // also need a method to update records
   }
+
+  private _currentRef: Referential = new Referential("", "", [], []);
+
+  setCurrentRef(to: Referential) {
+    this._currentRef = to; 
+  }
+
+  getCurrentRef(): Referential {
+    return this._currentRef;
+  }
 }

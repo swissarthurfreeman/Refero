@@ -10,7 +10,7 @@
             <mat-grid-tile colspan="1">
                 <div class="d-flex align-items-end flex-column">
                     <div class="p-2">
-                        <button mat-raised-button color="primary" style="width: 14em;">Configurer</button>
+                        <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView()">Configurer</button>
                     </div>
                     <div class="p-2">
                         <button mat-raised-button color="primary" style="width: 14em;">New Record</button>
@@ -26,7 +26,6 @@
             }
         </mat-grid-list>    
     }
-
     @if (simpleView) {
         <app-view-editor [Ref]="Ref" [simple]="simpleView"></app-view-editor>
     }

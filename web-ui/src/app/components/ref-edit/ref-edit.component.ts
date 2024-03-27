@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -27,25 +27,30 @@ import { ColConfigComponent } from '../col-config/col-config.component';
  * uploading of a csv file. 
  */
 @Component({
-    selector: 'app-ref-creation',
+    selector: 'app-ref-edit',
     standalone: true,
-    styleUrl: './ref-creation.component.scss',
-    templateUrl: './ref-creation.component.html',
+    styleUrl: './ref-edit.component.scss',
+    templateUrl: './ref-edit.component.html',
     imports: [CommonModule, MatTableModule, ReactiveFormsModule,
        MatFormFieldModule, MatSelectModule, MatButtonModule, 
        MatDividerModule, MatIconModule, MatGridListModule, 
        MatInputModule, ViewEditorComponent, SearchComponent, 
        TableComponent, ColConfigComponent]
 })
-export class RefCreationComponent {
+export class RefEditComponent implements OnInit {
   
   RefConfigForm: FormGroup;
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private dataService: RefDataService) {
     this.RefConfigForm = this.fb.group({
-      name: this.fb.control(this.newRef.name),
-      description: this.fb.control(this.newRef.description),
+      name: this.fb.control(this.Ref.name),
+      description: this.fb.control(this.Ref.description),
       columns: this.fb.array([])
     });
+  }
+
+  ngOnInit(): void {
+    // TODO : add scenario when we edit a referential created without a source file. 
+    this.addColFormsFor(Object.values(this.Ref.originalHeader), this.Ref.headerIds)
   }
   
   get columns() {
@@ -77,14 +82,13 @@ export class RefCreationComponent {
 
   CreateReferential() {
     console.log("Creating Ref");
-    this.dataService.createRef(this.newRef);
+    this.dataService.createRef(this.Ref);
   }
 
-  dataService = inject(RefDataService);
   file: File | undefined = undefined;
 
-  newRef: Referential = new Referential('', '', [], []); 
-
+  Ref: Referential = this.dataService.getCurrentRef();  // communication with home / consultation component
+  
   upload(event: any) {
     let file: File = event.target.files[0];
     this.file = file;
@@ -92,15 +96,19 @@ export class RefCreationComponent {
       value => {
         let parsedCSV = Papa.parse(value, {header: true});
         // TODO : Deal with case where no header is provided
-        let header = parsedCSV.meta.fields!;                  // these are the original column names
+        let originalHeader: string[] = parsedCSV.meta.fields!;                  // these are the original column names
         let lines = parsedCSV.data as Dictionary<string>[];
-        this.newRef = new Referential(file.name.toUpperCase(), "", lines,  header);
-        this.newRef.currView.setDispColsToAllCols();
-        
-        let refHeaderIds = Object.keys(this.newRef.header); // everything is uppercased by default
-        for(let i=0; i < refHeaderIds.length; i++) {
-          this.AddColToFormArray(header[i], refHeaderIds[i]);
-        }
+        console.log(originalHeader);
+        this.Ref = new Referential(file.name.toUpperCase(), "", lines,  originalHeader);
+        this.Ref.currView.setDispColsToAllCols();
+    
+        this.addColFormsFor(originalHeader, this.Ref.headerIds);
     });
+  }
+
+  addColFormsFor(originalHeader: string[], headerIds: string[]) {
+    for(let i=0; i < headerIds.length; i++) {
+      this.AddColToFormArray(originalHeader[i], headerIds[i]);
+    }
   }
 }
