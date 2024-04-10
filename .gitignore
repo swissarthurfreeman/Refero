@@ -5,7 +5,8 @@
 # Maven
 MANIFEST.MF
 /.mvn/
-
+assets
+/assets/mock-data
 # Dist files
 target
 out

@@ -1,0 +1,59 @@
+<!-- Saved View Selection -->
+<div class="d-flex flex-column">
+    <div class="p-2 me-auto">
+        <mat-form-field subscriptSizing="dynamic"> 
+            <mat-label>Ref. View</mat-label>
+            <mat-select [(value)]="Ref.currView.uid" (valueChange)="SelectView($event)">
+                @for (viewId of this.Ref.ViewIds; track $index) {
+                    <mat-option [value]="viewId">{{this.Ref.views[viewId].name}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+    @if (!isInjectionMode) {
+        <!-- View Saving Field -->
+        <div class="p-2">
+            <div class="d-flex">
+                <!-- I hate padding -->
+                <div class="p-2" style="padding-left: 0 !important;">
+                    <mat-form-field style="width:20em" subscriptSizing="dynamic">
+                        <mat-label>Save Current View</mat-label>
+                        <input matInput placeholder="Awesome View" [formControl]="newViewId">
+                    </mat-form-field>
+                </div>
+                <div class="p-2">
+                    <button mat-raised-button color="primary" style="height:4em; width: 6em;" (click)="SaveCurrentView()">Save</button>
+                </div>
+            </div>
+        </div>
+        <!-- Consultation of a Referential View, columns and lines -->
+        <div class="d-flex">
+            <div class="p-2">
+                <mat-form-field subscriptSizing="dynamic">
+                    <mat-label>Add Search Field</mat-label>
+                    <mat-select [(value)]="Ref.currView.searchAddOpt">
+                        @for (colId of Ref.currView.nSearchCols; track $index) {
+                        <mat-option [value]="colId">{{Ref.getColumnById(colId)}}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="p-2">
+                <button mat-raised-button color="primary" style="height:4em; width: 6em;" (click)="Ref.currView.addSearchCol(Ref.currView.searchAddOpt)">Add</button>
+            </div>
+            <div class="p-2">
+                <mat-form-field subscriptSizing="dynamic">
+                    <mat-label>Add Table Column</mat-label>
+                    <mat-select [(value)]="Ref.currView.dispAddOpt">
+                        @for (colId of Ref.currView.nDispCols; track $index) {
+                        <mat-option [value]="colId">{{Ref.getColumnById(colId)}}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="p-2">                             <!-- Backend dev that does front-end solution. This will break on mobile. -->
+                <button mat-raised-button color="primary" style="height:4em; width: 6em; margin-right: auto;" (click)="Ref.currView.addDispCol(Ref.currView.dispAddOpt)">Add</button>
+            </div>
+        </div>
+    }
+</div>

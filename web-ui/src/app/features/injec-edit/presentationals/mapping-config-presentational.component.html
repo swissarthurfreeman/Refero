@@ -1,0 +1,24 @@
+<div [formGroup]="$any(FormControl)">
+    <div class="d-flex flex-row">
+        <div class="p-2">
+            <mat-form-field subscriptSizing="dynamic">
+                <mat-label>Dest Col.</mat-label>
+                <mat-select formControlName="DestCol">
+                    @for(colId of Ref.headerIds; track $index) {
+                        <mat-option [value]="colId">{{Ref.getColumnById(colId)}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="p-2">
+            <mat-form-field subscriptSizing="dynamic">
+                <mat-label>Source Col.</mat-label>
+                <mat-select formControlName="SourceCol">
+                    @for(colId of this.ds.getRefDataBy(this.sourceId).headerIds; track $index) {
+                        <mat-option [value]="colId">{{this.ds.getRefDataBy(this.sourceId).getColumnById(colId)}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+</div>

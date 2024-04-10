@@ -1,0 +1,50 @@
+<div class="d-flex">
+    <div class="p-2 me-auto">
+        <ng-container *ngIf="srcRef$ | async as loadedSrc; else pleaseSelectBlock"> 
+            <mat-form-field>
+                <mat-label>Inject Record from :</mat-label>
+                <mat-select [(value)]="loadedSrc.uid" (valueChange)="SelectSrcRef($event)">
+                    @for (ref of ds.getRefs(); track $index) {
+                        <mat-option [value]="ref.uid">{{ref.name}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </ng-container>
+    </div>
+    <div class="p-2">
+        <button mat-raised-button color="primary" style="height:4em; width: 6em;">Save</button>
+    </div>
+    <div class="p-2">
+        <button mat-raised-button color="primary" style="height:4em; width: 6em;">Delete</button>
+    </div>
+</div>
+<hr>
+<ng-container *ngIf="{
+    DestRec: rec$ | async,
+    DestRef: ref$ | async
+} as loadedData; else elseBlock">
+    <mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
+        <!-- keep mat-grid-tile in container as for some reason in child width/height becomes 0-->
+        <mat-grid-tile colspan="1" [rowspan]="loadedData.DestRef!.headerIds.length">
+            <app-col-list-presentational 
+                [DestRef]="loadedData.DestRef!" [DestRec]="loadedData.DestRec!">
+            </app-col-list-presentational>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="4" [rowspan]="loadedData.DestRef!.headerIds.length">
+            <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
+                <ng-container *ngIf="srcRef$ | async as loadedSrc; else pleaseSelectBlock"> 
+                    @if (loadedSrc.name != '') {
+                        <app-view-container></app-view-container>
+                    } 
+                </ng-container>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+</ng-container>
+<ng-template #elseBlock>
+    <p>Loading...</p>
+</ng-template>
+  
+<ng-template #pleaseSelectBlock>
+    <p>Please select an injection ref.</p>
+</ng-template>

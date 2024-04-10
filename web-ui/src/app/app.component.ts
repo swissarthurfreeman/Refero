@@ -1,14 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { NavbarComponent } from "./components/navbar/navbar.component";
-import { CommonModule } from '@angular/common';
-import { HomeComponent } from "./components/home/home.component";
+import { NavbarComponent } from './features/navbar/navbar.component';
 
 @Component({
-    selector: 'app-root',
-    standalone: true,
-    templateUrl: './app.component.html',
-    imports: [RouterOutlet, NavbarComponent, CommonModule, RouterLink, RouterLinkActive, HomeComponent]
+  selector: 'app-root',
+  templateUrl: './app.component.html'
 })
 export class AppComponent {
   title = 'web-ui';

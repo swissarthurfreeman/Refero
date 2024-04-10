@@ -1,0 +1,50 @@
+<div class="add-columns-form" [formGroup]="RefConfigForm">
+    <div class="d-flex">
+        <div class="p-2 me-auto">
+            <div class="input-group mb-3">
+                <input #uploadFile (change)="upload($event)" type='file' class="form-control">
+            </div> 
+        </div>
+        <div class="p-2">
+            <button mat-raised-button color="primary" (click)="EditInjection()" >Injection Editor</button>
+        </div>
+        <div class="p-2" (click)="CreateReferential()">
+            <button mat-raised-button color="primary">Create</button>
+        </div>
+    </div>
+    <div class="d-flex">
+        <div class="p-2" style="width: 30%;">
+            <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
+                <mat-label>Ref. Name</mat-label>
+                <input matInput formControlName="name" [value]="Ref.name">
+            </mat-form-field>
+        </div>
+        <div class="p-2 flex-grow-1">
+            <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
+                <mat-label>Ref. Description.</mat-label>
+                <input matInput formControlName="description">
+            </mat-form-field>
+        </div>
+    </div>
+    <hr>
+    <ng-container formArrayName="columns">
+        <ng-container *ngFor="let ColForm of columns.controls; let i = index">
+            <div class="d-flex border rounded m-2">
+                <div class="p-2">
+                    <mat-icon class="delete-btn" (click)="deleteColumn(i)">delete_forever</mat-icon>
+                </div>
+                <div class="p-2">
+                    <!-- render column configuration fields -->
+                    <app-col-config-presentational [FormControl]="$any(ColForm)"></app-col-config-presentational>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+    <button mat-mini-fab (click)="AddColToFormArray()">
+        <mat-icon class="add-course-btn">add</mat-icon>
+    </button>
+    <button (click)="Debug()">Debug</button>
+</div>
+@if (Ref.lines.length > 0) {
+    <app-table [Ref]="Ref" [simple]="true"></app-table>
+}
