@@ -41,7 +41,13 @@ export class Referential {
     }
 
     getRecordById(recId: string): Dictionary<string> {
-        return this.lines.filter((line) => line['uid'] != recId)[0];    // we know lines are unique by uid.
+        return this.lines.filter((line) => line['uid'] === recId)[0];    // we know lines are unique by uid.
+    }
+
+    setRecordById(rec: Dictionary<string>) {
+        let idx = this.lines.findIndex((line) => line['uid'] === rec['uid']);
+        this.lines[idx] = rec;
+        console.log("Updated Rec with new");
     }
 
     constructor(name: string, description: string, 
@@ -94,6 +100,10 @@ export class Referential {
     }
 
     injections: Dictionary<Injection> = {};
+
+    getInjections(): Injection[] {
+        return Object.values(this.injections);
+    }
 
     addInjection(injection: Injection) {
         this.injections[injection.uid] = injection;

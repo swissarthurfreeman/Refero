@@ -1,13 +1,18 @@
-<ng-container *ngIf="!(isInjectionMode$ | async) as isNotInjMode">     <!-- If it's not injection mode-->
-    <ng-container *ngIf="ref$ | async as DestRef; else elseBlock">     <!-- If this block gets rendered, isNotInjMode=true-->
-        <mat-grid-list cols="3" rowHeight="19em">
-            <mat-grid-tile colspan="2">
-                <app-view-editor [Ref]="DestRef!" [isInjectionMode]="false"></app-view-editor>
-            </mat-grid-tile>
+<ng-container *ngIf="{
+    InjMode: injectionMode$ | async,
+    CurrRef: currRef$ | async
+} as RefViewState">
+    @if (!RefViewState.InjMode) {
+    <mat-grid-list cols="3" rowHeight="19em">
+        <mat-grid-tile colspan="2">
+            <app-view-editor [Ref]="RefViewState.CurrRef!" [isInjectionMode]="RefViewState.InjMode!"></app-view-editor>
+        </mat-grid-tile>
             <mat-grid-tile colspan="1"> <!-- New Record, Import, Injection... Buttons -->
                 <div class="d-flex align-items-end flex-column">
                     <div class="p-2">
-                        <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(DestRef.uid)" >Configurer</button>
+                        <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(RefViewState.CurrRef!.uid)">
+                            Configurer
+                        </button>
                     </div>
                     <div class="p-2">
                         <button mat-raised-button color="primary" style="width: 14em;">New Record</button>
@@ -19,22 +24,13 @@
                         <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;">ImportFile</button>
                     </div>
                 </div>
-            </mat-grid-tile>
-        </mat-grid-list>
-        <hr>
-        <app-search [Ref]="DestRef!"></app-search>
-        <app-table [Ref]="DestRef!"></app-table>
-    </ng-container>
+            </mat-grid-tile>  
+    </mat-grid-list>
+    }
+    @if(RefViewState.InjMode) {
+        <app-view-editor [Ref]="RefViewState.CurrRef!" [isInjectionMode]="RefViewState.InjMode!"></app-view-editor>
+    }
+    <hr>
+    <app-search [Ref]="RefViewState.CurrRef!"></app-search>
+    <app-table [Ref]="RefViewState.CurrRef!" [simpleMode]="RefViewState.InjMode!"></app-table>
 </ng-container>
-<ng-container *ngIf="(isInjectionMode$ | async) as isInjMode">              <!-- If it is injection mode -->
-    <ng-container *ngIf="srcRef$ | async as srcRef; else elseBlock">        <!-- If this block gets rendered, isInjMode=true-->
-        <app-view-editor [Ref]="srcRef!" [isInjectionMode]="true"></app-view-editor>
-        <hr>
-        <app-search [Ref]="srcRef!"></app-search>
-        <app-table [Ref]="srcRef!"></app-table>
-    </ng-container>
-</ng-container>
-
-<ng-template #elseBlock>
-    <p>Loading...</p>
-</ng-template>

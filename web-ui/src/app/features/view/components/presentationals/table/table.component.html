@@ -4,32 +4,30 @@
             @for (colId of Ref.headerIds; track $index) {
                 <ng-container [matColumnDef]="colId">
                     <th mat-header-cell *matHeaderCellDef> {{Ref.getColumnById(colId)}}
-                        @if (!this.simple) {
+                        @if (!this.simpleMode) {
                         <button mat-mini-fab color="primary" (click)="Ref.currView.removeDispCol(colId)">
                             <mat-icon>remove</mat-icon>
                         </button>
                         }
                     </th> <!-- Define the header string -->
-                    <td mat-cell *matCellDef="let line"> {{ line[colId] }} </td>
-                    <!-- Define the data to display for each line -->
+                    <td mat-cell *matCellDef="let line"> {{ line[colId] }} </td> <!-- Define the data to display for each line -->
                 </ng-container>
             }
-
-            <!-- Tell material angular to render these previously defined columns  -->
             <tr mat-header-row *matHeaderRowDef="Ref.currView.dispCols"></tr>
 
-            <!-- 
-                Tell material angular to actually render the rows, let myRowData is a property 
-                of material table, which represents any row in the data source, which we
-                render the columnsToDisplay of, the latter being a property of the component.
-                (click) allows navigating to detail view with the row uid  
-            -->
-            @if (!this.simple) {
-                <tr mat-row (click)="viewRecord(myRowData.uid)" *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
+            @if (!this.simpleMode) {
+                <tr mat-row *matRowDef="let myRowData; columns: Ref.currView.dispCols" (click)="viewRecord(myRowData.uid)"></tr>
             }
 
-            @if (this.simple) {
-                <tr mat-row *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
+            @if (this.simpleMode) {
+                
+                <ng-container *ngIf="{
+                    DestRecId: DestRecId$ | async,
+                    Injection: Injection$ | async
+                } as Context">
+                    <tr mat-row (click)="applyInjection(myRowData.uid, Context.DestRecId!, Context.Injection!)" *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
+                </ng-container>
+                
             }
         </table>
     </div>

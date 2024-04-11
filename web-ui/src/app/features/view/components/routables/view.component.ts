@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { ConsultRef } from '../../../../shared/stores/ref-view/ref-view.action';
+import { SetCurrentRef } from '../../../../shared/stores/ref-view/ref-view.action';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,7 +15,6 @@ export class ViewComponent implements OnInit {
   @Input() RefId!: string;
 
   ngOnInit(): void {
-    //console.log("ViewRoutable updates store with current ref...");
-    this.store.dispatch(new ConsultRef(this.RefId));
+    this.store.dispatch(new SetCurrentRef(this.RefId));
   }
 }

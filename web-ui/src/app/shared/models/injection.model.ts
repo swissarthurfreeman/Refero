@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Dictionary, Referential } from './referential.model';
+import { RefService } from '../services/ref.service';
+import { inject } from '@angular/core';
 
 export class Injection {
     srcId: string;          // referential from the which we're taking a line

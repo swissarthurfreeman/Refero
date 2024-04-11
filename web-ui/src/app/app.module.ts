@@ -14,6 +14,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { ViewComponent } from './features/view/components/routables/view.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { RefConfigState } from './shared/stores/ref-config-edit/ref-config.state';
+import { RecEditState } from './shared/stores/rec-edit/rec-edit.state';
 
 @NgModule({
     declarations: [
@@ -35,11 +36,12 @@ import { RefConfigState } from './shared/stores/ref-config-edit/ref-config.state
         NgxsModule.forRoot([
             AppState,
             RefViewState,
-            RefConfigState
+            RefConfigState,
+            RecEditState
         ]),
-        NgxsReduxDevtoolsPluginModule,
+        NavbarComponent,
         NgxsLoggerPluginModule,
-        NavbarComponent
+        NgxsReduxDevtoolsPluginModule.forRoot()
     ]
 })
 export class AppModule { }

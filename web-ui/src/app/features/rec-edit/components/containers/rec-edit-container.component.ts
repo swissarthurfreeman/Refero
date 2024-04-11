@@ -4,7 +4,10 @@ import { RefViewState } from '../../../../shared/stores/ref-view/ref-view.state'
 import { Observable } from 'rxjs';
 import { Dictionary, Referential } from '../../../../shared/models/referential.model';
 import { RefService } from '../../../../shared/services/ref.service';
-import { SelectInjectionSourceRef } from '../../../../shared/stores/ref-view/ref-view.action';
+import { InjectionService } from '../../../../shared/services/injection.service';
+import { RecEditState } from '../../../../shared/stores/rec-edit/rec-edit.state';
+import { Injection } from '../../../../shared/models/injection.model';
+import { SetInjection, SetSrcRef } from '../../../../shared/stores/rec-edit/rec-edit.action';
 
 @Component({
   selector: 'app-rec-edit-container',
@@ -12,20 +15,20 @@ import { SelectInjectionSourceRef } from '../../../../shared/stores/ref-view/ref
   styleUrl: './rec-edit-container.component.scss'
 })
 export class RecEditContainerComponent implements OnInit {
-  ngOnInit(): void {
-    //this.ref$.subscribe(value => console.log("RecEdit reads :", value));
-    //this.rec$.subscribe(value => console.log("RecEdit reads :", value));
-  }
+  ngOnInit(): void {}
 
-  constructor(public ds: RefService, public store: Store) {}
+  constructor(public ds: RefService, public is: InjectionService, public store: Store) {}
 
-  @Select(RefViewState.getRef) ref$!: Observable<Referential>;
-  @Select(RefViewState.getDestRec) rec$!: Observable<Dictionary<string>>;
+  @Select(RecEditState.getInjection) injection$!: Observable<Injection>;
+  @Select(RecEditState.getDestRec) destRec$!: Observable<Dictionary<string>>;
+  
+  @Select(RecEditState.getSrcRef) srcRef$!: Observable<Referential>;
+  @Select(RefViewState.getCurrentRef) destRef$!: Observable<Referential>;
 
-  @Select(RefViewState.getSourceRef) srcRef$!: Observable<Referential>;
-
-  SelectSrcRef(refId: string) {
-    //console.log("Action: SelectInjectionSourceRef :", refId);
-    this.store.dispatch(new SelectInjectionSourceRef(refId));
+  SelectInjection(injection: Injection) {
+    this.store.dispatch([
+      new SetSrcRef(this.ds.getRefDataBy(injection.srcId)),
+      new SetInjection(injection)
+    ]);
   }
 }

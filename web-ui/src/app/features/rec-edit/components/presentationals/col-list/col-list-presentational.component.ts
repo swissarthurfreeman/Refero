@@ -8,7 +8,7 @@ import { Dictionary, Referential } from '../../../../../shared/models/referentia
 })
 export class ColListPresentationalComponent {
   ngOnInit(): void {
-    //console.log("ColListPresentational reads :", this.DestRef, this.DestRec);
+    console.log(Object.values(this.DestRec));
   }
   @Input() DestRef!: Referential;   // why do we need the DestRef ? Can't we just modify DestRec by reference ? 
   @Input() DestRec!: Dictionary<string>;
