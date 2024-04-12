@@ -1,34 +1,36 @@
 import { v4 as uuidv4 } from 'uuid';
 import { View } from "./view.model";
 import { Injection } from './injection.model';
-
-export interface Dictionary<T> {
-    [Key: string]: T;
-}
+import { Dict, Record } from './record.model';
 
 export class Referential {
     uid: string;
     name: string;
     description: string;
-    ref!: Referential;
 
-    header: Dictionary<string> = {};         // { colId: colName...} object
-    originalHeader: Dictionary<string> = {}; // {colId: originalName} object
-    lines: Array<Dictionary<string>>;        // array of {colId: value...} objects
+    ref!: Referential;  // wtf is this ? 
+
+    header: Dict<string> = new Map<string, string>();         // { colId: colName...} object
+    originalHeader: Dict<string> = new Map<string, string>(); // {colId: originalName} object
     
-    views: Dictionary<View> = {};            // { viewId: View...} object
-    currView: View;                          // currently selected view
+    records: Dict<Record>;               // array of {colId: value...} objects
+    get Records() {
+        return Array.from(this.records.values());
+    }
+    
+    views: Dict<View> = new Map<string, View>();            // { viewId: View...} object
+    currView: View;                    // this is stateful and is a problem . 
 
-    setCurrViewTo(viewId: string) {
-        this.currView = this.views[viewId];
+    setCurrViewTo(viewId: string) {     
+        this.currView = this.views.get(viewId)!;
     }
 
     get ViewIds() {
-        return Object.keys(this.views);
+        return this.views.keys();
     }
 
     get headerIds(): Array<string> {
-        return Object.keys(this.header);
+        return Array.from(this.header.keys());
     }
 
     /**
@@ -37,53 +39,53 @@ export class Referential {
      * @returns the name of the column
      */
     getColumnById(colId: string): string {
-        return this.header[colId];    
+        return this.header.get(colId)!;     // TODO : remove these useless getters and deal with optionals    
     }
 
-    getRecordById(recId: string): Dictionary<string> {
-        return this.lines.filter((line) => line['uid'] === recId)[0];    // we know lines are unique by uid.
+    getRecordById(recId: string): Record {
+        return this.records.get(recId)!;
     }
 
-    setRecordById(rec: Dictionary<string>) {
-        let idx = this.lines.findIndex((line) => line['uid'] === rec['uid']);
-        this.lines[idx] = rec;
-        console.log("Updated Rec with new");
+    setRecordById(rec: Record) {
+        this.records.set(rec['id'], rec);
     }
 
-    constructor(name: string, description: string, 
-        lines: Array<Dictionary<string>>, header: Array<string>, uid?: string) {
-        
+    constructor(name: string, description: string, records: any[] | Record[], header: string[], uid?: string) {
         this.name = name;
         this.description = description;
+        
         if(uid) {   
             this.uid = uid;
         } else {
             this.uid = uuidv4();
         }
+
         this.header = Referential.getHeaderConfig(header);
         
-        // convert lines from {colName: value...} to { colId1: value ...}
+        // convert records from {colName: value...} to { colId1: value ...}
         // every line has a uid.
-        let nLines: Array<Dictionary<string>> = [];
-        for(let line of lines) {
-            let nLine: Dictionary<string> = {}
-            for(let colId of Object.keys(this.header)) {
-                nLine[colId] = line[this.header[colId]]; 
-            } 
-            nLine['uid'] = uuidv4();
-            nLines.push(nLine);
+        let nRecs: Dict<Record> = new Map<string, Record>();
+
+        for(let rec of records) {
+            let nRec: Record = {};
+            for(let colId of this.header.keys()) {
+                let colName: string = this.header.get(colId)!;
+                nRec[colId] = rec[colName]; 
+            }
+            nRec['id'] = uuidv4();
+            nRecs.set(nRec['id'], nRec);
         }
-        this.lines = nLines;
+        this.records = nRecs;
 
         // upper case column names
         for(let colId of Object.keys(this.header)) {
-            this.originalHeader[colId] = this.header[colId];        // keep track of file original columns
-            this.header[colId] = this.header[colId].toUpperCase();
+            this.originalHeader.set(colId, this.header.get(colId)!);        // keep track of file original columns
+            this.header.set(colId, this.header.get(colId)!.toUpperCase());
         }
 
         // create default view, store it in view dictionary.
         let defView = new View("DEFAULT_VIEW", this);
-        this.views[defView.uid] = defView;
+        this.views.set(defView.id, defView);
         this.currView = defView;
     }
 
@@ -91,21 +93,21 @@ export class Referential {
      * From a line {colName: value...} yield the header configuration
      * as {colId: colName...}.  
      */
-    static getHeaderConfig(line: Array<string>): Dictionary<string> {
-        let headerConfig: Dictionary<string> = {}
+    static getHeaderConfig(line: Array<string>): Dict<string> {
+        let headerConfig: Dict<string> = new Map<string, string>();
         for (let colName of line) {
-            headerConfig[uuidv4()] = colName; 
+            headerConfig.set(uuidv4(), colName); 
         }
         return headerConfig;
     }
 
-    injections: Dictionary<Injection> = {};
+    injections: Dict<Injection> = new Map<string, Injection>();
 
     getInjections(): Injection[] {
-        return Object.values(this.injections);
+        return Array.from(this.injections.values());
     }
 
     addInjection(injection: Injection) {
-        this.injections[injection.uid] = injection;
+        this.injections.set(injection.uid, injection);
     }
 }

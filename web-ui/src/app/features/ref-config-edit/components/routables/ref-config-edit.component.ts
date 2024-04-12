@@ -16,12 +16,10 @@ export class RefConfigEditComponent implements OnInit {
   
   constructor(public store: Store) {}
   ngOnInit(): void {
-    console.log("RefConfigEdit reads RefId :", this.RefId);
     if (this.RefId === undefined) {
       this.RefId = '';
     }
     
-    console.log("Dispatch Select Ref to Edit : ", this.RefId);
     this.store.dispatch(new SelectRefConfigToEdit(this.RefId));
   }
 }

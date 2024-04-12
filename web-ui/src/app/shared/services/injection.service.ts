@@ -1,5 +1,5 @@
 import { Injectable, Optional } from '@angular/core';
-import { Dictionary, Referential } from '../models/referential.model';
+import { Dict } from '../models/record.model';
 import { RefService } from './ref.service';
 import { Injection } from '../models/injection.model';
 
@@ -10,7 +10,7 @@ export class InjectionService {
 
   constructor(public rs: RefService) {}
 
-  getInjectionBySource(injections: Dictionary<Injection>, sourceRef: string): Injection | undefined {
+  getInjectionBySource(injections: Dict<Injection>, sourceRef: string): Injection | undefined {
     for(let inj of Object.values(injections)) {
       if(inj.srcId === sourceRef) {
         return inj;

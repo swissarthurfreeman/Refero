@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { RefConfigState } from '../../../../shared/stores/ref-config-edit/ref-config.state';
-import { Dictionary, Referential } from '../../../../shared/models/referential.model';
+import { Referential } from '../../../../shared/models/referential.model';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RefService } from '../../../../shared/services/ref.service';
 import Papa from 'papaparse';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Record } from '../../../../shared/models/record.model';
 
 @Component({
   selector: 'app-ref-config-edit-container',
@@ -76,9 +77,9 @@ export class RefConfigEditContainerComponent implements OnInit {
         let parsedCSV = Papa.parse(value, {header: true});
         // TODO : Deal with case where no header is provided
         let originalHeader: string[] = parsedCSV.meta.fields!;                  // these are the original column names
-        let lines = parsedCSV.data as Dictionary<string>[];
+        let records = parsedCSV.data as Record[];
 
-        this.Ref = new Referential(file.name.toUpperCase(), "", lines,  originalHeader);
+        this.Ref = new Referential(file.name.toUpperCase(), "", records,  originalHeader);
         this.Ref.currView.setDispColsToAllCols();
         // this.rs.setCurrentRef(this.Ref); // to communicate with injection view
 

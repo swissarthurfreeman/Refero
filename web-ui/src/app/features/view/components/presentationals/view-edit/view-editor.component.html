@@ -3,9 +3,9 @@
     <div class="p-2 me-auto">
         <mat-form-field subscriptSizing="dynamic"> 
             <mat-label>Ref. View</mat-label>
-            <mat-select [(value)]="Ref.currView.uid" (valueChange)="SelectView($event)">
+            <mat-select [(value)]="Ref.currView.id" (valueChange)="SelectView($event)">
                 @for (viewId of this.Ref.ViewIds; track $index) {
-                    <mat-option [value]="viewId">{{this.Ref.views[viewId].name}}</mat-option>
+                    <mat-option [value]="viewId">{{this.Ref.views.get(viewId)!.name}}</mat-option>
                 }
             </mat-select>
         </mat-form-field>

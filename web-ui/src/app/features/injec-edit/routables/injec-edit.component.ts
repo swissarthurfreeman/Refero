@@ -14,6 +14,5 @@ export class InjecEditComponent implements OnInit {
   constructor(public store: Store) {}
 
   ngOnInit(): void {
-    console.log("InjecEditComp");
   }
 }

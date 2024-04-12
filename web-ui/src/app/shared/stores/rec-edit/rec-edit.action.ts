@@ -1,5 +1,6 @@
 import { Injection } from "../../models/injection.model";
-import { Dictionary, Referential } from "../../models/referential.model";
+import { Referential } from "../../models/referential.model";
+import { Record } from "../../models/record.model";
 
 export class SetDestRecId {
     static readonly type: string = "[RecEdit] Set Destination Record Id to Inject to";
@@ -8,7 +9,7 @@ export class SetDestRecId {
 
 export class SetDestRec {
     static readonly type: string = "[RecEdit] Set Destination Record to Inject to";
-    constructor(public record: Dictionary<string>) {}
+    constructor(public record: Record) {}
 }
 
 export class SetDestRef {

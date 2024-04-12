@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Dictionary, Referential } from '../models/referential.model';
+import { Referential } from '../models/referential.model';
+import { Dict } from '../models/record.model';
 import * as jsonRefOfsReeData from '../../../assets/mock-data/REF_OFS_REE_DATA.json'
 import * as jsonRefOfsReeStatut from '../../../assets/mock-data/REF_OFS_REE_STATUT.json'
 import * as jsonRefOfsReeType from '../../../assets/mock-data/REF_OFS_REE_TYPE.json'
@@ -17,29 +18,23 @@ export class RefService {
     let refType = new Referential("REF_OFS_REE_TYPE", "Définitions des types d'entité REE de l'OFS", 
       (jsonRefOfsReeType as any).default, Object.keys ( (jsonRefOfsReeType as any).default[0]));
     
-    this._refData = {};
-    this._refData[refData.uid] = refData;
-    this._refData[refStat.uid] = refStat;
-    this._refData[refType.uid] = refType;
+    this._refData = new Map<string, Referential>();
+    this._refData.set(refData.uid, refData);
+    this._refData.set(refStat.uid, refStat);
+    this._refData.set(refType.uid, refType);
   }
 
-  private _refData: Dictionary<Referential>;
+  private _refData: Dict<Referential>;
 
-  getRefDataBy(uid: string): Referential {
-    return this._refData[uid];
+  getRefDataBy(refId: string): Referential {
+    return this._refData.get(refId)!;
   }
 
   getRefs(): Array<Referential> {
-    return Object.values(this._refData);
+    return Array.from(this._refData.values());
   }
 
   createRef(newRef: Referential) {
-    this._refData[newRef.uid] = newRef;
-    // TODO: POST newRef to the backend
-  }
-
-  updateRef(ref: Referential) {
-    // TODO : PUT Ref to backend, will probably
-    // also need a method to update records
+    this._refData.set(newRef.uid, newRef);
   }
 }

@@ -1,6 +1,7 @@
 import { State, Action, StateContext, Store, Selector } from "@ngxs/store";
 import { StateEnum } from "../../enums/state.enum";
-import { Dictionary, Referential } from "../../models/referential.model";
+import { Referential } from "../../models/referential.model";
+import { Record } from "../../models/record.model"
 import { Injectable } from "@angular/core";
 import { RefService } from "../../services/ref.service";
 import { Router } from "@angular/router";
@@ -9,7 +10,7 @@ import { SetDestRec, SetDestRecId, SetDestRef, SetInjection, SetSrcRef } from ".
 
 export class RefEditStateModel {
     DestRecId: string = '';
-    DestRec: Dictionary<string> = {};
+    DestRec: Record = {};
     SrcRef: Referential = new Referential("", "", [], []);
     DestRef: Referential = new Referential("", "", [], []);
     Injection: Injection = new Injection("", [], "", []);

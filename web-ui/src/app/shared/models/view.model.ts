@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Referential } from './referential.model';
 
 export class View {
-    uid: string;
+    id: string;
     name: string;
     ref: Referential;
     
@@ -22,7 +22,7 @@ export class View {
     constructor(name: string, ref: Referential, 
         dispCols?: Array<string>, searchCols?: Array<string>) {
         this.name = name;
-        this.uid = uuidv4();
+        this.id = uuidv4();
         this.ref = ref;
         
         this.dispCols = [ref.headerIds[0], ref.headerIds[1], ref.headerIds[2], ref.headerIds[3]];
@@ -86,7 +86,7 @@ export class View {
             let view = new View(newName, this.ref, 
                 this.dispCols.slice(0), this.searchCols.slice(0));
             
-            this.ref.views[view.uid] = view;    // associate view to ref
+            this.ref.views.set(view.id, view);    // associate view to ref
 
             this.dispCols = this._dispCols.slice(0);
             this.searchCols = this._searchCols.slice(0);

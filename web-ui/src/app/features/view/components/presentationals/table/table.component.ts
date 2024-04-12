@@ -8,7 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatInputModule} from '@angular/material/input';
-import { Dictionary, Referential } from '../../../../../shared/models/referential.model';
+import { Referential } from '../../../../../shared/models/referential.model';
 import { Injection } from '../../../../../shared/models/injection.model';
 import { Select, Store } from '@ngxs/store';
 import { RecEditState } from '../../../../../shared/stores/rec-edit/rec-edit.state';
@@ -38,7 +38,6 @@ export class TableComponent implements OnInit {
     private store: Store) {}
   
   ngOnInit(): void {
-    console.log(this.Ref);
   }
 
   viewRecord(recId: string) {
@@ -50,16 +49,12 @@ export class TableComponent implements OnInit {
   @Select(RecEditState.getInjection) Injection$!: Observable<Injection>;
 
   applyInjection(srcRecId: string, destRecId: string, Injection: Injection) {
-    console.log(srcRecId, destRecId, Injection);
     let SrcRec = this.Ref.getRecordById(srcRecId);
     
     let DestRef = this.rs.getRefDataBy(Injection.destId);
     let DestRec = DestRef.getRecordById(destRecId);
 
-    console.log("SrcRec =", SrcRec, "DestRec =", DestRec);
-  
     let result = Injection.apply(SrcRec, DestRec)
-    console.log("Result of Injection:", result);
     
     DestRef.setRecordById(result);
   } 

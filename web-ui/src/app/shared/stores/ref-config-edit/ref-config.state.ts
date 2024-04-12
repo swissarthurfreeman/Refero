@@ -1,6 +1,6 @@
 import { Action, Selector, State, StateContext, Store } from "@ngxs/store";
 import { StateEnum } from "../../enums/state.enum";
-import { Dictionary, Referential } from "../../models/referential.model";
+import { Referential } from "../../models/referential.model";
 import { Injectable } from "@angular/core";
 import { RefService } from "../../services/ref.service";
 import { Router } from "@angular/router";

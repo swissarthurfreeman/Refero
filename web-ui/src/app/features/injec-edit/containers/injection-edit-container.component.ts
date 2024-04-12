@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Dictionary, Referential } from '../../../shared/models/referential.model';
+import { Referential } from '../../../shared/models/referential.model';
+import { Dict, Record } from '../../../shared/models/record.model';
+
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Injection } from '../../../shared/models/injection.model';
 import { RefService } from '../../../shared/services/ref.service';
@@ -51,27 +53,27 @@ export class InjectionEditContainerComponent implements OnInit {
   }
 
   CreateInjection() { // TODO : move to injection service
-    let raw: Dictionary<Array<Dictionary<string>> | string> = this.InjectionConfigForm.getRawValue();
+    let raw: any = this.InjectionConfigForm.getRawValue();
 
     let srcColIds = [];
     let destColIds = [];
-    for(let i=0; i < (raw['mappings'] as Array<Dictionary<string>>).length; i++) {
-      srcColIds.push((raw['mappings'][i] as Dictionary<string>)['SourceCol']);
-      destColIds.push((raw['mappings'][i] as Dictionary<string>)['DestCol']);
+    for(let i=0; i < raw['mappings'].length; i++) {
+      srcColIds.push(
+        raw['mappings'][i]['SourceCol']
+      );
+      destColIds.push(
+        raw['mappings'][i]['DestCol']
+      );
     }
     
     let injection = new Injection(
-      raw['SourceRef'] as string,
+      raw['SourceRef']! as string,
       srcColIds,
       this.Ref.uid,
       destColIds
     )
 
     this.Ref.addInjection(injection);
-    console.log(injection);
-    
-    //this.location.back();
-    console.log(this.Ref);
   }
 
   UpdateInjection() { // TODO : move to injection service

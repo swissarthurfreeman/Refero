@@ -1,7 +1,7 @@
 <form> 
     @for (colId of DestRef.headerIds; track $index) {
         <mat-form-field class="example-full-width">
-            <mat-label>{{DestRef.header[colId]}}</mat-label>
+            <mat-label>{{DestRef.header.get(colId)!}}</mat-label>
             <input matInput value="{{DestRec[colId]}}">
         </mat-form-field>
     }

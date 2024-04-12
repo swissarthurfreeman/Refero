@@ -1,6 +1,6 @@
 <div class="col">
     <div style="max-width:100%">
-        <table mat-table [dataSource]="Ref.lines"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
+        <table mat-table [dataSource]="Ref.Records"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
             @for (colId of Ref.headerIds; track $index) {
                 <ng-container [matColumnDef]="colId">
                     <th mat-header-cell *matHeaderCellDef> {{Ref.getColumnById(colId)}}
@@ -16,7 +16,7 @@
             <tr mat-header-row *matHeaderRowDef="Ref.currView.dispCols"></tr>
 
             @if (!this.simpleMode) {
-                <tr mat-row *matRowDef="let myRowData; columns: Ref.currView.dispCols" (click)="viewRecord(myRowData.uid)"></tr>
+                <tr mat-row *matRowDef="let myRowData; columns: Ref.currView.dispCols" (click)="viewRecord(myRowData.id)"></tr>
             }
 
             @if (this.simpleMode) {
@@ -25,7 +25,7 @@
                     DestRecId: DestRecId$ | async,
                     Injection: Injection$ | async
                 } as Context">
-                    <tr mat-row (click)="applyInjection(myRowData.uid, Context.DestRecId!, Context.Injection!)" *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
+                    <tr mat-row (click)="applyInjection(myRowData.id, Context.DestRecId!, Context.Injection!)" *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
                 </ng-container>
                 
             }

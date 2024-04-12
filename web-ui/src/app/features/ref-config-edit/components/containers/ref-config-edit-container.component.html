@@ -45,6 +45,6 @@
     </button>
     <button (click)="Debug()">Debug</button>
 </div>
-@if (Ref.lines.length > 0) {
+@if (Ref.records.size > 0) {
     <app-table [Ref]="Ref" [simpleMode]="true"></app-table>
 }
