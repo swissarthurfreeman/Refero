@@ -31,3 +31,4 @@ app_log/
 *.pem
 
 .vscode/*
+Docs/.~lock.web-ui.odg#
