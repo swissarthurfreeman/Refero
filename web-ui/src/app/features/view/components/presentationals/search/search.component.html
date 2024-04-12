@@ -1,12 +1,12 @@
 <!-- Render Search Field -->
 <div class="row">
     <div class="col">
-        @for (colId of Ref.currView.searchCols; track $index) {
+        @for (colId of currView.searchCols; track $index) {
         <div class="row">
             <div class="col">
                 <div class="input-group mb-3">
                     @if (!simple) {
-                        <button mat-mini-fab color="primary" (click)="Ref.currView.removeSearchCol(colId)">
+                        <button mat-mini-fab color="primary" (click)="currView.removeSearchCol(colId)">
                             <mat-icon>remove</mat-icon>
                         </button>
                     }

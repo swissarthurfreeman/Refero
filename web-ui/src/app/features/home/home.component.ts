@@ -11,8 +11,8 @@ export class HomeComponent {
   
   constructor(public ds: RefService, public router: Router) {}
 
-  selectReferential(RefUid: string) {
-    this.router.navigate([`view/${RefUid}`]);
+  selectReferential(RefId: string) {
+    this.router.navigate([`view/${RefId}`]);
   }
 
   createReferential(): void {

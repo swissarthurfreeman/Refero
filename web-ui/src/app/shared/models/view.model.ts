@@ -5,7 +5,8 @@ export class View {
     id: string;
     name: string;
     ref: Referential;
-    
+    refId: string;
+
     dispCols: Array<string>;
     _dispCols: Array<string>;
     nDispCols!: Array<string>;
@@ -24,6 +25,7 @@ export class View {
         this.name = name;
         this.id = uuidv4();
         this.ref = ref;
+        this.refId = ref.id;
         
         this.dispCols = [ref.headerIds[0], ref.headerIds[1], ref.headerIds[2], ref.headerIds[3]];
         if(dispCols) this.dispCols = dispCols;
@@ -77,22 +79,25 @@ export class View {
     /**
      * Persist the current view to the database, either as a new view object
      * or an udpate of the current view.  
+     * TODO : move to service layer
      */
-    save(newName: string) {
+    save(newName: string): View {
         if (this.name == newName) { // if we're updating the current view
             this._dispCols = this.dispCols.slice(0);
             this._searchCols = this._searchCols.slice(0);  // upon restoration, restore to updated version
+            return this
         } else {    // create new view, restore current view
             let view = new View(newName, this.ref, 
                 this.dispCols.slice(0), this.searchCols.slice(0));
             
             this.ref.views.set(view.id, view);    // associate view to ref
-
+            
             this.dispCols = this._dispCols.slice(0);
             this.searchCols = this._searchCols.slice(0);
 
             this._initChoices()
             // TODO : POST TO DATABASE
+            return view
         }
     }
 

@@ -69,7 +69,7 @@ export class InjectionEditContainerComponent implements OnInit {
     let injection = new Injection(
       raw['SourceRef']! as string,
       srcColIds,
-      this.Ref.uid,
+      this.Ref.id,
       destColIds
     )
 

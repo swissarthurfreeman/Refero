@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { Location } from '@angular/common';
 import { SetInjectionMode } from '../../../../shared/stores/ref-view/ref-view.action';
 import { Router } from '@angular/router';
+import { View } from '../../../../shared/models/view.model';
 
 @Component({
   selector: 'app-view-container',
@@ -17,6 +18,7 @@ export class ViewContainerComponent implements OnInit {
   
   @Select(RefViewState.getCurrentRef) currRef$!: Observable<Referential>;  // TODO : check if dispatching action to change RefViewStateModel's ref re-emits a value
   @Select(RefViewState.isInjectionMode) injectionMode$!: Observable<boolean>;
+  @Select(RefViewState.getCurrentView) currView$!: Observable<View>;
   
   ngOnInit(): void {
     let context = this.location.path().split('/')[1];

@@ -6,10 +6,10 @@ export class Injection {
     destId: string;         // referential to the which we're inserting
     srcColIds: string[];    // injection is essentially two arrays of same size
     destColIds: string[];   // of source col ids and destination col ids. 
-    uid: string;
+    id: string;
 
     constructor(srcId: string, srcColIds: string[], destId: string, destColIds: string[]) {
-        this.uid = uuidv4();
+        this.id = uuidv4();
         this.srcId = srcId;
         this.destId = destId;
         this.srcColIds = srcColIds;

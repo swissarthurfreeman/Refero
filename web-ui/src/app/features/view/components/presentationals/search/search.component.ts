@@ -8,6 +8,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatInputModule} from '@angular/material/input';
 import { Referential } from '../../../../../shared/models/referential.model';
+import { View } from '../../../../../shared/models/view.model';
 
 @Component({
   selector: 'app-search',
@@ -19,5 +20,6 @@ export class SearchComponent {
 
   @Input() Ref!: Referential;
   @Input() simple: boolean = false;
+  @Input() currView!: View;
   constructor() {}
 }

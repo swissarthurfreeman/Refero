@@ -10,16 +10,25 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Referential } from '../../../../../shared/models/referential.model';
 import { RefService } from '../../../../../shared/services/ref.service';
+import { Select, Store } from '@ngxs/store';
+import { SetCurrentRef, SetCurrentView } from '../../../../../shared/stores/ref-view/ref-view.action';
+import { RefViewState } from '../../../../../shared/stores/ref-view/ref-view.state';
+import { Observable } from 'rxjs';
+import { View } from '../../../../../shared/models/view.model';
+import { CommonModule } from '@angular/common';
+import { ViewService } from '../../../../../shared/services/view.service';
 
 @Component({
   selector: 'app-view-editor',
   standalone: true,
-  imports: [MatTableModule, MatFormFieldModule, ReactiveFormsModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule, MatGridListModule, MatInputModule],
+  imports: [CommonModule, MatTableModule, MatFormFieldModule, ReactiveFormsModule, MatSelectModule, MatButtonModule, MatDividerModule, MatIconModule, MatGridListModule, MatInputModule],
   templateUrl: './view-editor.component.html'
 })
 export class ViewEditorComponent {
   constructor(
-    private appRef: ApplicationRef
+    private appRef: ApplicationRef,
+    public vs: ViewService,
+    private store: Store
   ) {}
   
   @Input() isInjectionMode: boolean = false;
@@ -29,14 +38,16 @@ export class ViewEditorComponent {
   
   newViewId = new FormControl('AWESOME_VIEW');
 
-  SaveCurrentView() {
-    this.dataService.getRefDataBy(this.Ref.uid).currView.save(this.newViewId.value!);
+  @Select(RefViewState.getCurrentView) currView$!: Observable<View>;
+  
+  save(view: View) {
+    let newView = view.save(this.newViewId.value!);
+    this.vs.registerView(newView);
   }
 
   SelectView(viewId: string) {
-    this.dataService.getRefDataBy(this.Ref.uid).setCurrViewTo(viewId);
-    this.Ref = this.dataService.getRefDataBy(this.Ref.uid);  // this ref is shared by search and table, they should update to it changing
-    this.appRef.tick();
+    this.store.dispatch(new SetCurrentView(this.Ref.id, viewId));
+    //this.appRef.tick();
   }
 }
 

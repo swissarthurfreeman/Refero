@@ -4,11 +4,9 @@ import { Injection } from './injection.model';
 import { Dict, Record } from './record.model';
 
 export class Referential {
-    uid: string;
+    id: string;
     name: string;
     description: string;
-
-    ref!: Referential;  // wtf is this ? 
 
     header: Dict<string> = new Map<string, string>();         // { colId: colName...} object
     originalHeader: Dict<string> = new Map<string, string>(); // {colId: originalName} object
@@ -19,11 +17,6 @@ export class Referential {
     }
     
     views: Dict<View> = new Map<string, View>();            // { viewId: View...} object
-    currView: View;                    // this is stateful and is a problem . 
-
-    setCurrViewTo(viewId: string) {     
-        this.currView = this.views.get(viewId)!;
-    }
 
     get ViewIds() {
         return this.views.keys();
@@ -50,14 +43,14 @@ export class Referential {
         this.records.set(rec['id'], rec);
     }
 
-    constructor(name: string, description: string, records: any[] | Record[], header: string[], uid?: string) {
+    constructor(name: string, description: string, records: any[] | Record[], header: string[], id?: string) {
         this.name = name;
         this.description = description;
         
-        if(uid) {   
-            this.uid = uid;
+        if(id) {   
+            this.id = id;
         } else {
-            this.uid = uuidv4();
+            this.id = uuidv4();
         }
 
         this.header = Referential.getHeaderConfig(header);
@@ -82,11 +75,6 @@ export class Referential {
             this.originalHeader.set(colId, this.header.get(colId)!);        // keep track of file original columns
             this.header.set(colId, this.header.get(colId)!.toUpperCase());
         }
-
-        // create default view, store it in view dictionary.
-        let defView = new View("DEFAULT_VIEW", this);
-        this.views.set(defView.id, defView);
-        this.currView = defView;
     }
 
     /**
@@ -108,6 +96,6 @@ export class Referential {
     }
 
     addInjection(injection: Injection) {
-        this.injections.set(injection.uid, injection);
+        this.injections.set(injection.id, injection);
     }
 }

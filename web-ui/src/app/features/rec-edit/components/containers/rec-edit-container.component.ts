@@ -9,6 +9,7 @@ import { InjectionService } from '../../../../shared/services/injection.service'
 import { RecEditState } from '../../../../shared/stores/rec-edit/rec-edit.state';
 import { Injection } from '../../../../shared/models/injection.model';
 import { SetInjection, SetSrcRef } from '../../../../shared/stores/rec-edit/rec-edit.action';
+import { View } from '../../../../shared/models/view.model';
 
 @Component({
   selector: 'app-rec-edit-container',
@@ -25,6 +26,8 @@ export class RecEditContainerComponent implements OnInit {
   
   @Select(RecEditState.getSrcRef) srcRef$!: Observable<Referential>;
   @Select(RefViewState.getCurrentRef) destRef$!: Observable<Referential>;
+
+  @Select(RefViewState.getCurrentView) currView$!: Observable<View>;
 
   SelectInjection(injection: Injection) {
     this.store.dispatch([

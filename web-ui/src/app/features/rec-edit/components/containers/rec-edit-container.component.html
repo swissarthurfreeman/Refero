@@ -2,13 +2,14 @@
     destRec: destRec$ | async,
     destRef: destRef$ | async,
     srcRef: srcRef$ | async,
-    injection: injection$ | async
+    injection: injection$ | async,
+    currView: currView$ | async 
 } as Context">
     <div class="d-flex">
         <div class="p-2 me-auto">
                 <mat-form-field>
                     <mat-label>Inject Record from :</mat-label> <!-- BUG : getSourceRefsOfInjectionsTowards() is being called multiple times... -->
-                    <mat-select [(value)]="Context.srcRef!.uid" (valueChange)="SelectInjection($event)">
+                    <mat-select [(value)]="Context.srcRef!.id" (valueChange)="SelectInjection($event)">
                         @for (injection of Context.destRef!.getInjections(); track $index) {
                             <mat-option [value]="injection">{{ds.getRefDataBy(injection.srcId).name}}</mat-option>
                         }
@@ -34,7 +35,7 @@
             <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
                 <ng-container *ngIf="srcRef$ | async as loadedSrc"> 
                     @if (loadedSrc.name != '') {
-                        <app-table [Ref]="loadedSrc" [simpleMode]="true"></app-table>
+                        <app-table [Ref]="loadedSrc" [currView]="Context.currView!" [simpleMode]="true"></app-table>
                     } 
                 </ng-container>
             </div>

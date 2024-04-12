@@ -5,7 +5,7 @@
                 <ng-container [matColumnDef]="colId">
                     <th mat-header-cell *matHeaderCellDef> {{Ref.getColumnById(colId)}}
                         @if (!this.simpleMode) {
-                        <button mat-mini-fab color="primary" (click)="Ref.currView.removeDispCol(colId)">
+                        <button mat-mini-fab color="primary" (click)="currView.removeDispCol(colId)">
                             <mat-icon>remove</mat-icon>
                         </button>
                         }
@@ -13,10 +13,10 @@
                     <td mat-cell *matCellDef="let line"> {{ line[colId] }} </td> <!-- Define the data to display for each line -->
                 </ng-container>
             }
-            <tr mat-header-row *matHeaderRowDef="Ref.currView.dispCols"></tr>
+            <tr mat-header-row *matHeaderRowDef="currView.dispCols"></tr>
 
             @if (!this.simpleMode) {
-                <tr mat-row *matRowDef="let myRowData; columns: Ref.currView.dispCols" (click)="viewRecord(myRowData.id)"></tr>
+                <tr mat-row *matRowDef="let myRowData; columns: currView.dispCols" (click)="viewRecord(myRowData.id)"></tr>
             }
 
             @if (this.simpleMode) {
@@ -25,7 +25,7 @@
                     DestRecId: DestRecId$ | async,
                     Injection: Injection$ | async
                 } as Context">
-                    <tr mat-row (click)="applyInjection(myRowData.id, Context.DestRecId!, Context.Injection!)" *matRowDef="let myRowData; columns: Ref.currView.dispCols"></tr>
+                    <tr mat-row (click)="applyInjection(myRowData.id, Context.DestRecId!, Context.Injection!)" *matRowDef="let myRowData; columns: currView.dispCols"></tr>
                 </ng-container>
                 
             }

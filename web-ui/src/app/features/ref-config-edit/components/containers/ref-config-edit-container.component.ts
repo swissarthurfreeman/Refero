@@ -80,9 +80,7 @@ export class RefConfigEditContainerComponent implements OnInit {
         let records = parsedCSV.data as Record[];
 
         this.Ref = new Referential(file.name.toUpperCase(), "", records,  originalHeader);
-        this.Ref.currView.setDispColsToAllCols();
-        // this.rs.setCurrentRef(this.Ref); // to communicate with injection view
-
+        
         this.addColFormsFor(originalHeader, this.Ref.headerIds);
     });
   }

@@ -15,6 +15,7 @@ import { RecEditState } from '../../../../../shared/stores/rec-edit/rec-edit.sta
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { RefService } from '../../../../../shared/services/ref.service';
+import { View } from '../../../../../shared/models/view.model';
 
 
 @Component({
@@ -30,6 +31,7 @@ export class TableComponent implements OnInit {
   
   @Input() simpleMode!: boolean;  // container loads these guys and passes them to the children
   @Input() Ref!: Referential;
+  @Input() currView!: View;
   
   constructor(
     private router: Router, 
@@ -41,7 +43,7 @@ export class TableComponent implements OnInit {
   }
 
   viewRecord(recId: string) {
-    this.router.navigate([`record/${this.Ref.uid}/${recId}`]);
+    this.router.navigate([`record/${this.Ref.id}/${recId}`]);
   }
   
   @Select(RecEditState.getDestRecId) DestRecId$!: Observable<string>;

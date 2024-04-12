@@ -40,7 +40,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let ref of this.ds.getRefs()" class="table-light" (click)="selectReferential(ref.uid)">
+    <tr *ngFor="let ref of this.ds.getRefs()" class="table-light" (click)="selectReferential(ref.id)">
         <th scope="row">{{ref.name}}</th>
         <td>{{ref.description}}</td>
     </tr>

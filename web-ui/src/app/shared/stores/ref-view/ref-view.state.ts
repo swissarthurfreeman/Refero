@@ -2,13 +2,16 @@ import { State, Action, StateContext, Store, Selector } from "@ngxs/store";
 import { StateEnum } from "../../enums/state.enum";
 import { Referential } from "../../models/referential.model";
 import { Injectable } from "@angular/core";
-import { SetCurrentRef, SetInjectionMode } from "./ref-view.action";
+import { SetCurrentRef, SetCurrentView, SetInjectionMode } from "./ref-view.action";
 import { RefService } from "../../services/ref.service";
 import { Router } from "@angular/router";
+import { View } from "../../models/view.model";
+import { ViewService } from "../../services/view.service";
 
 export class RefViewStateModel {
-    currRef: Referential = new Referential("", "", [], []);                  // referential we're rendering the view of 
-    injectionMode: boolean = false;         // whether we're in injection mode or not
+    currRef!: Referential;                   // referential we're rendering the view of 
+    currView!: View;
+    injectionMode!: boolean;                 // whether we're in injection mode or not
 }
 
 @State<RefViewStateModel>({
@@ -16,7 +19,7 @@ export class RefViewStateModel {
 })
 @Injectable()
 export class RefViewState { // note that for the action to be active it has to be loaded via NgxsModule.forRoot/forFeature                     
-    constructor(public ds: RefService, public store: Store, public router: Router) {}
+    constructor(public ds: RefService, public vs: ViewService, public store: Store, public router: Router) {}
     @Action(SetCurrentRef)
     setCurrentRef(ctx: StateContext<RefViewStateModel>, action: SetCurrentRef) {
         ctx.patchState({
@@ -29,6 +32,27 @@ export class RefViewState { // note that for the action to be active it has to b
         ctx.patchState({
             injectionMode: action.active
         })
+    }
+
+    @Action(SetCurrentView)
+    setCurrentView(ctx: StateContext<RefViewStateModel>, action: SetCurrentView) {
+        if(action.ViewId === undefined) {
+            ctx.patchState({
+                currView: this.vs.getDefaultViewOfRef(action.RefId)!
+            })
+        } else {
+            console.log("Found View :", action.ViewId);
+            console.log("Got View :", this.vs.getViewById(action.ViewId)!);
+            ctx.patchState({
+                currView: this.vs.getViewById(action.ViewId)!
+            })
+        }
+        
+    }
+
+    @Selector()
+    static getCurrentView(state: RefViewStateModel) {
+        return state.currView;
     }
 
     @Selector()

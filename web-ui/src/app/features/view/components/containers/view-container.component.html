@@ -1,6 +1,7 @@
 <ng-container *ngIf="{
     InjMode: injectionMode$ | async,
-    CurrRef: currRef$ | async
+    CurrRef: currRef$ | async,
+    currView: currView$ | async
 } as RefViewState">
     @if (!RefViewState.InjMode) {
     <mat-grid-list cols="3" rowHeight="19em">
@@ -10,7 +11,7 @@
             <mat-grid-tile colspan="1"> <!-- New Record, Import, Injection... Buttons -->
                 <div class="d-flex align-items-end flex-column">
                     <div class="p-2">
-                        <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(RefViewState.CurrRef!.uid)">
+                        <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(RefViewState.CurrRef!.id)">
                             Configurer
                         </button>
                     </div>
@@ -31,6 +32,6 @@
         <app-view-editor [Ref]="RefViewState.CurrRef!" [isInjectionMode]="RefViewState.InjMode!"></app-view-editor>
     }
     <hr>
-    <app-search [Ref]="RefViewState.CurrRef!"></app-search>
-    <app-table [Ref]="RefViewState.CurrRef!" [simpleMode]="RefViewState.InjMode!"></app-table>
+    <app-search [Ref]="RefViewState.CurrRef!" [currView]="RefViewState.currView!"></app-search>
+    <app-table [Ref]="RefViewState.CurrRef!" [currView]="RefViewState.currView!" [simpleMode]="RefViewState.InjMode!"></app-table>
 </ng-container>
