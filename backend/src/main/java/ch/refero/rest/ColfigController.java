@@ -5,9 +5,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ch.refero.domain.model.Colfig;
 import ch.refero.domain.model.Entry;
+import ch.refero.domain.repository.ColfigRepository;
+import ch.refero.domain.repository.ColfigSpecification;
 import ch.refero.domain.repository.EntryRepository;
 import java.util.List;
 import java.util.Optional;
@@ -18,30 +22,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-@RequestMapping("/records")
-public class EntryController {
+@RequestMapping("/cols")
+public class ColfigController {
 
     @Autowired
-    private EntryRepository recRepo;
+    private ColfigRepository colRepo;
 
     
     @GetMapping("")
-    public HttpEntity<List<Entry>> list() {
-        var recs = recRepo.findAll();
-        return new ResponseEntity<>(recs, HttpStatus.OK);
+    public HttpEntity<List<Colfig>> list(@RequestParam String ref_id) {
+        var spec = ColfigSpecification.filterColfig(ref_id);
+        var cols = colRepo.findAll(spec);
+        return new ResponseEntity<>(cols, HttpStatus.OK);
     }
 
     @GetMapping("{id}")
-    public HttpEntity<Optional<Entry>> get(@PathVariable String id) {
-        var rec = recRepo.findById(id);
-        if(rec.isPresent())
-            return new ResponseEntity<>(rec, HttpStatus.OK);
+    public HttpEntity<Optional<Colfig>> get(@PathVariable String id) {
+        var col = colRepo.findById(id);
+        if(col.isPresent())
+            return new ResponseEntity<>(col, HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("")
-    public HttpEntity<Entry> post(@RequestBody Entry rec) {
-        recRepo.save(rec);
-        return new ResponseEntity<Entry>(rec, HttpStatus.OK);
+    public HttpEntity<Colfig> post(@RequestBody Colfig col) {
+        colRepo.save(col);
+        return new ResponseEntity<Colfig>(col, HttpStatus.OK);
     }
 }

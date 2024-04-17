@@ -3,6 +3,7 @@ package ch.refero.domain.model;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -31,7 +32,14 @@ public class Referential {
 
     @OneToMany(targetEntity = Entry.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "ref_id")
-    public List<Entry> entries;
+    private List<Entry> entries;
+
+    @OneToMany(targetEntity = Colfig.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "ref_id")
+    private List<Colfig> columns;
+
+    @ElementCollection
+    private List<RefView> views;
 
     public Referential() {}
 }

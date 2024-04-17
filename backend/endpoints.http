@@ -1,14 +1,20 @@
 ### 
-GET http://localhost:8080 HTTP/1.1
-content-type: application/json
-
-### 
 GET http://localhost:8080/refs HTTP/1.1
 content-type: application/json
 
 ### 
-GET http://localhost:8080/refs/test38420935 HTTP/1.1
+GET http://localhost:8080/cols?ref_id=refid1 HTTP/1.1
 content-type: application/json
+
+
+### 
+GET http://localhost:8080/refs/askjasl39493 HTTP/1.1
+content-type: application/json
+
+### 
+GET http://localhost:8080/cols HTTP/1.1
+content-type: application/json
+
 
 ### 
 GET http://localhost:8080/records HTTP/1.1
@@ -27,3 +33,29 @@ content-type: application/json
     },
     "ref_id": "test38420935"
 }
+
+
+### 
+POST http://localhost:8080/cols HTTP/1.1
+content-type: application/json
+
+{
+    "id": "sajlkasjfaslkfja",
+    "name": "REE_NOGA",
+    "colType": "FK",
+    "ref_id": "askjasl39493"
+
+}
+
+### 
+POST http://localhost:8080/views HTTP/1.1
+content-type: application/json
+
+{
+    "id": "sajlkasjfaslkfja",
+    "name": "REE_NOGA",
+    "colType": "FK",
+    "ref_id": "askjasl39493"
+
+}
+
