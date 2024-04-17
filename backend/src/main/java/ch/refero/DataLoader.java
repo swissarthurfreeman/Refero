@@ -1,15 +1,22 @@
 package ch.refero;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import ch.refero.domain.model.Entry;
 import ch.refero.domain.model.Referential;
+import ch.refero.domain.repository.EntryRepository;
 import ch.refero.domain.repository.ReferentialRepository;
 
 @Component
 public class DataLoader implements ApplicationRunner {
+
+    @Autowired
+    private EntryRepository entryRepository;
 
     @Autowired
     private ReferentialRepository refRepository;
@@ -33,5 +40,11 @@ public class DataLoader implements ApplicationRunner {
         ref2.description = "aAAAAAAAAAAA";
         refRepository.save(ref2);
 
+        
+        var rec = new Entry();
+        rec.id = "first_id029034";
+        rec.fields = new HashMap<String, String>();
+        rec.fields.put("Addresse", "Route des Beilans");
+        entryRepository.save(rec);
     }
 }
