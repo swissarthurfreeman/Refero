@@ -1,4 +1,4 @@
-package ch.refero.domain.repository;
+package ch.refero.domain.repository.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
 

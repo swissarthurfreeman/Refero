@@ -1,0 +1,50 @@
+@url = http://localhost:8080
+
+### 
+# @name getRef
+GET {{url}}/refs HTTP/1.1
+content-type: application/json
+
+@ref_id1 = {{getRef.response.body.0.id}}
+@ref_id2 = {{getRef.response.body.1.id}}
+
+### 
+# @name createEntry
+POST {{url}}/entries HTTP/1.1
+content-type: application/json
+
+{
+    "ref_id": "{{ref_id1}}",
+    "fields": {
+        "colid1": "value1",
+        "colid2": "value2"
+    }
+}
+
+@entry_id = {{createEntry.response.body.id}}
+
+
+### 
+POST {{url}}/entries HTTP/1.1
+content-type: application/json
+
+{
+    "ref_id": "{{ref_id2}}",
+    "fields": {
+        "colid21": "value21",
+        "colid22": "value22"
+    }
+}
+
+###
+GET {{url}}/entries/{{entry_id}}
+content-type: application/json
+
+###
+GET {{url}}/entries?ref_id={{ref_id1}}
+content-type: application/json
+
+
+###
+GET {{url}}/entries
+content-type: application/json

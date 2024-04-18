@@ -1,0 +1,37 @@
+@url = http://localhost:8080
+
+### 
+# @name getRef
+GET {{url}}/refs HTTP/1.1
+content-type: application/json
+
+@ref_id1 = {{getRef.response.body.0.id}}
+@ref_id2 = {{getRef.response.body.1.id}}
+
+
+### 
+POST http://localhost:8080/cols HTTP/1.1
+content-type: application/json
+
+{
+    "name": "REE_NOGAAA",
+    "colType": "FK",
+    "ref_id": "{{ref_id1}}11"
+}
+
+### 
+POST http://localhost:8080/cols HTTP/1.1
+content-type: application/json
+
+{
+    "name": "REE_ADDRESSE",
+    "ref_id": "{{ref_id2}}"
+}
+
+### 
+GET http://localhost:8080/cols HTTP/1.1
+content-type: application/json
+
+### 
+GET http://localhost:8080/cols?ref_id={{ref_id2}} HTTP/1.1
+content-type: application/json
