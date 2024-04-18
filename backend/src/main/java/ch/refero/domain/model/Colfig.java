@@ -1,5 +1,8 @@
 package ch.refero.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
@@ -10,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.AssertTrue;
 
 @Table(
     uniqueConstraints=
@@ -41,16 +45,29 @@ public class Colfig {
     public String name;
     
     @Column
-    public String colType;
+    public String colType;  // TODO : change this to enum of col types.
 
     @Column
+    @JsonInclude(Include.NON_NULL)
     public String dateFormat; 
 
     @Column
-    public String pointedRef;
+    @JsonInclude(Include.NON_NULL)
+    public String pointedRefId;
 
     @Column
+    @JsonInclude(Include.NON_NULL)
     public String pointedRefColId;
+
+    @AssertTrue(message = "pointedRef and pointedRefColId are required when colType is FK")
+    private boolean isValidFk() {
+        return !(colType.equals("FK")) || !(pointedRefId == null || pointedRefColId == null);
+    }
+
+    @AssertTrue(message = "dateFormat must be proivded when colType is DATE")
+    private boolean isValidDate() {
+        return !(colType.equals("DATE")) || !(dateFormat == null);
+    }
 
     public Colfig() {};
 }

@@ -14,9 +14,23 @@ POST http://localhost:8080/cols HTTP/1.1
 content-type: application/json
 
 {
-    "name": "REE_NOGAAA",
+    "name": "REE_NOGAAAAAA_DATE",
+    "colType": "DATE",
+    "ref_id": "{{ref_id1}}",
+    "dateFormat": "DD MM AAAA"
+}
+
+
+### 
+POST http://localhost:8080/cols HTTP/1.1
+content-type: application/json
+
+{
+    "name": "REE_NOGA_NUMBER",
     "colType": "FK",
-    "ref_id": "{{ref_id1}}11"
+    "ref_id": "{{ref_id1}}",
+    "pointedRef": "blabla",
+    "pointedRefColId": "lalalalala"
 }
 
 ### 

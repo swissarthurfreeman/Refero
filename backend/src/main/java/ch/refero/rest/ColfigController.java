@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.validation.FieldError;
 
 import ch.refero.domain.model.Colfig;
@@ -53,18 +54,33 @@ public class ColfigController {
     }
 
     @PostMapping("")
-    public HttpEntity<Colfig> post(@RequestBody @Valid Colfig col) {
+    public ResponseEntity<Colfig> post(@RequestBody @Valid Colfig col) {
         var savedCol = colfigService.save(col);
-        return new ResponseEntity<Colfig>(savedCol, HttpStatus.OK);
+        if(savedCol.isPresent())
+            return new ResponseEntity<Colfig>(savedCol.get(), HttpStatus.CREATED);
+        
+        logger.info("Throw exception !");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ref_id is not valid");
     }
 
+    // TODO : make sure a column that's a FK doesn't have a date format, etc. 
+    // TODO : Add PUT mapping for updating columns. 
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ResponseStatusException.class)
+    public Map<String, String> handleResponseStatusException(ResponseStatusException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getReason());
+        return errors;
+    }
+    
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();    // TODO : how to check ref_id validity ? 
+            String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
         return errors;
@@ -73,11 +89,8 @@ public class ColfigController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public Map<String, String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        // Error here can be unique column name error, or ref_id doesn't refer to
-        // a valid referential 
-        logger.info("Class :" + ex.getMessage());
-        errors.put("message", "Unique column name violation."); 
-        return errors;
+        Map<String, String> error = new HashMap<>();
+        error.put("message", "Column name is already present for this referential."); 
+        return error;
     }
 }

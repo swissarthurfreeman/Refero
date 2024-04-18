@@ -30,7 +30,22 @@ public class ColfigService {
         return colRepo.findById(id);
     }
 
-    public Colfig save(Colfig col) {
-        return colRepo.save(col);
+    @Autowired
+    ReferentialService refService;
+
+    Logger logger = LoggerFactory.getLogger(ColfigService.class);
+
+    /**
+     * Save the Colfig object to the database. If the ref_id
+     * does not reference a valid referential, nothing is saved
+     * and return optional is null.
+     * @param col the correctly formatted Colfig object to save.
+     * @return The newly  saved Colfig, with the server assigned id. 
+     */
+    public Optional<Colfig> save(Colfig col) {
+        if(refService.findById(col.getRef_id()).isPresent())
+            return Optional.of(colRepo.save(col));
+        
+        return Optional.ofNullable(null);
     }
 }
