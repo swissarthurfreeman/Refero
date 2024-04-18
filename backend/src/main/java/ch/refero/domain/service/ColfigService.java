@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.repository.ColfigRepository;
-import ch.refero.domain.repository.specifications.ColfigSpecification;
+import ch.refero.domain.repository.specifications.FilterByRefIdSpecification;
 
 @Service
 public class ColfigService {
@@ -19,7 +19,8 @@ public class ColfigService {
 
     public List<Colfig> findAll(Optional<String> ref_id) {
         if(ref_id.isPresent()) {
-            var spec = ColfigSpecification.filterColfig(ref_id.get());
+            
+            var spec = new FilterByRefIdSpecification<Colfig>().filterColfig(ref_id.get());
             var cols = colRepo.findAll(spec);
             return cols;
         }

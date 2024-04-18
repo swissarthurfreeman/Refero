@@ -1,6 +1,5 @@
 package ch.refero;
 
-import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -8,7 +7,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import ch.refero.domain.model.Referential;
-import ch.refero.domain.repository.ColfigRepository;
 //import ch.refero.domain.repository.EntryRepository;
 import ch.refero.domain.repository.ReferentialRepository;
 
@@ -29,9 +27,6 @@ public class DataLoader implements ApplicationRunner {
     public void createCols() {
 
     }
-
-    @Autowired
-    private ColfigRepository colRepo;
 
 
     public void createRefs() {

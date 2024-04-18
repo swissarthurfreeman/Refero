@@ -35,30 +35,5 @@ content-type: application/json
 }
 
 ### 
-GET http://localhost:8080/refs/askjasl39493 HTTP/1.1
+GET http://localhost:8080/refs/{{createdFirstRefId}} HTTP/1.1
 content-type: application/json
-
-### 
-GET http://localhost:8080/cols HTTP/1.1
-content-type: application/json
-
-
-### 
-GET http://localhost:8080/records HTTP/1.1
-content-type: application/json
-
-
-### 
-POST http://localhost:8080/records HTTP/1.1
-content-type: application/json
-
-{
-    "id": "dskjghdskjw0448092",
-    "fields": {
-        "toad": "tulip",
-        "totally": "blabla"
-    },
-    "ref_id": "test38420935"
-}
-
-

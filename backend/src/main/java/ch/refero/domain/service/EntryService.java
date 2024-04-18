@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import ch.refero.domain.model.Entry;
 import ch.refero.domain.repository.EntryRepository;
-import ch.refero.domain.repository.specifications.EntrySpecification;
+import ch.refero.domain.repository.specifications.FilterByRefIdSpecification;
 
 @Service
 public class EntryService {
@@ -21,7 +21,7 @@ public class EntryService {
 
     public List<Entry> findAll(Optional<String> ref_id) {
         if(ref_id.isPresent()) {
-            var spec = EntrySpecification.filterColfig(ref_id.get());
+            var spec = new FilterByRefIdSpecification<Entry>().filterColfig(ref_id.get());
             var entries = entryRepo.findAll(spec);
             return entries;
         }

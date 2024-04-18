@@ -2,22 +2,29 @@ package ch.refero.domain.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class RefView {
     @Id
     @Column
+    @GeneratedValue(strategy = GenerationType.UUID)
     public String id;
 
     @Column
+    @NotBlank(message = "Name of view cannot be blank.")
     public String name;
 
     @JoinColumn(name = "ref_id", insertable = false, updatable = false)
@@ -31,8 +38,10 @@ public class RefView {
     public String getRef_id() { return ref_id; }
 
     @ElementCollection
-    public List<Colfig> dispCols;       // a colfig does not need to have @OneToMany towards view.
-
+    @Column
+    public List<String> dispColIds;
+    
     @ElementCollection
-    public List<Colfig> searchCols;
+    @Column
+    public List<String> searchColIds;  
 }

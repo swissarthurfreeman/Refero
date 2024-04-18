@@ -11,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -45,6 +44,14 @@ public class Referential {
     @NotBlank(message = "Description cannot be blank!")
     public String description;
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     @OneToMany(targetEntity = Entry.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "ref_id")
     private List<Entry> entries;
@@ -53,8 +60,8 @@ public class Referential {
     @JoinColumn(name = "ref_id")
     private List<Colfig> columns;
 
-    @ElementCollection
-    private List<RefView> views;
+    //@ElementCollection
+    //private List<RefView> views;
 
     public Referential() {}
 

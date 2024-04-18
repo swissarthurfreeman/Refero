@@ -29,7 +29,7 @@ content-type: application/json
     "name": "REE_NOGA_NUMBER",
     "colType": "FK",
     "ref_id": "{{ref_id1}}",
-    "pointedRef": "blabla",
+    "pointedRefId": "blabla",
     "pointedRefColId": "lalalalala"
 }
 
@@ -39,6 +39,7 @@ content-type: application/json
 
 {
     "name": "REE_ADDRESSE",
+    "colType": "NONE",
     "ref_id": "{{ref_id2}}"
 }
 

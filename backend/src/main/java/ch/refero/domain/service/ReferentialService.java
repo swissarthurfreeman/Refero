@@ -3,7 +3,6 @@ package ch.refero.domain.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +38,9 @@ public class ReferentialService {
         var savedRefOpt = refRepository.findById(id);
         if(savedRefOpt.isPresent()) {
             var savedRef = savedRefOpt.get();
-            savedRef.setName(ref.name);         // PUT replaces the resource at that URI, necesarily a 
-            savedRef.setName(ref.description);  // valid Referential.
+            savedRef.setName(ref.name);                // PUT replaces the resource at that URI, necesarily a 
+            savedRef.setDescription(ref.description);  // valid Referential.
+            refRepository.save(savedRef);              // don't forget to resave
         }
         return savedRefOpt; 
     }
