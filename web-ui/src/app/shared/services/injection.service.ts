@@ -12,15 +12,6 @@ export class InjectionService {
 
   constructor(public rs: RefService, public http: HttpClient) {}
 
-  getInjectionBySource(injections: Injection[], sourceRef: string): Injection | undefined {
-    for(let inj of injections) {
-      if(inj.srcId === sourceRef) {
-        return inj;
-      }
-    }
-    return undefined;
-  }
-
   postInjection(injection: Injection): Observable<Injection> {
     return this.http.post<Injection>(`http://localhost:8080/injections`, injection);
   }

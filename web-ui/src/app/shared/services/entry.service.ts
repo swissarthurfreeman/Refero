@@ -31,4 +31,8 @@ export class EntryService {
       "fields": entry.fields
     })
   }
+
+  putEntry(entry: Entry): Observable<Entry> {
+    return this.http.put<Entry>(`http://localhost:8080/entries/${entry.id}`, entry);
+  }
 }

@@ -53,7 +53,6 @@ export class TableComponent implements OnInit {
     this.router.navigate([`entry/${this.Ref.id}/${recId}`]);
   }
   
-
   applyInjection(srcRec: Record, Injection: Injection) {
     for(let i=0; i < Injection.destColIds.length; i++) {
       this.CurrentEntry.fields[Injection.destColIds[i]] = srcRec[Injection.srcColIds[i]];

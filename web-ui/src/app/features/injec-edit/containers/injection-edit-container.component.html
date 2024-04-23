@@ -6,7 +6,7 @@
                     <mat-label>From Source Ref.</mat-label>
                     <mat-select formControlName="SourceRef" (valueChange)="SelectSource($event)">
                         @for (ref of Refs; track $index) {
-                            <mat-option [value]="ref.id">{{ref.name}}</mat-option>
+                            <mat-option [value]="ref">{{ref.name}}</mat-option>
                         }
                     </mat-select>
                 </mat-form-field>

@@ -18,5 +18,5 @@ export class MappingConfigPresentationalComponent implements OnInit {
   @Input() Ref!: Referential;
   @Input() sourceId!: string;             // id of source referential in select.
 
-  sourceRef$!: Observable<Referential>;
+  sourceRef$!: Observable<Referential>; // TODO : refactor to using Referential as input directly
 }

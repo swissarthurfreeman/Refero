@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Referential } from '../models/referential.model';
-import { Dict } from '../models/record.model';
 import * as jsonRefOfsReeData from '../../../assets/mock-data/REF_OFS_REE_DATA.json'
 import * as jsonRefOfsReeStatut from '../../../assets/mock-data/REF_OFS_REE_STATUT.json'
 import * as jsonRefOfsReeType from '../../../assets/mock-data/REF_OFS_REE_TYPE.json'

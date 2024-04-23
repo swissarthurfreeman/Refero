@@ -28,16 +28,17 @@ export class InjectionEditContainerComponent implements OnInit {
   sourceId: string = '';
   
   // we clearly need a current injection state in the ref-config-edit store
-  // select 
-  SelectSource(sourceId: string) {
+  SelectSource(srcRef: Referential) {
     this.mappings.clear();
-    this.sourceId = sourceId; // also needs to update the form to injection if it's already defined
-    let inj: Injection | undefined = this.is.getInjectionBySource(this.Ref.injections, sourceId);
-    if (inj != undefined) {
-      for(let i=0; i < inj.destColIds.length; i++) {
-        this.AddMappingToFormArray(inj.destColIds[i], inj.srcColIds[i]);
+    this.sourceId = srcRef.id;
+    for(let injection of this.Ref.injections) {
+      if(injection.srcId == srcRef.id) {
+        for(let i=0; i < injection.destColIds.length; i++) {
+          this.AddMappingToFormArray(injection.destColIds[i], injection.srcColIds[i]);
+        }
+        break;
       }
-    }    
+    }
   }
 
   AddMappingToFormArray(destColId?: string, sourceColId?: string) {
@@ -59,24 +60,23 @@ export class InjectionEditContainerComponent implements OnInit {
     let destColIds = [];
     for(let i=0; i < raw['mappings'].length; i++) {
       srcColIds.push(
-        raw['mappings'][i]['SourceCol']
+        raw['mappings'][i]['sourceColId']
       );
       destColIds.push(
-        raw['mappings'][i]['DestCol']
+        raw['mappings'][i]['destColId']
       );
     }
     
     let injection = new Injection();
-    injection.srcId = raw['SourceRef']! as string;
+    injection.srcId = (raw['SourceRef']! as Referential).id;
     injection.ref_id = this.Ref.id;
     injection.srcName = this.Ref.name;
     injection.srcColIds = srcColIds;
     injection.destColIds = destColIds;
 
-    console.log("Injection to Create :", injection);
+    console.log("POST :", injection);
     this.is.postInjection(injection).subscribe((value) => {
-      console.log("Created new Injection : ", value);
-      this.Ref.injections.push(value);    // BUG : we should be re-getting referentials instead 
+      window.location.reload();
     })
   }
 

@@ -10,6 +10,7 @@ import { Entry } from '../../../../shared/models/record.model';
 import { SetInjection } from '../../../../shared/stores/ref-view/ref-view.action';
 import { RecEditState } from '../../../../shared/stores/rec-edit/rec-edit.state';
 import { SetInjectionSourceRef, SetInjectionSourceRefView } from '../../../../shared/stores/rec-edit/rec-edit.action';
+import { EntryService } from '../../../../shared/services/entry.service';
 
 
 @Component({
@@ -20,7 +21,7 @@ import { SetInjectionSourceRef, SetInjectionSourceRefView } from '../../../../sh
 export class RecEditContainerComponent implements OnInit {
   ngOnInit(): void {}
 
-  constructor(public rs: RefService, public is: InjectionService, public store: Store) {}
+  constructor(public rs: RefService, public es: EntryService, public is: InjectionService, public store: Store) {}
 
   @Input() CurrentEntry!: Entry;
   @Input() CurrentRef!: Referential;
@@ -36,6 +37,13 @@ export class RecEditContainerComponent implements OnInit {
         new SetInjectionSourceRefView(SrcRef.views[0]),
         new SetInjection(injection)
       ])
+    })
+  }
+
+  SaveEntry() {
+    this.es.putEntry(this.CurrentEntry).subscribe((value) => {
+      console.log("PUT :", value);
+      window.location.reload();
     })
   }
 }
