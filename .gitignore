@@ -12,6 +12,8 @@ target
 out
 classes
 dist
+mock-data
+/mock-data/
 
 pastebin.json
 

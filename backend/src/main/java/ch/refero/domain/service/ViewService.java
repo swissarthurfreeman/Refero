@@ -1,6 +1,5 @@
 package ch.refero.domain.service;
 
-import java.sql.Ref;
 import java.util.List;
 import java.util.Optional;
 

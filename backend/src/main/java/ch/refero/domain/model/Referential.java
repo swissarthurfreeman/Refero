@@ -3,7 +3,6 @@ package ch.refero.domain.model;
 import java.util.List;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -58,10 +57,16 @@ public class Referential {
 
     @OneToMany(targetEntity = Colfig.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "ref_id")
-    private List<Colfig> columns;
+    public List<Colfig> columns;
 
-    //@ElementCollection
-    //private List<RefView> views;
+    @OneToMany(targetEntity = Injection.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "ref_id")
+    public List<Injection> injections;
+
+    @OneToMany(targetEntity = RefView.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "ref_id")
+    public List<RefView> views;
+
 
     public Referential() {}
 

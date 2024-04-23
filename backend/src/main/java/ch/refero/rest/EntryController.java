@@ -1,5 +1,6 @@
 package ch.refero.rest;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,12 +37,14 @@ public class EntryController {
     private EntryService entryService;
 
     @GetMapping("")
+    @CrossOrigin
     public HttpEntity<List<Entry>> list(@RequestParam(required = false) String ref_id) {
         var entries = entryService.findAll(Optional.ofNullable(ref_id)); // ref_id can be null, will work.
         return new ResponseEntity<>(entries, HttpStatus.OK);
     }
 
     @GetMapping("{id}")
+    @CrossOrigin
     public HttpEntity<Optional<Entry>> get(@PathVariable String id) {
         var entry = entryService.findById(id);
         if(entry.isPresent())
@@ -50,6 +53,7 @@ public class EntryController {
     }
 
     @PostMapping("")
+    @CrossOrigin
     public HttpEntity<Entry> post(@RequestBody @Valid Entry entry) {
         var newEntry = entryService.create(entry);
         return new ResponseEntity<Entry>(newEntry, HttpStatus.OK);

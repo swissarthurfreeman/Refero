@@ -31,6 +31,7 @@ public class Colfig {
     private Referential ref;
 
     @Column(name = "ref_id")
+    @NotBlank(message = "ref_id of column cannot be blank")
     private String ref_id;
 
     public void setRef_id(String ref_id) {
@@ -43,6 +44,12 @@ public class Colfig {
 
     @Column()
     public String name;
+
+    @Column()
+    public boolean required = true;
+
+    @Column()
+    public String fileColName;  // name of corresponding column in original source
     
     @Column
     @NotBlank(message = "ColType has to be one of FK, BK or NONE")
@@ -59,6 +66,11 @@ public class Colfig {
     @Column
     @JsonInclude(Include.NON_NULL)
     public String pointedRefColId;
+
+    @Column
+    @JsonInclude(Include.NON_NULL)
+    public String pointedRefLabel;
+    
 
     @AssertTrue(message = "pointedRef and pointedRefColId are required when colType is FK")
     private boolean isValidFk() {

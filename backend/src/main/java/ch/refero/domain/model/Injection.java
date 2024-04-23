@@ -13,31 +13,40 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-public class RefView {
+public class Injection {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.UUID)
     public String id;
 
-    @Column(unique = true)
-    @NotBlank(message = "Name of view cannot be blank.")
-    public String name;
+    @Column
+    @NotBlank(message = "srcId cannot be blank")
+    public String srcId;
 
+    @Column
+    @NotBlank(message = "srcName cannot be blank")
+    public String srcName;
+    
     @JoinColumn(name = "ref_id", insertable = false, updatable = false)
     @ManyToOne(targetEntity = Referential.class)
     private Referential ref;
 
     @Column(name = "ref_id")
+    @NotBlank(message = "ref_id field cannot be blank!")
     private String ref_id;
 
-    public void setRef_id(String ref_id) { this.ref_id = ref_id; }
-    public String getRef_id() { return ref_id; }
+    public void setRef_id(String ref_id) {
+        this.ref_id = ref_id;
+    }
+
+    public String getRef_id() {
+        return ref_id;
+    }
 
     @ElementCollection
-    @Column
-    public List<String> dispColIds;
-    
+    public List<String> srcColIds;
+
     @ElementCollection
-    @Column
-    public List<String> searchColIds;  
+    public List<String> destColIds;
+
 }

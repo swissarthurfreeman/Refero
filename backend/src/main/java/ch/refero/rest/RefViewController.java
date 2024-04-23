@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,12 +35,14 @@ public class RefViewController {
 
     
     @GetMapping("")
+    @CrossOrigin
     public HttpEntity<List<RefView>> list(@RequestParam(required = false) String ref_id) {
         var views = viewService.findAll(Optional.ofNullable(ref_id));
         return new ResponseEntity<>(views, HttpStatus.OK);
     }
 
     @GetMapping("{id}")
+    @CrossOrigin
     public HttpEntity<Optional<RefView>> get(@PathVariable String id) {
         var col = viewService.findById(id);
         if(col.isPresent())
@@ -48,6 +51,7 @@ public class RefViewController {
     }
 
     @PostMapping("")
+    @CrossOrigin
     public HttpEntity<RefView> post(@RequestBody @Valid RefView view) {
         var viewOpt = viewService.create(view);
         if(viewOpt.isPresent())

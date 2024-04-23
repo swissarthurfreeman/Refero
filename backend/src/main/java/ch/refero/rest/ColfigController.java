@@ -1,6 +1,7 @@
 package ch.refero.rest;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,12 +41,14 @@ public class ColfigController {
     public ColfigService colfigService;
 
     @GetMapping("")
+    @CrossOrigin
     public HttpEntity<List<Colfig>> list(@RequestParam(required = false) String ref_id) {
         var colfigs = colfigService.findAll(Optional.ofNullable(ref_id));
         return new ResponseEntity<>(colfigs, HttpStatus.OK);
     }
 
     @GetMapping("{id}")
+    @CrossOrigin
     public HttpEntity<Optional<Colfig>> get(@PathVariable String id) {
         var colfig = colfigService.findById(id);
         if(colfig.isPresent())
@@ -54,6 +57,7 @@ public class ColfigController {
     }
 
     @PostMapping("")
+    @CrossOrigin
     public ResponseEntity<Colfig> post(@RequestBody @Valid Colfig col) {
         var savedCol = colfigService.save(col);
         if(savedCol.isPresent())

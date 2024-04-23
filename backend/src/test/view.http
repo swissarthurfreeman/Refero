@@ -51,11 +51,21 @@ POST {{url}}/views
 content-type: application/json
 
 {
-    "name": "AWESOME_VIEW",
+    "name": "AWESOME_VIEW2",
     "ref_id": "{{ref_id1}}",
     "dispColIds": ["{{col_id1}}", "{{col_id3}}"],
     "searchColIds": ["{{col_id2}}"]
 }
 
 ###
+GET {{url}}/cols
+
+###
 GET {{url}}/views
+
+###
+GET {{url}}/refs
+
+
+###
+GET {{url}}/entries

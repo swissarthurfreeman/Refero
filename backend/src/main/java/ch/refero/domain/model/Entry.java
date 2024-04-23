@@ -27,7 +27,7 @@ public class Entry {
 
     @Column(name = "ref_id")
     @NotBlank(message = "ref_id field cannot be blank!")
-    private String ref_id;
+    public String ref_id;
 
     public void setRef_id(String ref_id) {
         this.ref_id = ref_id;
@@ -50,4 +50,9 @@ public class Entry {
     @Column(name = "val")           // the value of the map is in the val column of the Coll table. (value is sql reserved)
     @NotEmpty(message = "Record must contain a fields map.")
     public Map<String, String> fields;
+
+    @Override
+    public String toString() {
+        return "{ ref_id: " + ref_id + " , id:" + id + "}"; 
+    }
 }

@@ -52,7 +52,7 @@ GET {{url}}/entries/{{entry_id}}
 content-type: application/json
 
 ###
-GET {{url}}/entries?ref_id={{ref_id1}}
+GET {{url}}/entries?ref_id={{ref_id2}}
 content-type: application/json
 
 

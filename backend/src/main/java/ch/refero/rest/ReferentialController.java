@@ -1,6 +1,7 @@
 package ch.refero.rest;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,12 +39,14 @@ public class ReferentialController {
     private ReferentialService refService;
     
     @GetMapping("")
+    @CrossOrigin
     public HttpEntity<List<Referential>> list() {
         return new ResponseEntity<>(refService.findAll(), HttpStatus.OK);
     }
 
 
     @GetMapping("{id}")
+    @CrossOrigin
     public HttpEntity<Referential> get(@PathVariable String id) {
         var ref = refService.findById(id);
         if(ref.isPresent())
@@ -52,6 +55,7 @@ public class ReferentialController {
     }
 
     @PutMapping("{id}")
+    @CrossOrigin
     public HttpEntity<Referential> put(@PathVariable String id, @RequestBody @Valid Referential ref) {
         var updatedRef = refService.update(id, ref);
         if (updatedRef.isPresent())
@@ -62,6 +66,7 @@ public class ReferentialController {
 
     
     @PostMapping("")
+    @CrossOrigin
     public HttpEntity<Referential> post(@Valid @RequestBody Referential ref) {
         return new ResponseEntity<>(refService.create(ref), HttpStatus.CREATED);
     }
