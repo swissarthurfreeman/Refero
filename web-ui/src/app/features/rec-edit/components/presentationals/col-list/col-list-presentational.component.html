@@ -1,8 +1,8 @@
 <form> 
-    @for (colId of DestRef.headerIds; track $index) {
+    @for (colfig of DestRef.columns; track $index) {
         <mat-form-field class="example-full-width">
-            <mat-label>{{DestRef.header.get(colId)!}}</mat-label>
-            <input matInput value="{{DestRec[colId]}}">
+            <mat-label>{{colfig.name}}</mat-label>
+            <input matInput value="{{DestRec.fields[colfig.id]}}">
         </mat-form-field>
     }
 </form>

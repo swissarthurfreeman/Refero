@@ -2,40 +2,51 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ViewRoutingModule } from './view-routing.module';
-import { ViewComponent } from './components/routables/view.component';
-import { ViewContainerComponent } from './components/containers/view-container.component';
-import { TableComponent } from "./components/presentationals/table/table.component";
-import { SearchComponent } from "./components/presentationals/search/search.component";
-import { ViewEditorComponent } from "./components/presentationals/view-edit/view-editor.component";
-import { MatGridListModule } from '@angular/material/grid-list';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ViewComponent } from './routables/view.component';
+import { ViewContainerComponent } from './containers/view-container.component';
+import { SearchComponent } from './presentationals/search/search.component';
+
 import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule} from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { ViewEditorComponent } from './presentationals/view-edit/view-editor.component';
+import { TableComponent } from './presentationals/table/table.component';
 
 
 @NgModule({
     declarations: [
         ViewComponent,
-        ViewContainerComponent
+        ViewContainerComponent,
+        ViewEditorComponent,
+        SearchComponent,
+        TableComponent
     ],
     exports: [
         ViewContainerComponent,
-        TableComponent
+        TableComponent,
+        SearchComponent,
+        MatInputModule, 
+        ViewEditorComponent
     ],
     imports: [
         CommonModule,
+        MatFormFieldModule,
+        MatInputModule,
         ViewRoutingModule,
-        TableComponent,
-        SearchComponent,
-        ViewEditorComponent,
         MatGridListModule,
         MatButtonModule,
         FormsModule, 
-        MatFormFieldModule, 
-        MatInputModule,
-        MatSelectModule
+        MatSelectModule,
+        MatIconModule,
+        MatTableModule,
+        MatDividerModule,
+        ReactiveFormsModule
     ]
 })
 export class ViewModule { }

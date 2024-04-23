@@ -1,4 +1,6 @@
+import { Referential } from "../../models/referential.model";
+
 export class SelectRefConfigToEdit {
     static readonly type: string = "[RefConfig] Select Ref Config To Edit";  
-    constructor(public RefId: string) {}
+    constructor(public Ref: Referential) {}
 }

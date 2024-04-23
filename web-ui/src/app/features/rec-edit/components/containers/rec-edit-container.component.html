@@ -1,44 +1,43 @@
-<ng-container *ngIf="{
-    destRec: destRec$ | async,
-    destRef: destRef$ | async,
-    srcRef: srcRef$ | async,
-    injection: injection$ | async,
-    currView: currView$ | async 
-} as Context">
-    <div class="d-flex">
-        <div class="p-2 me-auto">
-                <mat-form-field>
-                    <mat-label>Inject Record from :</mat-label> <!-- BUG : getSourceRefsOfInjectionsTowards() is being called multiple times... -->
-                    <mat-select [(value)]="Context.srcRef!.id" (valueChange)="SelectInjection($event)">
-                        @for (injection of Context.destRef!.getInjections(); track $index) {
-                            <mat-option [value]="injection">{{ds.getRefDataBy(injection.srcId).name}}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-        </div>
-        <div class="p-2">
-            <button mat-raised-button color="primary" style="height:4em; width: 6em;">Save</button>
-        </div>
-        <div class="p-2">
-            <button mat-raised-button color="primary" style="height:4em; width: 6em;">Delete</button>
-        </div>
+<p>RecEditContainer</p>
+
+<div class="d-flex">
+    <div class="p-2 me-auto">
+        <mat-form-field>
+            <mat-label>Inject Record from :</mat-label> 
+            <mat-select (valueChange)="SelectInjection($event)">
+                @for (injection of CurrentRef.injections; track $index) {
+                    <mat-option [value]="injection">{{injection.srcName}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
     </div>
-    <hr>
-    <mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
-        <!-- keep mat-grid-tile in container as for some reason in child width/height becomes 0-->
-        <mat-grid-tile colspan="1" [rowspan]="Context.destRef!.headerIds.length">
-            <app-col-list-presentational 
-                [DestRef]="Context.destRef!" [DestRec]="Context.destRec!">
-            </app-col-list-presentational>
-        </mat-grid-tile>
-        <mat-grid-tile colspan="4" [rowspan]="Context.destRef!.headerIds.length">
-            <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
-                <ng-container *ngIf="srcRef$ | async as loadedSrc"> 
-                    @if (loadedSrc.name != '') {
-                        <app-table [Ref]="loadedSrc" [currView]="Context.currView!" [simpleMode]="true"></app-table>
-                    } 
+    <div class="p-2">
+        <button mat-raised-button color="primary" style="height:4em; width: 6em;">Save</button>
+    </div>
+    <div class="p-2">
+        <button mat-raised-button color="primary" style="height:4em; width: 6em;">Delete</button>
+    </div>
+</div>
+<hr>
+<mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
+    <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length">
+        <app-col-list-presentational 
+            [DestRef]="CurrentRef" [DestRec]="CurrentEntry">
+        </app-col-list-presentational>
+    </mat-grid-tile>
+
+    <mat-grid-tile colspan="4" [rowspan]="CurrentRef.columns.length">
+        <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
+            <ng-container *ngIf="SourceRef$ | async as SourceRef">
+                <ng-container *ngIf="SourceRefView$ | async as SourceRefView">
+                    @if (SourceRef.name != '') {
+                        <app-view-editor [isInjectionMode]="true" [Ref]="SourceRef" [View]="SourceRefView"></app-view-editor>
+                        <hr>
+                        <app-search [Ref]="SourceRef" [View]="SourceRefView"></app-search>
+                        <app-table [Ref]="SourceRef" [currView]="SourceRefView" [isInjectionMode]="true" [CurrentEntry]="CurrentEntry"></app-table>
+                    }
                 </ng-container>
-            </div>
-        </mat-grid-tile>
-    </mat-grid-list>
-</ng-container>
+            </ng-container>
+        </div>
+    </mat-grid-tile>
+</mat-grid-list>

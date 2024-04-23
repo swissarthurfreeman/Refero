@@ -10,8 +10,8 @@ export class InjectionService {
 
   constructor(public rs: RefService) {}
 
-  getInjectionBySource(injections: Dict<Injection>, sourceRef: string): Injection | undefined {
-    for(let inj of Object.values(injections)) {
+  getInjectionBySource(injections: Injection[], sourceRef: string): Injection | undefined {
+    for(let inj of injections) {
       if(inj.srcId === sourceRef) {
         return inj;
       }

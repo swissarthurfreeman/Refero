@@ -1,0 +1,66 @@
+
+<!-- Saved View Selection -->
+<div class="d-flex flex-column">
+    <div class="p-2 me-auto">
+        <mat-form-field subscriptSizing="dynamic"> 
+                <mat-select [value]="Ref.views[0].id" (valueChange)="SelectView($event)">
+                    @for (view of Ref.views; track $index) {
+                        <mat-option [value]="view.id">{{view.name}}</mat-option>
+                    }
+                </mat-select>
+            
+        </mat-form-field>
+    </div>
+    
+    @if (!isInjectionMode) {
+        <div class="p-2">
+            <div class="d-flex">
+                <div class="p-2" style="padding-left: 0 !important;">
+                    <mat-form-field style="width:20em" subscriptSizing="dynamic">
+                        <mat-label>Save Current View</mat-label>
+                        <ng-container *ngIf="newViewId">
+                            <input matInput placeholder="Awesome View" [formControl]="newViewId">
+                        </ng-container>
+                    </mat-form-field>
+                </div>
+                <div class="p-2">
+                    <button mat-raised-button color="primary" style="height:4em; width: 6em;" (click)="saveCurrentView(View)">Save</button>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="p-2">
+                <mat-form-field subscriptSizing="dynamic">
+                    <mat-label>Add Search Field</mat-label>
+                    <mat-select [(ngModel)]="searchColIdToAdd">
+                        @for (colfig of Ref.columns; track $index) {
+                            @if (!View.searchColIds.includes(colfig.id)) {
+                                <mat-option [value]="colfig.id">{{colfig.name}}</mat-option>
+                            }
+                        }
+                    </mat-select>
+                </mat-form-field>
+                
+            </div>
+            <div class="p-2">    
+                <button mat-raised-button color="primary" style="height:4em; width: 6em;" (click)="addSearchCol()">Add</button>
+            </div>
+            <div class="p-2">
+                <mat-form-field subscriptSizing="dynamic">
+                    <mat-label>Add Table Column</mat-label>
+                    <mat-select [(ngModel)]="dispColIdToAdd">
+                        @for (colfig of Ref.columns; track $index) {
+                            @if (!View.dispColIds.includes(colfig.id)) { 
+                                <mat-option [value]="colfig.id">{{colfig.name}}</mat-option> 
+                            }
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="p-2">                             
+                <button mat-raised-button color="primary" style="height:4em; width: 6em; margin-right: auto;" (click)="addDispCol()">Add</button>
+            </div>
+            
+        </div>
+    }
+</div>

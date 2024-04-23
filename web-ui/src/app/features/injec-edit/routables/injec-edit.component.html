@@ -1,9 +1,0 @@
-<ng-container *ngIf="ref$ | async as loadedRef; else elseBlock">
-    <p>Loaded !</p>
-    <app-injection-edit-container [Ref]="loadedRef"></app-injection-edit-container>
-</ng-container>
-
-<ng-template #elseBlock>
-    <p>Loading...</p>
-</ng-template>
-  

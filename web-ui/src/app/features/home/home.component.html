@@ -40,9 +40,14 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let ref of this.ds.getRefs()" class="table-light" (click)="selectReferential(ref.id)">
-        <th scope="row">{{ref.name}}</th>
-        <td>{{ref.description}}</td>
-    </tr>
+    <ng-container *ngIf="refs$ | async as Referentials;">
+      @for (ref of Referentials; track $index) {
+        <tr class="table-light" (click)="viewReferential(ref.id)">
+          <th scope="row">{{ref.name}}</th>
+          <td>{{ref.description}}</td>
+        </tr>
+      }
+    </ng-container>
   </tbody>
 </table>
+

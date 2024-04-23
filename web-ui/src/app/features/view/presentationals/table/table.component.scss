@@ -1,0 +1,5 @@
+table {     // this+wrapping the table in a div with 100% maxWidth is required to get the horizontal scrollbar...
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}

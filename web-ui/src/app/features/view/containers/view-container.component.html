@@ -1,0 +1,43 @@
+<ng-container *ngIf="currRef$ | async as CurrRef">    
+    <h1>{{CurrRef.name}}</h1>
+</ng-container>
+<mat-grid-list cols="3" rowHeight="19em">
+    <mat-grid-tile colspan="2">
+        <ng-container *ngIf="currRef$ | async as CurrRef">
+            <ng-container *ngIf="currView$ | async as CurrView">
+                <app-view-editor [Ref]="CurrRef" [View]="CurrView" [isInjectionMode]="false"></app-view-editor>
+            </ng-container>
+        </ng-container>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1"> 
+        <div class="d-flex align-items-end flex-column">
+            <div class="p-2">
+                <ng-container *ngIf="currRef$ | async as CurrRef">
+                    <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(CurrRef.id)">
+                        Configurer
+                    </button>
+                </ng-container>
+            </div>
+            <div class="p-2">
+                <button mat-raised-button color="primary" style="width: 14em;">New Record</button>
+            </div>
+            <div class="p-2">
+                <button mat-raised-button color="primary" style="width: 14em;">Export</button>
+            </div>
+            <div class="p-2">
+                <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;">ImportFile</button>
+            </div>
+        </div>
+    </mat-grid-tile>  
+</mat-grid-list>
+<hr>
+<ng-container *ngIf="currRef$ | async as CurrRef">
+    <ng-container *ngIf="currView$ | async as CurrView">
+        <app-search [Ref]="CurrRef" [View]="CurrView"></app-search>
+    </ng-container>
+</ng-container>
+<ng-container *ngIf="currRef$ | async as CurrRef">
+    <ng-container *ngIf="currView$ | async as CurrView">
+        <app-table [Ref]="CurrRef" [currView]="CurrView" [isInjectionMode]="false"></app-table>
+    </ng-container>
+</ng-container>

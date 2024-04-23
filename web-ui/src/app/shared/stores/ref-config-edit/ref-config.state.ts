@@ -7,7 +7,7 @@ import { Router } from "@angular/router";
 import { SelectRefConfigToEdit } from "./ref-config.action";
 
 export class RefConfigStateModel {
-    ref: Referential = new Referential("", "", [], []);
+    ref!: Referential;
 }
 
 @State<RefConfigStateModel>({
@@ -18,15 +18,9 @@ export class RefConfigState {
     constructor(public rs: RefService, public store: Store, public router: Router) {}
     @Action(SelectRefConfigToEdit)
     selectRefConfigToEdit(ctx: StateContext<RefConfigStateModel>, action: SelectRefConfigToEdit) {
-        if(action.RefId == '') {    // then we're creating a new ref
-            ctx.patchState({
-                ref: new Referential("", "", [], [])
-            })
-        } else {
-            ctx.patchState({
-                ref: this.rs.getRefDataBy(action.RefId)
-            })
-        }
+        ctx.patchState({
+            ref: action.Ref
+        })
     }
 
     @Selector()

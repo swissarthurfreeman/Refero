@@ -1,33 +1,25 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { Referential } from '../../../../shared/models/referential.model';
-import { SetDestRec, SetDestRecId, SetDestRef, SetInjection, SetSrcRef } from '../../../../shared/stores/rec-edit/rec-edit.action';
-import { RefViewState } from '../../../../shared/stores/ref-view/ref-view.state';
 import { Observable } from 'rxjs';
-import { Injection } from '../../../../shared/models/injection.model';
-import { SetInjectionMode } from '../../../../shared/stores/ref-view/ref-view.action';
+import { RefService } from '../../../../shared/services/ref.service';
+import { Referential } from '../../../../shared/models/referential.model';
+import { EntryService } from '../../../../shared/services/entry.service';
+import { Entry } from '../../../../shared/models/record.model';
 
 @Component({
   selector: 'app-rec-edit-routable',
   templateUrl: './rec-edit-routable.component.html'
 })
 export class RecEditRoutableComponent implements OnInit {
-  constructor(public store: Store) {}
+  constructor(public store: Store, public rs: RefService, public es: EntryService) {}
   @Input() RecId!: string;
   @Input() RefId!: string;
 
-  @Select(RefViewState.getCurrentRef) currRef$!: Observable<Referential>;
+  CurrentRef$!: Observable<Referential>;
+  CurrentEntry$!: Observable<Entry>;
 
   ngOnInit(): void {
-    this.currRef$.subscribe(currRef => {
-      this.store.dispatch([
-        new SetDestRef(currRef),
-        new SetDestRecId(this.RecId),
-        new SetDestRec(currRef.getRecordById(this.RecId)),
-        new SetInjectionMode(true),
-        new SetInjection(new Injection("", [], "", [])),
-        new SetSrcRef(new Referential("", "", [], []))
-      ]);
-    })
+    this.CurrentRef$ = this.rs.getReferentialBy(this.RefId);
+    this.CurrentEntry$ = this.es.getEntryBy(this.RecId);
   }
 }

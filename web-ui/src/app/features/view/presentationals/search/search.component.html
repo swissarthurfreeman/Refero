@@ -1,0 +1,21 @@
+<!-- Render Search Field -->
+<div class="row">
+    <div class="col">
+        @for (colfig of Ref.columns; track $index) {
+            @if (View.searchColIds.includes(colfig.id)) {
+            <div class="row">
+                <div class="input-group mb-3">
+                    @if (!isInjectionMode) {
+                        <button mat-mini-fab color="primary" (click)="rmSearchColId(colfig.id)">
+                            <mat-icon>remove</mat-icon>
+                        </button>
+                    }
+                    <span class="input-group-text">{{colfig.name}}</span>
+                    <input type="text" class="form-control">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                </div>
+            </div>
+            }
+        }
+    </div>
+</div>

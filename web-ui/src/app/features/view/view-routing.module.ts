@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ViewComponent } from './components/routables/view.component';
+import { ViewComponent } from './routables/view.component';
 
 const routes: Routes = [
   { path: ':RefId', component: ViewComponent }

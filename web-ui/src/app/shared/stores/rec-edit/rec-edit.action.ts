@@ -1,28 +1,12 @@
-import { Injection } from "../../models/injection.model";
 import { Referential } from "../../models/referential.model";
-import { Record } from "../../models/record.model";
+import { View } from "../../models/view.model";
 
-export class SetDestRecId {
-    static readonly type: string = "[RecEdit] Set Destination Record Id to Inject to";
-    constructor(public record: string) {}
+export class SetInjectionSourceRef {
+    static readonly type: string = "[RecConfig] Select Injection Source Ref";  
+    constructor(public Ref: Referential) {}
 }
 
-export class SetDestRec {
-    static readonly type: string = "[RecEdit] Set Destination Record to Inject to";
-    constructor(public record: Record) {}
-}
-
-export class SetDestRef {
-    static readonly type: string = "[RecEdit] Set Destination Referential"; // to be able to modify it's lines
-    constructor(public record: Referential) {}
-}
-
-export class SetSrcRef {
-    static readonly type: string = "[RecEdit] Set Source Referential of Injection";
-    constructor(public ref: Referential) {}
-}
-
-export class SetInjection {
-    static readonly type: string = "[RecEdit] Set Injection to Apply";
-    constructor(public injection: Injection) {}
+export class SetInjectionSourceRefView {
+    static readonly type: string = "[RecConfig] Select Injection Source Ref View";  
+    constructor(public View: View) {}
 }

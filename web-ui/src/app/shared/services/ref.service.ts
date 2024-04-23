@@ -5,45 +5,34 @@ import * as jsonRefOfsReeData from '../../../assets/mock-data/REF_OFS_REE_DATA.j
 import * as jsonRefOfsReeStatut from '../../../assets/mock-data/REF_OFS_REE_STATUT.json'
 import * as jsonRefOfsReeType from '../../../assets/mock-data/REF_OFS_REE_TYPE.json'
 import { ViewService } from './view.service';
+import { HttpClient } from "@angular/common/http";
+import { Observable } from 'rxjs';
 
+/**
+ * Referential management service. This class is for the time being purely
+ * mocking API endpoints. 
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class RefService {
+  getRecordById(RefId: string, RecId: string): import("../models/record.model").Record {
+    throw new Error('Method not implemented.');
+  }
+  constructor(private http: HttpClient) {}
 
-  constructor(public vs: ViewService) {
-    let refData = new Referential("REF_OFS_REE_DATA", "Entrées du REE des Entitées de l'Université de Genève", 
-      (jsonRefOfsReeData as any).default, Object.keys ( (jsonRefOfsReeData as any).default[0]), "4bda5c19-0155-4a27-905c-bb84b301ac37");
-
-    vs.createDefaultViewFor(refData);    
-
-    let refStat = new Referential("REF_OFS_REE_STATUT", "Définitions des status d'une entité REE de l'OFS", 
-      (jsonRefOfsReeStatut as any).default, Object.keys ( (jsonRefOfsReeStatut as any).default[0]));
-
-    vs.createDefaultViewFor(refStat);
-
-    let refType = new Referential("REF_OFS_REE_TYPE", "Définitions des types d'entité REE de l'OFS", 
-      (jsonRefOfsReeType as any).default, Object.keys ( (jsonRefOfsReeType as any).default[0]));
-
-    vs.createDefaultViewFor(refType);
-
-    this._refData = new Map<string, Referential>();
-    this._refData.set(refData.id, refData);
-    this._refData.set(refStat.id, refStat);
-    this._refData.set(refType.id, refType);
+  getReferentialBy(refId: string): Observable<Referential> {
+    return this.http.get<Referential>(`http://localhost:8080/refs/${refId}`);
   }
 
-  private _refData: Dict<Referential>;
-
-  getRefDataBy(refId: string): Referential {
-    return this._refData.get(refId)!;
+  getReferentials(): Observable<Referential[]> {
+    return this.http.get<Referential[]>(`http://localhost:8080/refs`);
   }
 
-  getRefs(): Array<Referential> {
-    return Array.from(this._refData.values());
-  }
-
-  createRef(newRef: Referential) {
-    this._refData.set(newRef.id, newRef);
+  postReferential(referential: Referential): Observable<Referential> {
+    return this.http.post<Referential>(`http://localhost:8080/refs`, {
+      "name": referential.name,
+      "description": referential.description
+    })
   }
 }

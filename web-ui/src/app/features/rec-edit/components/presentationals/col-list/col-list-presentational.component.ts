@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Referential } from '../../../../../shared/models/referential.model';
-import { Record } from "../../../../../shared/models/record.model"
+import { Entry } from '../../../../../shared/models/record.model';
 
 @Component({
   selector: 'app-col-list-presentational',
@@ -11,5 +11,5 @@ export class ColListPresentationalComponent {
   ngOnInit(): void {
   }
   @Input() DestRef!: Referential;   // why do we need the DestRef ? Can't we just modify DestRec by reference ? 
-  @Input() DestRec!: Record;
+  @Input() DestRec!: Entry;
 }

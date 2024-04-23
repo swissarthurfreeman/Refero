@@ -1,0 +1,82 @@
+<div [formGroup]="$any(FormControl)">
+    <button (click)="DebugCol()"> </button>
+    <div class="d-flex flex-row">
+        <div class="p-1">
+            <mat-form-field subscriptSizing="dynamic">
+                <mat-label>File Col.</mat-label>
+                <input matInput formControlName="fileColName">
+            </mat-form-field>
+        </div>
+        <div class="p-1">
+            <mat-form-field subscriptSizing="dynamic">
+                <mat-label>Ref Col.</mat-label>
+                <input matInput formControlName="name">
+            </mat-form-field>
+        </div>
+        <div class="p-1">
+            <mat-form-field subscriptSizing="dynamic">
+                <mat-label>Date Format</mat-label>
+                <input matInput formControlName="dateFormat">
+            </mat-form-field> 
+        </div>
+        <div class="p-1">
+            <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
+                <mat-label>Required</mat-label>
+                <mat-select formControlName="required">
+                    <mat-option [value]="true">Yes</mat-option>
+                    <mat-option [value]="false">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="p-1">
+            <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
+                <mat-label>Column Type</mat-label>
+                <mat-select formControlName="colType" (valueChange)="SelectColType($event)">
+                    <mat-option value="NONE">NONE</mat-option>
+                    <mat-option value="FK">FK</mat-option>
+                    <mat-option value="BK">BK</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="d-flex flex-row">    
+        @if (FormControl.get("colType")!.value=='FK') {
+            <div class="p-1">
+                <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
+                    <mat-label>Pointed Ref.</mat-label> <!-- retrieve all needed refs via async subscription -->
+                    <mat-select formControlName="pointedRefId" (valueChange)="SelectPointedRefId($event)">
+                        <ng-container *ngIf="refs$ | async as Refs">
+                            @for (ref of Refs; track $index) {
+                                <mat-option [value]="ref.id">{{ ref.name }}</mat-option>
+                            }
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="p-1">
+                <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
+                    <mat-label>Pointed Col.</mat-label>
+                    <mat-select formControlName="pointedRefColId">
+                        <ng-container *ngIf="pointedRef$ | async as PointedRef">
+                            @for (colfig of PointedRef.columns; track $index) {
+                                <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+                            }
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="p-1">
+                <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
+                    <mat-label>Label Col.</mat-label>
+                    <mat-select formControlName="pointedRefLabel">
+                        <ng-container *ngIf="pointedRef$ | async as PointedRef">
+                            @for (colfig of PointedRef.columns; track $index) {
+                                <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+                            }
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        }
+    </div>
+</div>

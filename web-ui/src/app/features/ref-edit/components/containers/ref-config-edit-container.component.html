@@ -1,0 +1,73 @@
+<div class="add-columns-form" [formGroup]="RefConfigForm">
+    <div class="d-flex">
+        <div class="p-2 me-auto">
+            <div class="input-group mb-3">
+                <input #uploadFile (change)="upload($event)" type='file' class="form-control">
+            </div> 
+        </div>
+        <div class="p-2">
+            <button mat-raised-button color="primary" (click)="EditInjection()" >Injection Editor</button>
+        </div>
+        <div class="p-2" (click)="CreateReferential()">
+            <button mat-raised-button color="primary">Create</button>
+        </div>
+    </div>
+    <div class="d-flex">
+        <div class="p-2" style="width: 30%;">
+            <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
+                <mat-label>Ref. Name</mat-label>
+                <input matInput formControlName="name" [value]="Ref.name">
+            </mat-form-field>
+        </div>
+        <div class="p-2 flex-grow-1">
+            <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
+                <mat-label>Ref. Description.</mat-label>
+                <input matInput formControlName="description">
+            </mat-form-field>
+        </div>
+    </div>
+    <hr>
+    <ng-container formArrayName="columns">
+        @for (colfigForm of columns.controls; track $index) {
+            <div class="d-flex border rounded m-2">
+                <div class="p-2">
+                    <mat-icon class="delete-btn" (click)="deleteColumn($index)">delete_forever</mat-icon>
+                </div>
+                <div class="p-2">
+                    <!-- render column configuration fields -->
+                    <app-col-config-presentational [FormControl]="$any(colfigForm)"></app-col-config-presentational>
+                </div>
+            </div>
+        }
+    </ng-container>
+    <button mat-mini-fab (click)="AddColToFormArray()">
+        <mat-icon class="add-course-btn">add</mat-icon>
+    </button>
+    <button (click)="Debug()">Debug</button>
+</div>
+
+<!-- TODO : make sure condition checks that this is indeed a new referential -->
+<!-- TODO : provide a scrollbar again -->
+@if (Ref.id == null) {
+    @if(Ref.columns.length > 0) {
+        <div class="col">
+            <!-- TODO : move to simple table view (re-using this component is way too much complexity) -->
+            <div style="max-width:100%">
+                @if (records.length > 0) {
+                <table mat-table [dataSource]="records"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
+                    @for (colfig of Ref.columns; track $index) {
+
+                        <ng-container [matColumnDef]="colfig.fileColName">
+                            <th mat-header-cell *matHeaderCellDef> {{colfig.name}} </th> <!-- Render column name -->
+                            <!-- Define the header string -->
+                            <td mat-cell *matCellDef="let line"> {{ line[colfig.fileColName] }} </td> <!-- Define the data to display for each line -->
+                        </ng-container>
+                    }
+                    <tr mat-header-row *matHeaderRowDef="getDispFileColNames()"></tr>
+                    <tr mat-row *matRowDef="let myRowData; columns: getDispFileColNames()"></tr>
+                </table>
+                }
+            </div>
+        </div>
+    }
+}

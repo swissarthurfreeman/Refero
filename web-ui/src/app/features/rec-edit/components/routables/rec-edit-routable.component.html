@@ -1,1 +1,5 @@
-<app-rec-edit-container></app-rec-edit-container>
+<ng-container *ngIf="CurrentEntry$ | async as CurrentEntry">
+    <ng-container *ngIf="CurrentRef$ | async as CurrentRef">
+        <app-rec-edit-container [CurrentRef]="CurrentRef" [CurrentEntry]="CurrentEntry"></app-rec-edit-container>
+    </ng-container>
+</ng-container>

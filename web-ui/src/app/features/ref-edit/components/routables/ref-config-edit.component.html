@@ -1,0 +1,8 @@
+<p>Ref-Config-Edit Routable</p>
+<ng-container *ngIf="ref$ | async as Ref; else elseBlock">
+    <app-ref-config-edit-container [Ref]="Ref"></app-ref-config-edit-container>
+</ng-container>
+
+<ng-template #elseBlock>
+    <p>Loading...</p>
+</ng-template>

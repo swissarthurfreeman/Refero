@@ -8,12 +8,11 @@ import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { AppState } from './shared/stores/app.state';
-import { NavbarComponent } from "./features/navbar/navbar.component";
 import { RefViewState } from './shared/stores/ref-view/ref-view.state';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { ViewComponent } from './features/view/components/routables/view.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { RefConfigState } from './shared/stores/ref-config-edit/ref-config.state';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { RecEditState } from './shared/stores/rec-edit/rec-edit.state';
 
 @NgModule({
@@ -22,8 +21,9 @@ import { RecEditState } from './shared/stores/rec-edit/rec-edit.state';
     ],
     providers: [
         provideClientHydration(),
+        provideHttpClient(withFetch()),
         provideRouter([
-            {component: ViewComponent, path: 'view'}    // makes @Input() work on ViewComponent...
+        //    {component: ViewComponent, path: 'view'}    // makes @Input() work on ViewComponent...
         ],
         withComponentInputBinding()),
         provideAnimationsAsync()
@@ -36,10 +36,9 @@ import { RecEditState } from './shared/stores/rec-edit/rec-edit.state';
         NgxsModule.forRoot([
             AppState,
             RefViewState,
-            RefConfigState,
-            RecEditState
+            RecEditState,
+            RefConfigState
         ]),
-        NavbarComponent,
         NgxsLoggerPluginModule,
         NgxsReduxDevtoolsPluginModule.forRoot()
     ]

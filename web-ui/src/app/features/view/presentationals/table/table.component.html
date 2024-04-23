@@ -1,0 +1,31 @@
+<div class="col">
+    <div style="max-width:100%">
+        <ng-container *ngIf="entries$ | async as Records">
+            <table mat-table [dataSource]="Records"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
+                @for (colfig of Ref.columns; track $index) {
+                    <ng-container [matColumnDef]="colfig.id">
+                        <th mat-header-cell *matHeaderCellDef> {{colfig.name}}    <!-- Render column name -->
+                            @if (!this.isInjectionMode) {
+                            <button mat-mini-fab color="primary" (click)="rmDispColId(colfig.id)">
+                                <mat-icon>remove</mat-icon>
+                            </button>
+                            }
+                        </th> <!-- Define the header string -->
+                        <td mat-cell *matCellDef="let line"> {{ line[colfig.id] }} </td> <!-- Define the data to display for each line -->
+                    </ng-container>
+                }
+                <tr mat-header-row *matHeaderRowDef="currView.dispColIds"></tr>
+
+                @if (!this.isInjectionMode) {
+                    <tr mat-row *matRowDef="let myRowData; columns: currView.dispColIds" (click)="viewEntry(myRowData.id)"></tr>
+                }
+
+                @if (this.isInjectionMode) {
+                    <ng-container *ngIf="Injection$ | async as Inj">
+                        <tr mat-row *matRowDef="let myRowData; columns: currView.dispColIds" (click)="applyInjection(myRowData, Inj)"></tr>   
+                    </ng-container>
+                }
+            </table>
+        </ng-container>
+    </div>
+</div>

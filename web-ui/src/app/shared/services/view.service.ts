@@ -3,36 +3,28 @@ import { Referential } from '../models/referential.model';
 import { Dict } from '../models/record.model';
 import { v4 as uuidv4 } from 'uuid';
 import { View } from '../models/view.model';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ViewService {
-  constructor() {}
+  constructor(public http: HttpClient) {}
 
-  private _views: Dict<View> = new Map<string, View>();
-
-  createDefaultViewFor(ref: Referential) {
-    let view = new View("DEFAULT_VIEW", ref);
-    ref.views.set(view.id, view);
-    this._views.set(view.id, view);
+  getViewsOf(refId: string): Observable<View[]> {
+    return this.http.get<View[]>(`http://localhost:8080/views?ref_id=${refId}`);
   }
 
-  getViewById(viewId: string): View | undefined {
-    return this._views.get(viewId);
+  getView(viewId: string): Observable<View> {
+    return this.http.get<View>(`http://localhost:8080/views/${viewId}`);
   }
-
-  getDefaultViewOfRef(refId: string): View | undefined {
-    for(let view of this._views.values()) {
-      if (view.name === "DEFAULT_VIEW" && view.refId === refId) {
-        return view;
-      }
-    }
-    return undefined;
+  postView(view: View): Observable<View> {
+    return this.http.post<View>(`http://localhost:8080/views`, {
+      name: view.name,
+      dispColIds: view.dispColIds,
+      searchColIds: view.searchColIds,
+      ref_id: view.ref_id
+    })
   }
-
-  registerView(view: View) {
-    this._views.set(view.id, view); 
-  }
-
 }

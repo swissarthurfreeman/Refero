@@ -1,86 +1,45 @@
-import { State, Action, StateContext, Store, Selector } from "@ngxs/store";
+import { Action, Selector, State, StateContext, Store } from "@ngxs/store";
 import { StateEnum } from "../../enums/state.enum";
 import { Referential } from "../../models/referential.model";
-import { Record } from "../../models/record.model"
 import { Injectable } from "@angular/core";
 import { RefService } from "../../services/ref.service";
 import { Router } from "@angular/router";
-import { Injection } from "../../models/injection.model";
-import { SetDestRec, SetDestRecId, SetDestRef, SetInjection, SetSrcRef } from "./rec-edit.action";
+import { SetInjectionSourceRef, SetInjectionSourceRefView } from "./rec-edit.action";
+import { View } from "../../models/view.model";
 
-export class RefEditStateModel {
-    DestRecId: string = '';
-    DestRec: Record = {};
-    SrcRef: Referential = new Referential("", "", [], []);
-    DestRef: Referential = new Referential("", "", [], []);
-    Injection: Injection = new Injection("", [], "", []);
+export class RecEditStateModel {
+    SourceRef!: Referential;
+    SourceRefView!: View;
 }
 
-@State<RefEditStateModel>({
+@State<RecEditStateModel>({
     name: StateEnum.rec_edit
 })
 @Injectable()
-export class RecEditState { // note that for the action to be active it has to be loaded via NgxsModule.forRoot/forFeature                     
-    constructor(public ds: RefService, public store: Store, public router: Router) {}
+export class RecEditState {                       
+    constructor(public rs: RefService, public store: Store, public router: Router) {}
     
-    @Action(SetDestRecId)
-    setDestRecId(ctx: StateContext<RefEditStateModel>, action: SetDestRecId) {
+    @Action(SetInjectionSourceRef)
+    setInjectionSourceReferential(ctx: StateContext<RecEditStateModel>, action: SetInjectionSourceRef) {
         ctx.patchState({
-            DestRecId: action.record
+            SourceRef: action.Ref
         })
     }
 
-
-    @Action(SetDestRec)
-    setDestRec(ctx: StateContext<RefEditStateModel>, action: SetDestRec) {
+    @Action(SetInjectionSourceRefView)
+    selectRefConfigToEdit(ctx: StateContext<RecEditStateModel>, action: SetInjectionSourceRefView) {
         ctx.patchState({
-            DestRec: action.record
-        })
-    }
-
-    @Action(SetInjection) 
-    setInjection(ctx: StateContext<RefEditStateModel>, action: SetInjection) {
-        ctx.patchState({
-            Injection: action.injection
-        })
-    }
-
-    @Action(SetSrcRef)
-    setSrcRef(ctx: StateContext<RefEditStateModel>, action: SetSrcRef) {
-        ctx.patchState({
-            SrcRef: action.ref
-        })
-    }
-
-    @Action(SetDestRef)
-    setDestRef(ctx: StateContext<RefEditStateModel>, action: SetDestRef) {
-        ctx.patchState({
-            DestRef: action.record
+            SourceRefView: action.View
         })
     }
 
     @Selector()
-    static getDestRecId(state: RefEditStateModel) {
-        return state.DestRecId;
+    static getInjectionSourceRef(state: RecEditStateModel) {
+        return state.SourceRef;
     }
 
     @Selector()
-    static getInjection(state: RefEditStateModel) {
-        return state.Injection;
-    }
-
-    @Selector()
-    static getSrcRef(state: RefEditStateModel) {
-        return state.SrcRef;
-    }
-
-    @Selector()
-    static getDestRef(state: RefEditStateModel) {
-        return state.DestRef;
-    }
-
-    @Selector()
-    static getDestRec(state: RefEditStateModel) {
-        return state.DestRec;
+    static getInjectionSourceRefView(state: RecEditStateModel) {
+        return state.SourceRefView;
     }
 }
