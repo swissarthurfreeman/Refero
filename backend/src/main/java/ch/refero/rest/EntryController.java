@@ -5,11 +5,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import ch.refero.domain.model.Entry;
 import ch.refero.domain.service.EntryService;
@@ -57,6 +59,16 @@ public class EntryController {
     public HttpEntity<Entry> post(@RequestBody @Valid Entry entry) {
         var newEntry = entryService.create(entry);
         return new ResponseEntity<Entry>(newEntry, HttpStatus.OK);
+    }
+
+
+    @PutMapping("{id}")
+    @CrossOrigin
+    public HttpEntity<Entry> put(@PathVariable String id, @RequestBody @Valid Entry entry) {
+        var updatedEntry = entryService.update(entry.id, entry);
+        logger.info("PUT :", entry.id, entry.fields);
+
+        return new ResponseEntity<Entry>(updatedEntry, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

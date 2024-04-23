@@ -1,8 +1,11 @@
+@url = http://localhost:8080
+
 ### 
 # @name getFirstRef
-GET http://localhost:8080/refs HTTP/1.1
+GET {{url}}/refs HTTP/1.1
 content-type: application/json
 
 @firstRefId = {{getFirstRef.response.body.0.id}}
 
-
+###
+GET {{url}}/injections?ref_id={{firstRefId}}

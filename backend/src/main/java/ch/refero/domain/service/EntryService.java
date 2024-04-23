@@ -39,7 +39,7 @@ public class EntryService {
         return entryRepo.save(entry);
     }
 
-    public Optional<Entry> update(String id, Entry entry) {
-        return null;
+    public Entry update(String id, Entry entry) {
+        return this.entryRepo.save(entry);
     }
 }
