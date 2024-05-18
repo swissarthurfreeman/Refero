@@ -49,6 +49,10 @@ export class RecEditContainerComponent implements OnInit {
   }
   
   ngOnInit(): void {
+    this.EntryForm = this.fb.group({
+      keypairs: this.fb.array([])
+    });
+    
     for(let colfig of this.CurrentRef.columns) {
       const mapForm = this.fb.group({
         colId: [colfig.id],

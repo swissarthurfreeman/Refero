@@ -9,6 +9,7 @@ import { View } from '../../../../shared/models/view.model';
 import { EntryService } from '../../../../shared/services/entry.service';
 import { Entry, Record } from '../../../../shared/models/record.model';
 import { RefViewState } from '../../../../shared/stores/ref-view/ref-view.state';
+import { FormArray } from '@angular/forms';
 
 
 @Component({
@@ -21,9 +22,6 @@ export class TableComponent implements OnInit {
   @Input() Ref!: Referential;
   @Input() currView!: View;
 
-  @Input() CurrentEntry!: Entry;  // optional for injection, used if simple mode is on. 
-  @Select(RefViewState.getInjection) Injection$!: Observable<Injection>;
-  
   constructor(
     private router: Router, 
     public rs: RefService,
@@ -52,10 +50,23 @@ export class TableComponent implements OnInit {
   viewEntry(recId: string) {
     this.router.navigate([`entry/${this.Ref.id}/${recId}`]);
   }
+
+  @Input() EntryForm!: FormArray;
+  @Input() CurrentEntry!: Entry;  // optional for injection, used if simple mode is on. 
+  @Select(RefViewState.getInjection) Injection$!: Observable<Injection>;
   
-  applyInjection(srcRec: Record, Injection: Injection) {
-    for(let i=0; i < Injection.destColIds.length; i++) {
-      this.CurrentEntry.fields[Injection.destColIds[i]] = srcRec[Injection.srcColIds[i]];
+  applyInjection(srcRec: Record, Injection: Injection) {        // TODO : this code can be made more readable no ? 
+    for(let control of this.EntryForm.controls) {
+      let keypair = control.getRawValue();
+      for(let i=0; i < Injection.destColIds.length; i++) {
+        console.log(keypair['colId'], Injection.destColIds[i])
+        if (keypair['colId'] === Injection.destColIds[i]) {         // TODO : update the corresponding FormArray here...
+          console.log("Inject =", srcRec[Injection.srcColIds[i]]);
+          
+          control.setValue({colId: Injection.destColIds[i], value: srcRec[Injection.srcColIds[i]]})
+          //this.CurrentEntry.fields[Injection.destColIds[i]] = srcRec[Injection.srcColIds[i]];
+        }
+      }
     }
   } 
 
