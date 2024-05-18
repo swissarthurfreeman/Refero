@@ -1,4 +1,4 @@
-<ng-container *ngIf="currRef$ | async as CurrRef">    
+<ng-container *ngIf="currRef$ | async as CurrRef">    <!-- TODO : clean this up -->
     <h1>{{CurrRef.name}}</h1>
 </ng-container>
 <mat-grid-list cols="3" rowHeight="19em">
@@ -9,25 +9,25 @@
             </ng-container>
         </ng-container>
     </mat-grid-tile>
-    <mat-grid-tile colspan="1"> 
-        <div class="d-flex align-items-end flex-column">
-            <div class="p-2">
-                <ng-container *ngIf="currRef$ | async as CurrRef">
+    <mat-grid-tile colspan="1">
+        <ng-container *ngIf="currRef$ | async as CurrRef"> 
+            <div class="d-flex align-items-end flex-column">
+                <div class="p-2">
                     <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(CurrRef.id)">
                         Configurer
                     </button>
-                </ng-container>
+                </div>
+                <div class="p-2">
+                    <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToNewRecord(CurrRef.id)">New Record</button>
+                </div>
+                <div class="p-2">
+                    <button mat-raised-button color="primary" style="width: 14em;">Export</button>
+                </div>
+                <div class="p-2">
+                    <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;">ImportFile</button>
+                </div>
             </div>
-            <div class="p-2">
-                <button mat-raised-button color="primary" style="width: 14em;">New Record</button>
-            </div>
-            <div class="p-2">
-                <button mat-raised-button color="primary" style="width: 14em;">Export</button>
-            </div>
-            <div class="p-2">
-                <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;">ImportFile</button>
-            </div>
-        </div>
+        </ng-container>
     </mat-grid-tile>  
 </mat-grid-list>
 <hr>

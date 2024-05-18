@@ -21,9 +21,13 @@
 <hr>
 <mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
     <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length">
-        <app-col-list-presentational 
-            [DestRef]="CurrentRef" [DestRec]="CurrentEntry">
-        </app-col-list-presentational>
+        <div [formGroup]="EntryForm">
+            <ng-container formArrayName="keypairs">
+                @for (mapForm of keypairs.controls; track $index) {
+                    <app-key-value-presentational [colName]="getColNameOf(mapForm.getRawValue()['colId'])" [FormControl]="$any(mapForm)"></app-key-value-presentational>
+                }
+            </ng-container>
+        </div>
     </mat-grid-tile>
 
     <mat-grid-tile colspan="4" [rowspan]="CurrentRef.columns.length">

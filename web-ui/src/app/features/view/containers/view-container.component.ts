@@ -33,4 +33,8 @@ export class ViewContainerComponent implements OnInit {
   consultationToEditView(refId: string) {
     this.router.navigate(['config', refId]);
   }
+
+  consultationToNewRecord(refId: string) {
+    this.router.navigate(['entry', refId, '']);
+  }
 }

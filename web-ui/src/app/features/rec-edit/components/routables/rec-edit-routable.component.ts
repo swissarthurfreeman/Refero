@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { RefService } from '../../../../shared/services/ref.service';
 import { Referential } from '../../../../shared/models/referential.model';
 import { EntryService } from '../../../../shared/services/entry.service';
-import { Entry } from '../../../../shared/models/record.model';
+import { Entry, Record } from '../../../../shared/models/record.model';
+import { Colfig } from '../../../../shared/models/Colfig.model';
 
 @Component({
   selector: 'app-rec-edit-routable',
@@ -20,6 +21,26 @@ export class RecEditRoutableComponent implements OnInit {
 
   ngOnInit(): void {
     this.CurrentRef$ = this.rs.getReferentialBy(this.RefId);
-    this.CurrentEntry$ = this.es.getEntryBy(this.RecId);
+    if(this.RecId === '') {
+      console.log("RecId is empty, new Rec time");
+      this.CurrentEntry$ = new Observable<Entry>((sub) => {
+        let e = new Entry();
+        e.ref_id = this.RefId;
+        this.CurrentRef$.subscribe((ref) => {
+          e.fields = this.getEmptyRecordFromColfigs(ref.columns);
+          sub.next(e);
+        })
+      })
+    } else {
+      this.CurrentEntry$ = this.es.getEntryBy(this.RecId);
+    }
+  }
+
+  getEmptyRecordFromColfigs(cols: Colfig[]): Record {
+    let rec: Record = {};
+    for(let col of cols) {
+      rec[col.id] = '';
+    }
+    return rec;
   }
 }

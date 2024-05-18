@@ -11,6 +11,8 @@ import { SetInjection } from '../../../../shared/stores/ref-view/ref-view.action
 import { RecEditState } from '../../../../shared/stores/rec-edit/rec-edit.state';
 import { SetInjectionSourceRef, SetInjectionSourceRefView } from '../../../../shared/stores/rec-edit/rec-edit.action';
 import { EntryService } from '../../../../shared/services/entry.service';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { Colfig } from '../../../../shared/models/Colfig.model';
 
 
 @Component({
@@ -19,9 +21,7 @@ import { EntryService } from '../../../../shared/services/entry.service';
   styleUrl: './rec-edit-container.component.scss'
 })
 export class RecEditContainerComponent implements OnInit {
-  ngOnInit(): void {}
-
-  constructor(public rs: RefService, public es: EntryService, public is: InjectionService, public store: Store) {}
+  constructor(public rs: RefService, public es: EntryService, public is: InjectionService, public store: Store, private fb: FormBuilder) {}
 
   @Input() CurrentEntry!: Entry;
   @Input() CurrentRef!: Referential;
@@ -40,10 +40,37 @@ export class RecEditContainerComponent implements OnInit {
     })
   }
 
+  EntryForm: FormGroup = this.fb.group({
+    keypairs: this.fb.array([])
+  });
+
+  get keypairs() {
+    return this.EntryForm.controls["keypairs"] as FormArray;
+  }
+  
+  ngOnInit(): void {
+    for(let colfig of this.CurrentRef.columns) {
+      const mapForm = this.fb.group({
+        colId: [colfig.id],
+        value: ['' || this.CurrentEntry.fields[colfig.id]],
+      });
+      this.keypairs.push(mapForm);
+    }
+  }
+
   SaveEntry() {
+    // read values from formArray, update CurrentEntry based on it, PUT changes to database.
+    for(let keypair of this.EntryForm.getRawValue()['keypairs'])
+      this.CurrentEntry.fields[keypair['colId']] = keypair['value']
+    
+    console.log("PUT :", this.CurrentEntry);
     this.es.putEntry(this.CurrentEntry).subscribe((value) => {
-      console.log("PUT :", value);
-      window.location.reload();
+      console.log("PUT response :", value); // TODO : add confirmation popups in the frontend.
     })
+  }
+
+  getColNameOf(colId: string): string { // clown shit
+    let col = this.CurrentRef.columns.filter((col) => col.id === colId)[0]
+    return col.name;
   }
 }
