@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Location } from '@angular/common';
@@ -7,6 +7,7 @@ import { RefViewState } from '../../../shared/stores/ref-view/ref-view.state';
 import { Referential } from '../../../shared/models/referential.model';
 import { SetInjectionMode } from '../../../shared/stores/ref-view/ref-view.action';
 import { View } from '../../../shared/models/view.model';
+import { TableComponent } from '../presentationals/table/table.component';
 
 @Component({
   selector: 'app-view-container',
@@ -38,7 +39,9 @@ export class ViewContainerComponent implements OnInit {
     this.router.navigate(['entry', refId, '']);
   }
 
-  exportReferential(refId: string) {
-    
+  @ViewChild(TableComponent) table!: TableComponent;
+
+  exportReferential() {
+    this.table.exportTable();
   }
 }

@@ -47,7 +47,7 @@ export class SearchComponent implements OnInit {
       })
 
       fc.valueChanges.subscribe((filterValue) => {
-        this.filter[colfig.id] = filterValue.filterValue;                 // TODO : make this cleaner, formGroups are a mess
+        this.filter[colfig.id] = filterValue.filterValue?.toLowerCase();                 // TODO : make this cleaner, formGroups are a mess
         console.log("Dispatch =", this.filter);                           // this value needs to be emitted to the table component for it to update
         this.store.dispatch(new SetSearchFilterValue(JSON.stringify(this.filter))); // we stringify because DataSource.filter is a string...
       })

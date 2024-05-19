@@ -11,6 +11,7 @@ import { Entry, Record } from '../../../../shared/models/record.model';
 import { RefViewState } from '../../../../shared/stores/ref-view/ref-view.state';
 import { FormArray } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
+import { SetSearchFilterValue } from '../../../../shared/stores/ref-view/ref-view.action';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class TableComponent implements OnInit {
   @Select(RefViewState.getSearchFilterValue) SearchFilterValue$!: Observable<string>;
 
   ngOnInit(): void {
+    this.store.dispatch(new SetSearchFilterValue(""));
     this.entries$ = this.es.getEntriesOf(this.Ref.id).pipe(map((entries) => {
       var newEntries: Record[] = [];
       for(let entry of entries) {
@@ -49,18 +51,16 @@ export class TableComponent implements OnInit {
     this.SearchFilterValue$.subscribe((filterValue) => {
       this.dataSource.filter = filterValue;
     })
-    // this.dataSource.filter = JSON.stringify(this.currView.filterValue); // subscribe to filterValue from store
     this.dataSource.filterPredicate = this.tableFilter();
   }
 
-  tableFilter(): (data: any, filter: string) => boolean {
+  tableFilter(): (data: any, filter: string) => boolean { // very simple filter implementation, this can be bettered with a whole syntax if needs be
     let filterFunction = function(data: any, filter: any): boolean {
-      console.log("Call filterFunction");
-      let searchTerms = JSON.parse(filter); // will be {colId: value...}
+      let searchTerms = JSON.parse(filter);               // will be {colId: value...}
       let result = true;
-      console.log("data =", data, "\nfilter =", filter);  // data is single {colId: value}
+      //console.log("data =", data, "\nfilter =", filter);  // data is an Entry {colId: value...}
       for(let colId of Object.keys(searchTerms)) {
-        result = result && ( data[colId].toLowerCase().indexOf(searchTerms[colId]) !== -1 )
+        result = result && ( (data[colId] as string).toLowerCase().indexOf(searchTerms[colId]) !== -1 )
       }
       return result;
     }
@@ -92,5 +92,36 @@ export class TableComponent implements OnInit {
 
   rmDispColId(colId: string) {
     this.currView.dispColIds.splice(this.currView.dispColIds.indexOf(colId), 1);
+  }
+
+  exportTable() {
+    let csv = "";
+    let header = "";
+    for(let colId of this.currView.dispColIds) {
+      for(let colfig of this.Ref.columns) {
+        if (colfig.id === colId) {
+          header += '"' + colfig.name + '",';
+        }
+      }
+    }
+    header = header + '\n'
+    csv += header;
+
+    // since columnIds are not human readable, we have to manually replace them...
+    for(let record of this.dataSource.data) {
+      let line = "";
+      for(let colId of this.currView.dispColIds) {
+        line += '"' + record[colId] + '",'
+      }
+      line += '\n';
+      csv += line;
+    }
+    
+    let blob = new Blob([csv], {type: 'text/plain'});
+    
+    var link = document.createElement('a');
+    link.download = this.Ref.name.replaceAll(' ', '_') + '.csv';
+    link.href = window.URL.createObjectURL(blob);
+    link.click();
   }
 }
