@@ -2,7 +2,7 @@ import { State, Action, StateContext, Store, Selector } from "@ngxs/store";
 import { StateEnum } from "../../enums/state.enum";
 import { Referential } from "../../models/referential.model";
 import { Injectable } from "@angular/core";
-import { SetCurrentRef, SetCurrentView, SetInjection, SetInjectionMode } from "./ref-view.action";
+import { SetCurrentRef, SetCurrentView, SetInjection, SetInjectionMode, SetSearchFilterValue } from "./ref-view.action";
 import { RefService } from "../../services/ref.service";
 import { Router } from "@angular/router";
 import { View } from "../../models/view.model";
@@ -14,6 +14,7 @@ export class RefViewStateModel {
     currView!: View;
     injectionMode!: boolean;                 // whether we're in injection mode or not
     injection!: Injection;
+    searchFilterValue!: string;                    // the search filter value
 }
 
 @State<RefViewStateModel>({
@@ -48,6 +49,18 @@ export class RefViewState { // note that for the action to be active it has to b
         ctx.patchState({
             currView: action.View
         })
+    }
+
+    @Action(SetSearchFilterValue)
+    setSearchFilterValue(ctx: StateContext<RefViewStateModel>, action: SetSearchFilterValue) {
+        ctx.patchState({
+            searchFilterValue: action.searchFilterValue
+        })
+    }
+
+    @Selector()
+    static getSearchFilterValue(state: RefViewStateModel) {
+        return state.searchFilterValue;
     }
 
     @Selector()

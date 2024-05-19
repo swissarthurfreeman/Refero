@@ -12,6 +12,11 @@ export class SetCurrentView {
     constructor(public View: View) {}    // ViewId is not provided, the default view is set. 
 }
 
+export class SetSearchFilterValue {
+    static readonly type: string = "[View] Set Search Filters Value ";  
+    constructor(public searchFilterValue: string) {}
+}
+
 export class SetInjectionMode {
     static readonly type: string = "[RefView] Set Injection Mode";
     constructor(public active: boolean) {}

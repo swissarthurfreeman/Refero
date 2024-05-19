@@ -37,4 +37,8 @@ export class ViewContainerComponent implements OnInit {
   consultationToNewRecord(refId: string) {
     this.router.navigate(['entry', refId, '']);
   }
+
+  exportReferential(refId: string) {
+    
+  }
 }

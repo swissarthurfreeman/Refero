@@ -1,7 +1,7 @@
 <div class="col">
     <div style="max-width:100%">
         <ng-container *ngIf="entries$ | async as Records">
-            <table mat-table [dataSource]="Records"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
+            <table mat-table [dataSource]="dataSource"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
                 @for (colfig of Ref.columns; track $index) {
                     <ng-container [matColumnDef]="colfig.id">
                         <th mat-header-cell *matHeaderCellDef> {{colfig.name}}    <!-- Render column name -->

@@ -13,6 +13,9 @@ import { RefService } from '../../../../shared/services/ref.service';
 import { ColfigService } from '../../../../shared/services/colfig.service';
 import { Observable } from 'rxjs';
 import { Colfig } from '../../../../shared/models/Colfig.model';
+import { FormArray, FormBuilder, FormControl } from '@angular/forms';
+import { Store } from '@ngxs/store';
+import { SetSearchFilterValue } from '../../../../shared/stores/ref-view/ref-view.action';
 
 @Component({
   selector: 'app-search',
@@ -25,11 +28,32 @@ export class SearchComponent implements OnInit {
   @Input() View!: View;
 
 
-  constructor(public rs: RefService, public cs: ColfigService, private cd: ChangeDetectorRef) {}
+  constructor(public store: Store, public rs: RefService, public cs: ColfigService, private cd: ChangeDetectorRef, private fb: FormBuilder) {}
+  
+  searchFormGroup = this.fb.group({
+    searchFields: this.fb.array([])
+  });
 
-  colfigs$!: Observable<Colfig[]>;
+  get searchFields() {
+    return this.searchFormGroup.controls["searchFields"] as FormArray;
+  }
 
+  filter: any = {};
+  
   ngOnInit(): void {
+    for(let colfig of this.Ref.columns) {
+      const fc = this.fb.group({
+        filterValue: ''
+      })
+
+      fc.valueChanges.subscribe((filterValue) => {
+        this.filter[colfig.id] = filterValue.filterValue;                 // TODO : make this cleaner, formGroups are a mess
+        console.log("Dispatch =", this.filter);                           // this value needs to be emitted to the table component for it to update
+        this.store.dispatch(new SetSearchFilterValue(JSON.stringify(this.filter))); // we stringify because DataSource.filter is a string...
+      })
+      
+      this.searchFields.push(fc);
+    }
     this.cd.detectChanges();
   }
 
