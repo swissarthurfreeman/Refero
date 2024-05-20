@@ -12,21 +12,13 @@ export class ColConfigPresentationalComponent implements OnInit {
   constructor(public rs: RefService) {}
   
   ngOnInit(): void {
-
-  }
-
-  SelectColType(ColType: any) {
-    if(ColType == "FK") {
-      this.refs$ = this.rs.getReferentials();
-    }
+    this.refs$ = this.rs.getReferentials();
+    this.pointedRef$ = this.rs.getReferentialBy(this.Ref.id);
   }
 
   refs$!: Observable<Referential[]>; 
   pointedRef$!: Observable<Referential>; 
 
-  SelectPointedRefId(refId: any) {
-    this.pointedRef$ = this.rs.getReferentialBy(refId);
-  }
 
   @Input() Ref!: Referential;
   @Input() FormControl!: FormControl;

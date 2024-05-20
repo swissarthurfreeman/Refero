@@ -59,44 +59,46 @@ export class RefConfigEditContainerComponent implements OnInit {
     const ColfigForm = this.fb.group({
       ColId: [''], // this value is needed to be able to associate column config to ColId of referential under creation
       RefCol: ['', Validators.required],
-      FileCol: [''],
-      DateFormat: [''],
-      Required: [true],
-      ColType: ['NONE'],
-      PointedRefId: [''],
-      PointedRefColId: [''],
-      LabelCol: [''],
+      FileCol: '',
+      DateFormat: '',
+      Required: true,
+      ColType: 'NONE',
+      PointedRefId: '',
+      PointedRefColId: '',
+      LabelCol: '',
     });
     this.columns.push(ColfigForm);
   }
 
-  CreateReferential() {
+  UpdateReferential() {
     let refconfig: any = this.RefConfigForm.getRawValue();
     let ref = new Referential();
     
+    if(this.Ref !== undefined)  // if we're not creating a referential from scratch
+      ref.id = this.Ref.id;
+
     ref.name = refconfig['name']; // manually populate formcontrols for this to work
     ref.description = refconfig['description'];
 
     let createdColfigObservables: Observable<Colfig>[] = [];
 
-    this.rs.postReferential(ref).subscribe((newRef) => {
+    this.rs.putReferential(ref).subscribe((updatedRef) => {
 
       for(let colfig of refconfig['columns']) {
-        colfig.ref_id = newRef.id;
-        createdColfigObservables.push(this.cs.postColfig(colfig));
+        colfig.ref_id = updatedRef.id;
+        createdColfigObservables.push(this.cs.postColfig(colfig));  // TODO : make this a putColfig, it could be updating
       }
       
       const combinedObservable = forkJoin(createdColfigObservables);
 
       combinedObservable.subscribe({
-        next: (responses) => {
+        next: (responses: Colfig[]) => {
           // This callback is triggered when all post requests have been completed
-          // Do something after all posts have been completed
           
-          console.log('All posts completed:', responses);
-          for(let record of this.records) {
+          // POST all new entries from file
+          for(let record of this.records) {  // TODO : do this only when we're creating a new referential, move to function
             const entry: Entry = new Entry();
-            entry.ref_id = newRef.id;
+            entry.ref_id = updatedRef.id;
             entry.fields = {};
 
             for(let colfig of responses) {
@@ -107,7 +109,8 @@ export class RefConfigEditContainerComponent implements OnInit {
             });
           }
           
-          this.rs.getReferentialBy(newRef.id).subscribe((theFuckingRef) => {
+          // POST default FULL_VIEW...
+          this.rs.getReferentialBy(updatedRef.id).subscribe((theFuckingRef) => {
             let dispColIds = []
             
             for(let colfig of theFuckingRef.columns) {
@@ -115,7 +118,7 @@ export class RefConfigEditContainerComponent implements OnInit {
             }
             
             let defaultView = new View();
-            defaultView.ref_id = newRef.id;
+            defaultView.ref_id = updatedRef.id;
             defaultView.name = "FULL_VIEW";
             
             defaultView.dispColIds = dispColIds;

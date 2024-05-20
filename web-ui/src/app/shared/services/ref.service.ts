@@ -28,8 +28,8 @@ export class RefService {
     return this.http.get<Referential[]>(`http://localhost:8080/refs`);
   }
 
-  postReferential(referential: Referential): Observable<Referential> {
-    return this.http.post<Referential>(`http://localhost:8080/refs`, {
+  putReferential(referential: Referential): Observable<Referential> {
+    return this.http.put<Referential>(`http://localhost:8080/refs/${referential.id}`, {
       "name": referential.name,
       "description": referential.description
     })

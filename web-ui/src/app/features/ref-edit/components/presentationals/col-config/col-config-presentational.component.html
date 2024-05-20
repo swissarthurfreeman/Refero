@@ -31,7 +31,7 @@
         <div class="p-1">
             <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
                 <mat-label>Column Type</mat-label>
-                <mat-select formControlName="colType" (valueChange)="SelectColType($event)">
+                <mat-select formControlName="colType">
                     <mat-option value="NONE">NONE</mat-option>
                     <mat-option value="FK">FK</mat-option>
                     <mat-option value="BK">BK</mat-option>
@@ -44,7 +44,7 @@
             <div class="p-1">
                 <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
                     <mat-label>Pointed Ref.</mat-label> <!-- retrieve all needed refs via async subscription -->
-                    <mat-select formControlName="pointedRefId" (valueChange)="SelectPointedRefId($event)">
+                    <mat-select formControlName="pointedRefId">
                         <ng-container *ngIf="refs$ | async as Refs">
                             @for (ref of Refs; track $index) {
                                 <mat-option [value]="ref.id">{{ ref.name }}</mat-option>
