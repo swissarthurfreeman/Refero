@@ -68,7 +68,7 @@
             <div class="p-1">
                 <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
                     <mat-label>Label Col.</mat-label>
-                    <mat-select formControlName="pointedRefLabel">
+                    <mat-select formControlName="pointedRefColLabelId">
                         <ng-container *ngIf="pointedRef$ | async as PointedRef">
                             @for (colfig of PointedRef.columns; track $index) {
                                 <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>

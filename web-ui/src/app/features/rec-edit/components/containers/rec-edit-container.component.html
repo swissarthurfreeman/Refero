@@ -23,13 +23,13 @@
     <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length">
         <div [formGroup]="EntryForm">
             <ng-container formArrayName="keypairs">
-                @for (mapForm of keypairs.controls; track $index) {
-                    <app-key-value-presentational [colName]="getColNameOf(mapForm.getRawValue()['colId'])" [FormControl]="$any(mapForm)"></app-key-value-presentational>
+                @for (keyPairFormControl of keypairs.controls; track $index) {
+                    <app-key-value-presentational [colId]="keyPairFormControl.getRawValue()['colId']" [FormControl]="$any(keyPairFormControl)"></app-key-value-presentational>
                 }
             </ng-container>
         </div>
     </mat-grid-tile>
-
+    <!-- Injection panel -->
     <mat-grid-tile colspan="4" [rowspan]="CurrentRef.columns.length">
         <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
             <ng-container *ngIf="SourceRef$ | async as SourceRef">

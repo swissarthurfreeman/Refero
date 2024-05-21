@@ -3,7 +3,9 @@
         <div class="p-2 me-auto">
             <div class="input-group mb-3">
                 <!-- File upload form -->
-                <input #uploadFile (change)="upload($event)" type='file' class="form-control">
+                @if (this.Ref.id === undefined) {
+                    <input #uploadFile (change)="upload($event)" type='file' class="form-control">
+                }
             </div> 
         </div>
         <div class="p-2">

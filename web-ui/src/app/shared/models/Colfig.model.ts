@@ -8,5 +8,5 @@ export class Colfig {
     dateFormat!: string;
     pointedRefId!: string;
     pointedRefColId!: string;
-    pointedRefLabel!: string;
+    pointedRefColLabelId!: string;
 }

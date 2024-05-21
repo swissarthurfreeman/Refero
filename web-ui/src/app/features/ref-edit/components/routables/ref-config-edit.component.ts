@@ -19,12 +19,11 @@ export class RefConfigEditComponent implements OnInit {
   
   ngOnInit(): void {
     if (this.RefId === undefined) {
-      this.RefId = '';
       let ref = new Referential();
       ref.columns = [];
       ref.injections = [];
       ref.views = [];
-      this.store.dispatch(new SelectRefConfigToEdit(ref));  // then we're creating a new referential.
+      this.store.dispatch(new SelectRefConfigToEdit(ref));  // then we're creating a new referential, observable emits.
     } else {
       this.rs.getReferentialBy(this.RefId).subscribe((ref) => {
         this.store.dispatch(new SelectRefConfigToEdit(ref));
