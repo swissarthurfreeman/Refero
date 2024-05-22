@@ -11,7 +11,7 @@
                 <mat-select formControlName="value" > <!-- test with REE DATA and STATUT -->
                     <ng-container *ngIf="foreignEntries$ | async as ForeignEntries">
                         @for (e of ForeignEntries; track $index) {
-                            <mat-option [value]="e.id">{{ e.fields[Colfig.pointedRefColLabelId] }}</mat-option>
+                            <mat-option [value]="e.fields[Colfig.pointedRefColId]">{{ e.fields[Colfig.pointedRefColLabelId] }}</mat-option>
                         }
                     </ng-container>
                 </mat-select>

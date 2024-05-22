@@ -29,34 +29,27 @@ export class RecEditContainerComponent implements OnInit {
   @Select(RecEditState.getInjectionSourceRef) SourceRef$!: Observable<Referential>;
   @Select(RecEditState.getInjectionSourceRefView) SourceRefView$!: Observable<View>;
 
+  EntryForm!: FormGroup;
 
-  SelectInjection(injection: Injection) {
-    this.rs.getReferentialBy(injection.srcId).subscribe((SrcRef) => {
-      this.store.dispatch([
-        new SetInjectionSourceRef(SrcRef),
-        new SetInjectionSourceRefView(SrcRef.views[0]),
-        new SetInjection(injection)
-      ])
-    })
+  ngOnInit(): void {
+    this.EntryForm = this.fb.group({
+      keypairs: this.fb.array([])
+    });
+    this.AddKeyPairs();
   }
-
-  EntryForm: FormGroup = this.fb.group({
-    keypairs: this.fb.array([])
-  });
 
   get keypairs() {
     return this.EntryForm.controls["keypairs"] as FormArray;
   }
   
-  ngOnInit(): void {
-    this.EntryForm = this.fb.group({
-      keypairs: this.fb.array([])
-    });
-    
+  AddKeyPairs() {
     for(let colfig of this.CurrentRef.columns) {
+      if(colfig.name === "STATUS")
+        console.log(this.CurrentEntry, colfig);
+
       const mapForm = this.fb.group({
-        colId: [colfig.id],
-        value: ['' || this.CurrentEntry.fields[colfig.id]],
+        colId: colfig.id,
+        value: this.CurrentEntry.fields[colfig.id],
       });
       this.keypairs.push(mapForm);
     }
@@ -73,8 +66,13 @@ export class RecEditContainerComponent implements OnInit {
     })
   }
 
-  getColNameOf(colId: string): string { // clown shit
-    let col = this.CurrentRef.columns.filter((col) => col.id === colId)[0]
-    return col.name;
+  SelectInjection(injection: Injection) {
+    this.rs.getReferentialBy(injection.srcId).subscribe((SrcRef) => {
+      this.store.dispatch([
+        new SetInjectionSourceRef(SrcRef),
+        new SetInjectionSourceRefView(SrcRef.views[0]),
+        new SetInjection(injection)
+      ])
+    })
   }
 }

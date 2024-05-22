@@ -60,6 +60,7 @@ export class TableComponent implements OnInit {
       let result = true;
       //console.log("data =", data, "\nfilter =", filter);  // data is an Entry {colId: value...}
       for(let colId of Object.keys(searchTerms)) {
+        if(data[colId] === undefined) continue; // TODO : figure out why this is happening, why is there an empty line ??
         result = result && ( (data[colId] as string).toLowerCase().indexOf(searchTerms[colId]) !== -1 )
       }
       return result;

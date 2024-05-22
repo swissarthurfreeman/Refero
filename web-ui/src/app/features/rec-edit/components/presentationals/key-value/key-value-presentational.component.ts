@@ -21,7 +21,9 @@ export class KeyValuePresentationalComponent {
     this.colfig$ = this.cs.getColfigBy(this.colId);
     this.colfig$.subscribe((colfig) => {
       if(colfig.colType === 'FK') {
-        this.foreignEntries$ = this.es.getEntriesOf(colfig.ref_id);
+        console.log("Getting Entries of Foreign Ref with ID", colfig.pointedRefId);
+        this.foreignEntries$ = this.es.getEntriesOf(colfig.pointedRefId);
+        this.foreignEntries$.subscribe((entries) => { console.log(entries )});
       }
     })
   }

@@ -24,7 +24,10 @@
         <div [formGroup]="EntryForm">
             <ng-container formArrayName="keypairs">
                 @for (keyPairFormControl of keypairs.controls; track $index) {
-                    <app-key-value-presentational [colId]="keyPairFormControl.getRawValue()['colId']" [FormControl]="$any(keyPairFormControl)"></app-key-value-presentational>
+                    <app-key-value-presentational 
+                        [colId]="keyPairFormControl.getRawValue()['colId']" 
+                        [FormControl]="$any(keyPairFormControl)">
+                    </app-key-value-presentational>
                 }
             </ng-container>
         </div>

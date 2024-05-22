@@ -57,11 +57,16 @@ export class RefConfigEditContainerComponent implements OnInit {
 
   addColFormsFor(ref: Referential) {
     for (let colfig of ref.columns) {
+      if(colfig.name === "STATUS") {
+        console.log(colfig);
+      }
+
       this.columns.push(
         this.getColfigGroupOf(
           colfig.id, colfig.colType, colfig.required, colfig.dateFormat,
           colfig.name, colfig.fileColName, colfig.pointedRefId,
-          colfig.pointedRefColId, colfig.pointedRefColLabelId)
+          colfig.pointedRefColId, colfig.pointedRefColLabelId
+        )
       );
     }
   }
@@ -70,20 +75,24 @@ export class RefConfigEditContainerComponent implements OnInit {
     this.columns.push(this.getColfigGroupOf('', 'NONE', true, '', '', '', '', '', ''));
   }
 
+  get columns() {
+    return this.RefConfigForm.controls["columns"] as FormArray;
+  }
+
   PostDefaultViewOf(refId: string) {
     this.rs.getReferentialBy(refId).subscribe((ref) => {      // POST default FULL_VIEW...
       let dispColIds = []
 
-      for (let colfig of ref.columns) {
+      for (let colfig of ref.columns)
         dispColIds.push(colfig.id);
-      }
 
       let defaultView = new View();
-      defaultView.ref_id = refId;
+      defaultView.ref_id = ref.id;
       defaultView.name = "DEFAULT_VIEW";
 
       defaultView.dispColIds = dispColIds;
       defaultView.searchColIds = dispColIds;
+
       this.vs.postView(defaultView).subscribe((view) => {
         console.log("Posted default view :", view);
       })
@@ -145,10 +154,6 @@ export class RefConfigEditContainerComponent implements OnInit {
 
   deleteColumn(idx: number) {
     this.columns.removeAt(idx);
-  }
-
-  get columns() {
-    return this.RefConfigForm.controls["columns"] as FormArray;
   }
 
   Debug() {
