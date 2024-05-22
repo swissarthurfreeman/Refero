@@ -57,11 +57,8 @@ public class ReferentialController {
     @PutMapping("{id}")
     @CrossOrigin
     public HttpEntity<Referential> put(@PathVariable String id, @RequestBody @Valid Referential ref) {
-        var updatedRef = refService.update(id, ref);
-        if (updatedRef.isPresent())
-            return new ResponseEntity<>(updatedRef.get(), HttpStatus.OK);
-        
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        logger.info("update ref with id: " + id);
+        return new ResponseEntity<>(refService.update(id, ref), HttpStatus.OK); // PUT of new id creates the resource...
     }
 
     

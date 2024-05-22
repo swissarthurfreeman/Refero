@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.validation.constraints.NotBlank;
@@ -49,6 +50,7 @@ public class Entry {
     @MapKeyColumn(name = "col_id")  // the key of the map is in the col_id column of the Coll table.
     @Column(name = "val")           // the value of the map is in the val column of the Coll table. (value is sql reserved)
     @NotEmpty(message = "Record must contain a fields map.")
+    @Lob
     public Map<String, String> fields;
 
     @Override

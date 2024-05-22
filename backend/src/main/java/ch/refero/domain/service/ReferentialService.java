@@ -34,14 +34,15 @@ public class ReferentialService {
         return refRepository.save(ref);
     }
 
-    public Optional<Referential> update(String id, Referential ref) {
-        var savedRefOpt = refRepository.findById(id);
+    public Referential update(String id, Referential ref) {       
+        var savedRefOpt = refRepository.findById(id);   
         if(savedRefOpt.isPresent()) {
-            var savedRef = savedRefOpt.get();
-            savedRef.setName(ref.name);                // PUT replaces the resource at that URI, necesarily a 
-            savedRef.setDescription(ref.description);  // valid Referential.
-            refRepository.save(savedRef);              // don't forget to resave
-        }
-        return savedRefOpt; 
+            var savedRef = savedRefOpt.get();                   // simply calling save yields a constraint violation...
+            savedRef.setName(ref.name);                        // PUT replaces the resource at that URI, necesarily a valid Referential. 
+            savedRef.setDescription(ref.description);  
+            return refRepository.save(savedRef);               // don't forget to resave
+        }                                                      // PUT of non existent creates the resource
+        var newRef = this.create(ref);
+        return newRef; 
     }
 }

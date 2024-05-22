@@ -10,8 +10,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 
+@Table(
+    uniqueConstraints=
+        @UniqueConstraint(columnNames={"id", "name"})   // cannot have duplicate id, name pairs
+)
 @Entity
 public class RefView {
     @Id
@@ -19,7 +25,6 @@ public class RefView {
     @GeneratedValue(strategy = GenerationType.UUID)
     public String id;
 
-    @Column(unique = true)
     @NotBlank(message = "Name of view cannot be blank.")
     public String name;
 

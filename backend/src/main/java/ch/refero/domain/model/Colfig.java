@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,22 +18,23 @@ import jakarta.validation.constraints.NotBlank;
 
 @Table(
     uniqueConstraints=
-        @UniqueConstraint(columnNames={"id", "name"})   // cannot have duplicate column names.
+        @UniqueConstraint(columnNames={"id", "name"})   // cannot have duplicate id, name pairs
 )
 @Entity
 public class Colfig {
     @Id
-    @Column
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column
     public String id;
     
-    @JoinColumn(name = "ref_id", insertable = false, updatable = false)
-    @ManyToOne(targetEntity = Referential.class)
-    private Referential ref;
+    // TODO : think about why we had this thing ?
+    //@JoinColumn(name = "ref_id", insertable = false, updatable = false)
+    //@ManyToOne(targetEntity = Referential.class)
+    //private Referential ref;
 
     @Column(name = "ref_id")
     @NotBlank(message = "ref_id of column cannot be blank")
-    private String ref_id;
+    private String ref_id;                                          // TODO : investigate @ForeignKey() annotation
 
     public void setRef_id(String ref_id) {
         this.ref_id = ref_id;
@@ -69,12 +71,12 @@ public class Colfig {
 
     @Column
     @JsonInclude(Include.NON_NULL)
-    public String pointedRefLabel;
+    public String pointedRefColLabelId;
     
 
     @AssertTrue(message = "pointedRef and pointedRefColId are required when colType is FK")
     private boolean isValidFk() {
-        return !(colType.equals("FK")) || !(pointedRefId == null || pointedRefColId == null);
+        return !(colType.equals("FK")) || !(pointedRefId == null || pointedRefColId == null || pointedRefColLabelId == null);
     }
 
     @AssertTrue(message = "dateFormat must be proivded when colType is DATE")

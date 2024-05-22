@@ -44,8 +44,11 @@ content-type: application/json
 }
 
 ### 
-GET http://localhost:8080/cols HTTP/1.1
+GET http://localhost:8080/cols/003a5620-9f95-43d6-8af7-c9eb56e4d8d6 HTTP/1.1
 content-type: application/json
+
+###
+GET http://localhost:8080/refs/b8cfc092-4d08-4a0d-9cfc-4471b8f5c865
 
 ### 
 GET http://localhost:8080/cols?ref_id={{ref_id2}} HTTP/1.1
