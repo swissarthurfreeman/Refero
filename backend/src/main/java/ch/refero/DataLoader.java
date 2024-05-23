@@ -1,10 +1,8 @@
 package ch.refero;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -19,16 +17,11 @@ import ch.refero.domain.model.Referential;
 import ch.refero.domain.repository.ColfigRepository;
 import ch.refero.domain.repository.EntryRepository;
 import ch.refero.domain.repository.InjectionRepository;
-//import ch.refero.domain.repository.EntryRepository;
 import ch.refero.domain.repository.ReferentialRepository;
 import ch.refero.domain.repository.ViewRepository;
 
 @Component
 public class DataLoader implements ApplicationRunner {
-
-    //@Autowired
-    //private EntryRepository entryRepository;
-
     @Autowired
     private ReferentialRepository refRepository;
 
@@ -60,25 +53,25 @@ public class DataLoader implements ApplicationRunner {
         refRepository.save(ref2);
 
         var col1_ref2 = new Colfig();
-        col1_ref2.setRef_id(ref2.id);
+        col1_ref2.ref_id = ref2.id;
         col1_ref2.colType = "NONE";
         col1_ref2.name = "Average Diameter";
         colRepository.save(col1_ref2);        
 
         var col2_ref2 = new Colfig();
-        col2_ref2.setRef_id(ref2.id);
+        col2_ref2.ref_id = ref2.id;
         col2_ref2.colType = "NONE";
         col2_ref2.name = "Color";
         colRepository.save(col2_ref2);
 
         var col3_ref2 = new Colfig();
-        col3_ref2.setRef_id(ref2.id);
+        col3_ref2.ref_id = ref2.id;
         col3_ref2.colType = "NONE";
         col3_ref2.name = "Name";
         colRepository.save(col3_ref2);
 
         var view = new RefView();
-        view.setRef_id(ref2.id);
+        view.ref_id = ref2.id;
         view.name = "COOL_VIEW";
 
         String disp1[] = {col3_ref2.id, col1_ref2.id};
@@ -94,7 +87,7 @@ public class DataLoader implements ApplicationRunner {
         var ref2 = this.refRepository.findById(id).get();
 
         var rec1 = new Entry();
-        rec1.setRef_id(ref2.id);
+        rec1.ref_id = ref2.id;
         rec1.fields = new HashMap<String, String>();
         rec1.fields.put(ref2.columns.get(0).id, "25cm"); // Mean Diameter
         rec1.fields.put(ref2.columns.get(1).id, "Yellow"); // Color
@@ -102,7 +95,7 @@ public class DataLoader implements ApplicationRunner {
         entryRepository.save(rec1);
 
         var rec2 = new Entry();
-        rec2.setRef_id(ref2.id);
+        rec2.ref_id = ref2.id;
         rec2.fields = new HashMap<String, String>();
         rec2.fields.put(ref2.columns.get(0).id, "50cm"); // Mean Diameter
         rec2.fields.put(ref2.columns.get(1).id, "Scarlet Yellow"); // Color
@@ -114,7 +107,7 @@ public class DataLoader implements ApplicationRunner {
     public void createEntriesOfRef1(String id) {
         var rec1 = new Entry();
         var ref1 = this.refRepository.findById(id).get();
-        rec1.setRef_id(ref1.id);
+        rec1.ref_id = ref1.id;
         rec1.fields = new HashMap<String, String>();
         rec1.fields.put(ref1.columns.get(0).id, "20cm"); // Mean Diameter
         rec1.fields.put(ref1.columns.get(1).id, "Bright Red"); // Color
@@ -122,7 +115,7 @@ public class DataLoader implements ApplicationRunner {
         entryRepository.save(rec1);
 
         var rec2 = new Entry();
-        rec2.setRef_id(ref1.id);
+        rec2.ref_id = ref1.id;
         rec2.fields = new HashMap<String, String>();
         rec2.fields.put(ref1.columns.get(0).id, "30cm"); // Mean Diameter
         rec2.fields.put(ref1.columns.get(1).id, "Scarlet Red"); // Color
@@ -130,7 +123,7 @@ public class DataLoader implements ApplicationRunner {
         entryRepository.save(rec2);
 
         var rec3 = new Entry();
-        rec3.setRef_id(ref1.id);
+        rec3.ref_id = ref1.id;
         rec3.fields = new HashMap<String, String>();
         rec3.fields.put(ref1.columns.get(0).id, "15cm"); // Mean Diameter
         rec3.fields.put(ref1.columns.get(1).id, "Blood Red"); // Color
@@ -145,25 +138,25 @@ public class DataLoader implements ApplicationRunner {
         refRepository.save(ref1);
 
         var col1_ref1 = new Colfig();
-        col1_ref1.setRef_id(ref1.id);
+        col1_ref1.ref_id = ref1.id;
         col1_ref1.colType = "NONE";
         col1_ref1.name = "Mean diameter";
         colRepository.save(col1_ref1);        
 
         var col2_ref1 = new Colfig();
-        col2_ref1.setRef_id(ref1.id);
+        col2_ref1.ref_id = ref1.id;
         col2_ref1.colType = "NONE";
         col2_ref1.name = "Colour";
         colRepository.save(col2_ref1);
 
         var col3_ref1 = new Colfig();
-        col3_ref1.setRef_id(ref1.id);
+        col3_ref1.ref_id = ref1.id;
         col3_ref1.colType = "NONE";
         col3_ref1.name = "Latin Name";
         colRepository.save(col3_ref1);
 
         var view = new RefView();
-        view.setRef_id(ref1.id);
+        view.ref_id = ref1.id;
         view.name = "NICE_VIEW";
 
         String disp1[] = {col3_ref1.id, col1_ref1.id};
@@ -181,7 +174,7 @@ public class DataLoader implements ApplicationRunner {
         
 
         Injection inj = new Injection();
-        inj.setRef_id(dest.id); // injection from bananas to tomatos, tomatos ref owns the injection
+        inj.ref_id = dest.id; // injection from bananas to tomatos, tomatos ref owns the injection
         inj.srcId = src.id;
         inj.srcName = src.name;
 

@@ -1,0 +1,31 @@
+@url = http://localhost:8080
+
+###
+POST {{url}}/entries HTTP/1.1
+content-type: application/json
+
+{
+}
+
+###
+GET {{url}}/refs
+
+###
+POST {{url}}/refs HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Max Havelar Tomatos Referential",
+    "description": "aksas"
+}
+
+
+###
+POST {{url}}/cols HTTP/1.1
+content-type: application/json
+
+{
+    "colType": "NONE",
+    "ref_id": " "
+}
+

@@ -9,14 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ch.refero.domain.model.Entry;
+import ch.refero.domain.model.Referential;
 import ch.refero.domain.repository.EntryRepository;
+//import ch.refero.domain.repository.ReferentialRepository;
 import ch.refero.domain.repository.specifications.FilterByRefIdSpecification;
 
 @Service
 public class EntryService {
-
     @Autowired
     private EntryRepository entryRepo;
+
     Logger logger = LoggerFactory.getLogger(ReferentialService.class);
 
     public List<Entry> findAll(Optional<String> ref_id) {
@@ -36,6 +38,12 @@ public class EntryService {
     public Entry create(Entry entry) {
         // TODO : check every column id in entry is valid
         // if column is BK, check it's unique. 
+        /*for(var colfig: forRef.columns) {
+            if(colfig.required && entry.fields.get(colfig.id) == null)
+                return Optional.of(new ReferentialConstraintError("Required column : " + colfig.name + " missing from entry."));
+        }
+        entryRepo.save(entry);
+        return Optional.empty();*/
         return entryRepo.save(entry);
     }
 

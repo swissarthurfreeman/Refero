@@ -69,32 +69,4 @@ public class ColfigController {
 
     // TODO : make sure a column that's a FK doesn't have a date format, etc. 
     // TODO : Add PUT mapping for updating columns. 
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ResponseStatusException.class)
-    public Map<String, String> handleResponseStatusException(ResponseStatusException ex) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getReason());
-        return errors;
-    }
-    
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public Map<String, String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("message", "Column name is already present for this referential."); 
-        return error;
-    }
 }

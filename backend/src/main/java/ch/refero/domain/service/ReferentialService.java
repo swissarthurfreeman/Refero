@@ -38,8 +38,8 @@ public class ReferentialService {
         var savedRefOpt = refRepository.findById(id);   
         if(savedRefOpt.isPresent()) {
             var savedRef = savedRefOpt.get();                   // simply calling save yields a constraint violation...
-            savedRef.setName(ref.name);                        // PUT replaces the resource at that URI, necesarily a valid Referential. 
-            savedRef.setDescription(ref.description);  
+            savedRef.name = ref.name;                        // PUT replaces the resource at that URI, necesarily a valid Referential. 
+            savedRef.description = ref.description;  
             return refRepository.save(savedRef);               // don't forget to resave
         }                                                      // PUT of non existent creates the resource
         var newRef = this.create(ref);

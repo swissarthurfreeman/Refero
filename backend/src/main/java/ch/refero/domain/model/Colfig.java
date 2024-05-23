@@ -1,8 +1,11 @@
 package ch.refero.domain.model;
 
+import org.springframework.lang.NonNull;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import ch.refero.domain.model.constraints.ValidRefIdConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
@@ -32,17 +35,11 @@ public class Colfig {
     //@ManyToOne(targetEntity = Referential.class)
     //private Referential ref;
 
+    
     @Column(name = "ref_id")
-    @NotBlank(message = "ref_id of column cannot be blank")
-    private String ref_id;                                          // TODO : investigate @ForeignKey() annotation
-
-    public void setRef_id(String ref_id) {
-        this.ref_id = ref_id;
-    }
-
-    public String getRef_id() {
-        return ref_id;
-    }
+    @ValidRefIdConstraint
+    @NotBlank(message = "ref_id cannot be blank")
+    public String ref_id;                                          // TODO : investigate @ForeignKey() annotation
 
     @Column()
     public String name;
@@ -76,12 +73,12 @@ public class Colfig {
 
     @AssertTrue(message = "pointedRef and pointedRefColId are required when colType is FK")
     private boolean isValidFk() {
-        return !(colType.equals("FK")) || !(pointedRefId == null || pointedRefColId == null || pointedRefColLabelId == null);
+        return !("FK".equals(this.colType)) || !(pointedRefId == null || pointedRefColId == null || pointedRefColLabelId == null);
     }
 
     @AssertTrue(message = "dateFormat must be proivded when colType is DATE")
     private boolean isValidDate() {
-        return !(colType.equals("DATE")) || !(dateFormat == null);
+        return !("DATE".equals(colType)) || !(dateFormat == null);
     }
 
     public Colfig() {};

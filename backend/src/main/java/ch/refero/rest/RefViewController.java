@@ -60,20 +60,4 @@ public class RefViewController {
         // TODO : refactor service to throw an error object and catch then.
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "View has an invalid column id in it."); 
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public Map<String, String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", "View ref_id is invalid.");
-        return errors;
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ResponseStatusException.class)
-    public Map<String, String> handleResponseStatusException(ResponseStatusException ex) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getReason());
-        return errors;
-    }
 }

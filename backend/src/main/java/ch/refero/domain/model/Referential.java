@@ -18,38 +18,14 @@ public class Referential {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column
     public String id;
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
-    }
     
     @Column(unique = true)
     @NotBlank(message = "Name cannot be blank!")
     public String name;
 
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Column
     @NotBlank(message = "Description cannot be blank!")
     public String description;
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 
     @OneToMany(targetEntity = Entry.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "ref_id")
@@ -66,9 +42,6 @@ public class Referential {
     @OneToMany(targetEntity = RefView.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "ref_id")
     public List<RefView> views;
-
-
-    public Referential() {}
 
     @Override
     public String toString() {

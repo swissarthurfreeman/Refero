@@ -67,26 +67,4 @@ public class ReferentialController {
     public HttpEntity<Referential> post(@Valid @RequestBody Referential ref) {
         return new ResponseEntity<>(refService.create(ref), HttpStatus.CREATED);
     }
-
-    // see https://github.com/eugenp/tutorials/tree/master/spring-boot-modules/spring-boot-validation
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public Map<String, String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", "Unique referential name violation.");
-        return errors;
-    }
-
 }

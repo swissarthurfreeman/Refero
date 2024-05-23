@@ -1,6 +1,8 @@
 package ch.refero.domain.model;
 
 import java.util.Map;
+
+import ch.refero.domain.model.constraints.ValidRefIdConstraint;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -27,16 +29,9 @@ public class Entry {
     private Referential ref;
 
     @Column(name = "ref_id")
-    @NotBlank(message = "ref_id field cannot be blank!")
+    @NotBlank(message = "ref_id cannot be blank")
+    @ValidRefIdConstraint
     public String ref_id;
-
-    public void setRef_id(String ref_id) {
-        this.ref_id = ref_id;
-    }
-
-    public String getRef_id() {
-        return ref_id;
-    }
 
     /**
      * Persisting this requires a table of record_id (parent_id), key (col_id), 
@@ -49,7 +44,7 @@ public class Entry {
     })
     @MapKeyColumn(name = "col_id")  // the key of the map is in the col_id column of the Coll table.
     @Column(name = "val")           // the value of the map is in the val column of the Coll table. (value is sql reserved)
-    @NotEmpty(message = "Record must contain a fields map.")
+    @NotEmpty(message = "Entry must contain a fields map.")
     @Lob
     public Map<String, String> fields;
 

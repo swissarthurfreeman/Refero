@@ -1,5 +1,6 @@
 package ch.refero.rest;
 
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import ch.refero.domain.model.Entry;
 import ch.refero.domain.service.EntryService;
+import ch.refero.domain.service.ReferentialService;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
@@ -28,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 @RestController
@@ -54,11 +57,22 @@ public class EntryController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @Autowired
+    private ReferentialService refService;
+
     @PostMapping("")
     @CrossOrigin
     public HttpEntity<Entry> post(@RequestBody @Valid Entry entry) {
-        var newEntry = entryService.create(entry);
-        return new ResponseEntity<Entry>(newEntry, HttpStatus.OK);
+        /*var ref = refService.findById(entry.ref_id);
+        if(ref.isPresent()) {
+            var entryCreationReport = entryService.create(entry, ref.get()); 
+            if(entryCreationReport.isPresent()) {
+
+            }
+            return new ResponseEntity<Entry>(newEntry, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);*/
+        return new ResponseEntity<>(this.entryService.create(entry), HttpStatus.CREATED);
     }
 
 
@@ -69,13 +83,5 @@ public class EntryController {
         logger.info("PUT :", entry.id, entry.fields);
 
         return new ResponseEntity<Entry>(updatedEntry, HttpStatus.OK);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public Map<String, String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message", "Unique entry id violation.");
-        return errors;
     }
 }
