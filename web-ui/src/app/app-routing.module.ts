@@ -8,7 +8,7 @@ const routes: Routes = [
   { path: 'config/:RefId/injections', loadChildren: () => import('./features/injec-edit/injec-edit.module').then(m => m.InjecEditModule) },
   { path: 'config/:RefId', loadChildren: () => import('./features/ref-edit/ref-config-edit.module').then(m => m.RefConfigEditModule) },
   { path: 'config', loadChildren: () => import('./features/ref-edit/ref-config-edit.module').then(m => m.RefConfigEditModule) },
-  //{ path: 'import/:RefId', loadChildren: () => import('./features/import/import.module').then(m => m.ImportModule) }
+  { path: 'import/:RefId', loadChildren: () => import('./features/ref-import/ref-import.module').then(m => m.RefImportModule) }
 ];
 
 @NgModule({

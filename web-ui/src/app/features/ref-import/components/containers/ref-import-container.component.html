@@ -1,0 +1,14 @@
+<h1>Import into {{ Ref.name }}</h1>
+
+<div class="d-flex">
+    <div class="p-2 me-auto">
+        <div class="input-group mb-3">
+            <!-- File upload form -->
+            <input #uploadFile (change)="upload($event)" type='file' class="form-control">
+        </div> 
+    </div>
+    <div class="p-2">
+        <button mat-raised-button color="primary">Import</button>
+    </div>
+</div>
+<hr>

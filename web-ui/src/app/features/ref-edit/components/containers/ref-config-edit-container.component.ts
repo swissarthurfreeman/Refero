@@ -183,7 +183,9 @@ export class RefConfigEditContainerComponent implements OnInit {
 
       this.Ref.name = this.file!.name;
 
+      parsedCSV.data.pop()  // pop crap at end
       let records = parsedCSV.data as Record[];
+
       this.records = records;
 
       this.addColFormsFor(this.Ref);  // TODO : revamp to just adding for a single colfig, cycle before. 

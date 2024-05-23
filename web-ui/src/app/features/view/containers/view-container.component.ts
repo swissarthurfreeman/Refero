@@ -39,6 +39,10 @@ export class ViewContainerComponent implements OnInit {
     this.router.navigate(['entry', refId, '']);
   }
 
+  importFile(refId: string) {
+    this.router.navigate(['import', refId]);
+  }
+
   @ViewChild(TableComponent) table!: TableComponent;
 
   exportReferential() {
