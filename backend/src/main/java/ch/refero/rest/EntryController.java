@@ -57,12 +57,10 @@ public class EntryController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @Autowired
-    private ReferentialService refService;
-
     @PostMapping("")
     @CrossOrigin
     public HttpEntity<Entry> post(@RequestBody @Valid Entry entry) {
+        // TODO : validate entry, check all constraints, throw errors that can be handled by ReferoExceptionHandler class
         /*var ref = refService.findById(entry.ref_id);
         if(ref.isPresent()) {
             var entryCreationReport = entryService.create(entry, ref.get()); 

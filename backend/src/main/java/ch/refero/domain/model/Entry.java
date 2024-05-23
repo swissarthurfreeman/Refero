@@ -1,7 +1,13 @@
 package ch.refero.domain.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.springframework.data.util.Pair;
+
+import ch.refero.domain.model.constraints.ValidColfigIdConstraint;
 import ch.refero.domain.model.constraints.ValidRefIdConstraint;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -47,6 +53,11 @@ public class Entry {
     @NotEmpty(message = "Entry must contain a fields map.")
     @Lob
     public Map<String, String> fields;
+
+    @ValidColfigIdConstraint
+    private Pair<String, List<String>> getFields() {                  // getFields name is obligatory for the validation to work correctly
+        return Pair.of(this.ref_id, new ArrayList<>(this.fields.keySet())); 
+    }
 
     @Override
     public String toString() {

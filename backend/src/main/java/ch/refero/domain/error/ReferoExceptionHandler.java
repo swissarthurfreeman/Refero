@@ -39,10 +39,10 @@ public class ReferoExceptionHandler extends ResponseEntityExceptionHandler {
 
         final List<String> errors = new ArrayList<String>();
         for (final FieldError error : ex.getBindingResult().getFieldErrors())
-            errors.add(error.getField() + ": " + error.getDefaultMessage());
+            errors.add(error.getDefaultMessage());
 
         for (final ObjectError error : ex.getBindingResult().getGlobalErrors())
-            errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
+            errors.add(error.getDefaultMessage());
 
         final ReferoError apiError = new ReferoError(
             HttpStatus.BAD_REQUEST, 

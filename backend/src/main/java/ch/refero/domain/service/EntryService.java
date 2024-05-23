@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import ch.refero.domain.model.Entry;
@@ -44,6 +45,7 @@ public class EntryService {
         }
         entryRepo.save(entry);
         return Optional.empty();*/
+        // throw new DataIntegrityViolationException("asjsajkghsdg");  // doesn't require a try catch block...
         return entryRepo.save(entry);
     }
 

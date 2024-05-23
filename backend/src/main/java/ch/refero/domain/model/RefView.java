@@ -1,7 +1,11 @@
 package ch.refero.domain.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.util.Pair;
+
+import ch.refero.domain.model.constraints.ValidColfigIdConstraint;
 import ch.refero.domain.model.constraints.ValidRefIdConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -17,7 +21,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Table(
     uniqueConstraints=
-        @UniqueConstraint(columnNames={"id", "name"})   // cannot have duplicate id, name pairs
+        @UniqueConstraint(columnNames={"ref_id", "name"})   // cannot have duplicate id, name pairs
 )
 @Entity
 public class RefView {
@@ -38,11 +42,21 @@ public class RefView {
     @ValidRefIdConstraint
     public String ref_id;
 
-    @ElementCollection
     @Column
-    public List<String> dispColIds;
+    @ElementCollection
+    public List<String> dispColIds = new ArrayList<>();
+
+    @ValidColfigIdConstraint
+    private Pair<String, List<String>> getDispColIds() {
+        return Pair.of(this.ref_id, this.dispColIds);
+    }
     
-    @ElementCollection
     @Column
-    public List<String> searchColIds;  
+    @ElementCollection
+    public List<String> searchColIds = new ArrayList<>();  
+
+    @ValidColfigIdConstraint
+    private Pair<String, List<String>> getSearchColIds() {
+        return Pair.of(this.ref_id, this.searchColIds);
+    }
 }

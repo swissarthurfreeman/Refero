@@ -16,7 +16,7 @@ public class ValidRefIdConstraintValidator implements ConstraintValidator<ValidR
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if(value == null) 
-            return false;   // this makes me angry
+            return false;   // this makes me angry, not caught by @NotBlank first
 
         if(refRepo.findById(value).isPresent())
             return true;
