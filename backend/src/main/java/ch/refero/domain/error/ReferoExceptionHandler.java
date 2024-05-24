@@ -67,13 +67,9 @@ public class ReferoExceptionHandler extends ResponseEntityExceptionHandler {
            cause = cause.getCause(); 
         }
 
-        var msg = "Error persisting to database, a database schema constraint was violated."; 
-        if(ex instanceof DuplicateKeyException) // for when refero throws DupKeyException in Entry creation service.
-            msg = ex.getMessage();
-
         final ReferoError persistenceError = new ReferoError(
             HttpStatus.BAD_REQUEST, 
-            msg,
+            ex.getMessage(),
             errors
         );
         return new ResponseEntity<>(persistenceError, HttpStatus.BAD_REQUEST);

@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.model.Entry;
-import ch.refero.domain.model.Referential;
 import ch.refero.domain.repository.EntryRepository;
-//import ch.refero.domain.repository.ReferentialRepository;
 import ch.refero.domain.repository.specifications.FilterByRefIdSpecification;
 
 @Service
@@ -50,8 +48,22 @@ public class EntryService {
      * @param entry @Valid marked entry
      * @return
      */
-    public Entry create(Entry entry) { 
-        this.validateBusinessKeys(entry);
+    public Entry create(Entry entry) {
+
+        List<Colfig> bkColfigs = new ArrayList<>();
+        List<Colfig> reqColfigs = new ArrayList<>();
+
+        for(var colId: entry.fields.keySet()) {
+            var colfig = this.colfigService.findById(colId).get();  // Entry has been validated before
+            if(colfig.colType.equals("BK"))
+                bkColfigs.add(colfig);
+            
+            if(colfig.required)
+                reqColfigs.add(colfig);   
+        }
+
+        this.validateBusinessKeys(entry, bkColfigs);
+        this.validateRequiredFields(entry, reqColfigs);
         return entryRepo.save(entry);
     }
     
@@ -59,19 +71,13 @@ public class EntryService {
      * Check if business key of entry (composed or not) is unique within the already existing 
      * entries in the referential. Throws a DuplicateKeyException if it's not the case. 
      */
-    private void validateBusinessKeys(Entry entry) {
-        List<Colfig> bkColfigs = new ArrayList<>();             // if column is BK, check it's unique.
-        var newEntryBkSlice = "";                           
-
-        for(var colId: entry.fields.keySet()) {
-            var colfig = this.colfigService.findById(colId).get();
-            if(colfig.colType.equals("BK")) {
-                bkColfigs.add(colfig);
-                newEntryBkSlice += entry.fields.get(colfig.id);
-            }
-        }
-
+    private void validateBusinessKeys(Entry entry, List<Colfig> bkColfigs) {
         if(bkColfigs.size() > 0) {                              // we build a list of strings of bk1 bk2 ... bkn strings present in the ref 
+            var newEntryBkSlice = "";                           
+
+            for(var bkColfig: bkColfigs)
+                newEntryBkSlice += entry.fields.get(bkColfig.id);
+
             List<Entry> entries = this.findAll(Optional.of(entry.ref_id));
             List<String> bkStringSlices = new ArrayList<>();
 
@@ -90,6 +96,15 @@ public class EntryService {
                 if(!entries.get(idx).id.equals(entry.id)) {
                     throw new DuplicateKeyException("Duplicate Business Key error, BK value (" + newEntryBkSlice + ") already exists.");
                 }
+            }
+        }
+    }
+
+    private void validateRequiredFields(Entry entry, List<Colfig> reqColfigs) {
+        if(reqColfigs.size() > 0) {
+            for(var reqColfig: reqColfigs) {
+                if(entry.fields.get(reqColfig.id).isBlank())
+                    throw new DataIntegrityViolationException("Missing Required field '" + reqColfig.name + "' is blank.");
             }
         }
     }
