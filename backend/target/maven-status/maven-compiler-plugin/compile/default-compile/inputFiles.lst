@@ -6,12 +6,14 @@
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/error/ReferoExceptionHandler.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/service/InjectionService.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/error/ReferoError.java
+/home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/constraints/UniqueRefIdViewNameConstraint.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/Application.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/service/ViewService.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/constraints/ValidRefIdConstraintValidator.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/service/EntryService.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/service/ColfigService.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/service/ReferentialService.java
+/home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/constraints/UniqueColfigRefIdColNameConstraint.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/repository/EntryRepository.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/DataLoader.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/rest/EntryController.java
@@ -19,10 +21,12 @@
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/Injection.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/Colfig.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/Entry.java
+/home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/constraints/UniqueColfigRefIdColNameConstraintValidator.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/rest/RefViewController.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/constraints/ValidRefIdConstraint.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/RefView.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/config/ValidationConfig.java
+/home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/constraints/UniqueRefIdViewNameConstraintValidator.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/rest/ColfigController.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/repository/InjectionRepository.java
 /home/gordon/Documents/Mandats/Stats/Refero/backend/src/main/java/ch/refero/domain/model/constraints/ValidColfigIdConstraintValidator.java

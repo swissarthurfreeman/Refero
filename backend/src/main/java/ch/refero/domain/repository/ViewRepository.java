@@ -12,7 +12,6 @@ import ch.refero.domain.model.RefView;
 
 
 public interface ViewRepository extends JpaRepository<RefView, String>, JpaSpecificationExecutor<RefView> {
-    @NonNull List<RefView> findAll();
     @NonNull List<RefView> findAll(@NonNull Specification<RefView> spec);
     @NonNull Optional<RefView> findById(@NonNull String id);
 }

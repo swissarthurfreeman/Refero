@@ -3,8 +3,6 @@ package ch.refero.domain.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.springframework.data.util.Pair;
 
 import ch.refero.domain.model.constraints.ValidColfigIdConstraint;

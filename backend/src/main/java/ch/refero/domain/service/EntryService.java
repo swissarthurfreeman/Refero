@@ -1,6 +1,8 @@
 package ch.refero.domain.service;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -8,9 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.model.Entry;
 import ch.refero.domain.repository.EntryRepository;
@@ -59,11 +61,18 @@ public class EntryService {
                 bkColfigs.add(colfig);
             
             if(colfig.required)
-                reqColfigs.add(colfig);   
+                reqColfigs.add(colfig);   // TODO : check foreign key validity if required
         }
 
-        this.validateBusinessKeys(entry, bkColfigs);
-        this.validateRequiredFields(entry, reqColfigs);
+        var errMap = this.validateBusinessKeys(entry, bkColfigs);
+        var reqFieldsErrors = this.validateRequiredFields(entry, reqColfigs);
+        errMap.putAll(reqFieldsErrors);
+
+        if(errMap.size() > 0) {
+            Gson gson = new Gson();
+            String gsonData = gson.toJson(errMap);
+            throw new DataIntegrityViolationException(gsonData);
+        }
         return entryRepo.save(entry);
     }
     
@@ -71,7 +80,9 @@ public class EntryService {
      * Check if business key of entry (composed or not) is unique within the already existing 
      * entries in the referential. Throws a DuplicateKeyException if it's not the case. 
      */
-    private void validateBusinessKeys(Entry entry, List<Colfig> bkColfigs) {
+    private Map<String, String> validateBusinessKeys(Entry entry, List<Colfig> bkColfigs) {
+        var bkFieldsError = new HashMap<String, String>();
+        
         if(bkColfigs.size() > 0) {                              // we build a list of strings of bk1 bk2 ... bkn strings present in the ref 
             var newEntryBkSlice = "";                           
 
@@ -94,18 +105,27 @@ public class EntryService {
                 logger.info("\n\nDUP KEY\n\n");
                 // TODO : This could mean we're updating an already existing record, hence the check here.
                 if(!entries.get(idx).id.equals(entry.id)) {
-                    throw new DuplicateKeyException("Duplicate Business Key error, BK value (" + newEntryBkSlice + ") already exists.");
+                    for(var bkColfig: bkColfigs) {
+                        bkFieldsError.put(bkColfig.id, "Entry with BK (" + newEntryBkSlice + ") already exists.");
+                    }
+                    return bkFieldsError;
                 }
             }
         }
+        return bkFieldsError;
     }
 
-    private void validateRequiredFields(Entry entry, List<Colfig> reqColfigs) {
+    private Map<String, String> validateRequiredFields(Entry entry, List<Colfig> reqColfigs) {
+        var reqFieldErrors = new HashMap<String, String>();
         if(reqColfigs.size() > 0) {
             for(var reqColfig: reqColfigs) {
-                if(entry.fields.get(reqColfig.id).isBlank())
-                    throw new DataIntegrityViolationException("Missing Required field '" + reqColfig.name + "' is blank.");
+                
+                if(entry.fields.get(reqColfig.id).isBlank()) {
+                    reqFieldErrors.put(reqColfig.id, "field is required");
+                    // throw new DataIntegrityViolationException("Missing Required field '" + reqColfig.name + "' is blank.");
+                }
             }
         }
+        return reqFieldErrors;
     }
 }

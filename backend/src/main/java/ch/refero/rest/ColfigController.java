@@ -1,32 +1,26 @@
 package ch.refero.rest;
 
-import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.validation.FieldError;
 
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.service.ColfigService;
 import jakarta.validation.Valid;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,12 +53,7 @@ public class ColfigController {
     @PostMapping("")
     @CrossOrigin
     public ResponseEntity<Colfig> post(@RequestBody @Valid Colfig col) {
-        var savedCol = colfigService.save(col);
-        if(savedCol.isPresent())
-            return new ResponseEntity<Colfig>(savedCol.get(), HttpStatus.CREATED);
-        
-        logger.info("Throw exception !");
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ref_id is not valid");
+        return new ResponseEntity<Colfig>(col, HttpStatus.CREATED);
     }
 
     // TODO : make sure a column that's a FK doesn't have a date format, etc. 

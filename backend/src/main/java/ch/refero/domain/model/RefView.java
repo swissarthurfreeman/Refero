@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.springframework.data.util.Pair;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import ch.refero.domain.model.constraints.UniqueRefIdViewNameConstraint;
 import ch.refero.domain.model.constraints.ValidColfigIdConstraint;
 import ch.refero.domain.model.constraints.ValidRefIdConstraint;
 import jakarta.persistence.Column;
@@ -13,8 +16,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +25,7 @@ import jakarta.validation.constraints.NotBlank;
         @UniqueConstraint(columnNames={"ref_id", "name"})   // cannot have duplicate id, name pairs
 )
 @Entity
+@UniqueRefIdViewNameConstraint   // for catching this at validation level
 public class RefView {
     @Id
     @Column
@@ -32,10 +34,6 @@ public class RefView {
 
     @NotBlank(message = "Name of view cannot be blank.")
     public String name;
-
-    @JoinColumn(name = "ref_id", insertable = false, updatable = false)
-    @ManyToOne(targetEntity = Referential.class)
-    private Referential ref;
 
     @Column(name = "ref_id")
     @NotBlank(message = "ref_id cannot be blank")

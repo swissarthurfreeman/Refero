@@ -1,14 +1,11 @@
 package ch.refero.domain.error;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -19,10 +16,10 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.google.gson.Gson;
 
 @ControllerAdvice
 public class ReferoExceptionHandler extends ResponseEntityExceptionHandler {
@@ -37,21 +34,34 @@ public class ReferoExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(@NonNull MethodArgumentNotValidException ex, @NonNull HttpHeaders headers, @NonNull HttpStatusCode status, @NonNull WebRequest request) {
         logger.info("@Valid exception :" + ex.getClass().getName());
 
-        final List<String> errors = new ArrayList<String>();
+        Map<String, String> errMap = new HashMap<String, String>();
         for (final FieldError error : ex.getBindingResult().getFieldErrors())
-            errors.add(error.getDefaultMessage());
+            errMap.put(error.getField(), error.getDefaultMessage());
 
-        for (final ObjectError error : ex.getBindingResult().getGlobalErrors())
-            errors.add(error.getDefaultMessage());
+        for (final ObjectError error : ex.getBindingResult().getGlobalErrors()) {
+            if(error.getObjectName().equals("refView")) {
+                errMap.put("name", error.getDefaultMessage());
+            } else {
+                errMap.put(error.getObjectName(), error.getDefaultMessage());
+            }
+        }
+            
 
+
+        Gson gson = new Gson();
+        String jsonErrMap = gson.toJson(errMap);
+        
         final ReferoError apiError = new ReferoError(
             HttpStatus.BAD_REQUEST, 
-            "Validation failed for an argument, changes not saved.", 
-            errors
+            jsonErrMap
         );
+
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
+    /*
+     * Exception thrown when an attempt to insert or update data results in violation of an integrity constraint.
+     */
     @ExceptionHandler({ DataIntegrityViolationException.class })
     protected ResponseEntity<Object> handleDataIntegrityViolationException(@NonNull DataIntegrityViolationException ex) {
         // BUG : depending on wether JDBC or H2 is being used, this will throw a DuplicateKeyException or a DataIntegrityViolationException respectfully
@@ -59,30 +69,10 @@ public class ReferoExceptionHandler extends ResponseEntityExceptionHandler {
         // depending on the db connector used in production, the output might be a DuplicateKeyException, in which case we can actually return a more
         // specific error message. We could move this exception handler to the controller when needed, though it may lead to duplication
 
-        final List<String> errors = new ArrayList<>();
-        
-        var cause = ex.getCause();
-        while(cause != null) {
-           errors.add(cause.getMessage());
-           cause = cause.getCause(); 
-        }
-
         final ReferoError persistenceError = new ReferoError(
             HttpStatus.BAD_REQUEST, 
-            ex.getMessage(),
-            errors
+            ex.getMessage()
         );
         return new ResponseEntity<>(persistenceError, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ResponseStatusException.class)
-    protected ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex) {
-        var errors = new ArrayList<String>();
-        final ReferoError genericErorr = new ReferoError(
-            HttpStatus.BAD_REQUEST, 
-            ex.getMessage(),
-            errors
-        );
-        return new ResponseEntity<>(genericErorr, HttpStatus.BAD_REQUEST);
     }
 }

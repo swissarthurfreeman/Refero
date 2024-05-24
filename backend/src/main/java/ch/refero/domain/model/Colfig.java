@@ -1,19 +1,14 @@
 package ch.refero.domain.model;
 
-import org.springframework.lang.NonNull;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import ch.refero.domain.model.constraints.ValidRefIdConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.AssertTrue;
@@ -21,7 +16,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Table(
     uniqueConstraints=
-        @UniqueConstraint(columnNames={"id", "name"})   // cannot have duplicate id, name pairs
+        @UniqueConstraint(columnNames={"ref_id", "name"})   // cannot same name for columns of same referential
 )
 @Entity
 public class Colfig {
@@ -29,17 +24,12 @@ public class Colfig {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column
     public String id;
-    
-    // TODO : think about why we had this thing ?
-    //@JoinColumn(name = "ref_id", insertable = false, updatable = false)
-    //@ManyToOne(targetEntity = Referential.class)
-    //private Referential ref;
 
     
     @Column(name = "ref_id")
     @ValidRefIdConstraint
     @NotBlank(message = "ref_id cannot be blank")
-    public String ref_id;                                          // TODO : investigate @ForeignKey() annotation
+    public String ref_id;
 
     @Column()
     public String name;
