@@ -151,7 +151,7 @@ public class DataLoader implements ApplicationRunner {
 
         var col3_ref1 = new Colfig();
         col3_ref1.ref_id = ref1.id;
-        col3_ref1.colType = "NONE";
+        col3_ref1.colType = "BK";
         col3_ref1.name = "Latin Name";
         colRepository.save(col3_ref1);
 

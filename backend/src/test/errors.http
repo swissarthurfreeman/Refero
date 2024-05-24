@@ -52,7 +52,7 @@ Content-Type: application/json
 
 {
     "ref_id": "{{ref_id1}}",
-    "name": " . ",
+    "name": "TOOO",
     "dispColIds": ["{{ref1_colid1}}"]
 }
 

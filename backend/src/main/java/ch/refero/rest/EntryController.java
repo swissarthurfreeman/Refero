@@ -60,16 +60,6 @@ public class EntryController {
     @PostMapping("")
     @CrossOrigin
     public HttpEntity<Entry> post(@RequestBody @Valid Entry entry) {
-        // TODO : validate entry, check all constraints, throw errors that can be handled by ReferoExceptionHandler class
-        /*var ref = refService.findById(entry.ref_id);
-        if(ref.isPresent()) {
-            var entryCreationReport = entryService.create(entry, ref.get()); 
-            if(entryCreationReport.isPresent()) {
-
-            }
-            return new ResponseEntity<Entry>(newEntry, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);*/
         return new ResponseEntity<>(this.entryService.create(entry), HttpStatus.CREATED);
     }
 
@@ -77,9 +67,6 @@ public class EntryController {
     @PutMapping("{id}")
     @CrossOrigin
     public HttpEntity<Entry> put(@PathVariable String id, @RequestBody @Valid Entry entry) {
-        var updatedEntry = entryService.update(entry.id, entry);
-        logger.info("PUT :", entry.id, entry.fields);
-
-        return new ResponseEntity<Entry>(updatedEntry, HttpStatus.OK);
+        return new ResponseEntity<Entry>(this.entryService.create(entry), HttpStatus.OK);
     }
 }
