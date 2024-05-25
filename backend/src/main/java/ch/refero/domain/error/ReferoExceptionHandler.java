@@ -47,7 +47,6 @@ public class ReferoExceptionHandler extends ResponseEntityExceptionHandler {
         }
             
 
-
         Gson gson = new Gson();
         String jsonErrMap = gson.toJson(errMap);
         

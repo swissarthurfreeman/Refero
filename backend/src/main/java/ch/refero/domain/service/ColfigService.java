@@ -44,9 +44,6 @@ public class ColfigService {
      * @return The newly  saved Colfig, with the server assigned id. 
      */
     public Optional<Colfig> save(Colfig col) {
-        if(refService.findById(col.ref_id).isPresent())
-            return Optional.of(colRepo.save(col));
-        
-        return Optional.ofNullable(null);
+        return Optional.of(colRepo.save(col));
     }
 }

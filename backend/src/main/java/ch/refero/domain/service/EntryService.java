@@ -13,6 +13,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.model.Entry;
 import ch.refero.domain.repository.EntryRepository;
@@ -64,13 +66,19 @@ public class EntryService {
                 reqColfigs.add(colfig);   // TODO : check foreign key validity if required
         }
 
-        var errMap = this.validateBusinessKeys(entry, bkColfigs);
         var reqFieldsErrors = this.validateRequiredFields(entry, reqColfigs);
+        var errMap = this.validateBusinessKeys(entry, bkColfigs);
+        
         errMap.putAll(reqFieldsErrors);
+
+        for(var key: errMap.keySet()) {
+            logger.info("key: " + key + " object: " + errMap.get(key).toString());
+        }
 
         if(errMap.size() > 0) {
             Gson gson = new Gson();
             String gsonData = gson.toJson(errMap);
+            logger.info("\n\nHEREEEEEEEEEEEEE\n\n");
             throw new DataIntegrityViolationException(gsonData);
         }
         return entryRepo.save(entry);
@@ -80,8 +88,8 @@ public class EntryService {
      * Check if business key of entry (composed or not) is unique within the already existing 
      * entries in the referential. Throws a DuplicateKeyException if it's not the case. 
      */
-    private Map<String, String> validateBusinessKeys(Entry entry, List<Colfig> bkColfigs) {
-        var bkFieldsError = new HashMap<String, String>();
+    private Map<String, Object> validateBusinessKeys(Entry entry, List<Colfig> bkColfigs) {
+        var bkFieldsError = new HashMap<String, Object>();
         
         if(bkColfigs.size() > 0) {                              // we build a list of strings of bk1 bk2 ... bkn strings present in the ref 
             var newEntryBkSlice = "";                           
@@ -107,6 +115,11 @@ public class EntryService {
                 if(!entries.get(idx).id.equals(entry.id)) {
                     for(var bkColfig: bkColfigs) {
                         bkFieldsError.put(bkColfig.id, "Entry with BK (" + newEntryBkSlice + ") already exists.");
+                        
+                        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+                        logger.info("\n\nENTRY TO JSON\n\n");
+                        logger.info("\n\n"+entries.get(idx).toString()+"\n\n");
+                        bkFieldsError.put("dupEntry", gson.toJson(entries.get(idx)));
                     }
                     return bkFieldsError;
                 }

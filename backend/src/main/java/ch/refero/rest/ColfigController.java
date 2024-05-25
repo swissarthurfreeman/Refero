@@ -53,7 +53,7 @@ public class ColfigController {
     @PostMapping("")
     @CrossOrigin
     public ResponseEntity<Colfig> post(@RequestBody @Valid Colfig col) {
-        return new ResponseEntity<Colfig>(col, HttpStatus.CREATED);
+        return new ResponseEntity<Colfig>(colfigService.save(col).get(), HttpStatus.CREATED);
     }
 
     // TODO : make sure a column that's a FK doesn't have a date format, etc. 
