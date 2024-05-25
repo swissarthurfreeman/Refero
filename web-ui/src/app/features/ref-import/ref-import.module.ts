@@ -12,25 +12,26 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-
+import { RecEditModule } from "../rec-edit/rec-edit.module";
 
 @NgModule({
-  declarations: [
-    RefImportRoutableComponent,
-    RefImportContainerComponent
-  ],
-  imports: [
-    CommonModule,
-    ImportRoutingModule,
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatDividerModule,
-    MatIconModule,
-    MatGridListModule,
-    MatInputModule
-  ]
+    declarations: [
+        RefImportRoutableComponent,
+        RefImportContainerComponent
+    ],
+    imports: [
+        CommonModule,
+        ImportRoutingModule,
+        CommonModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatDividerModule,
+        MatIconModule,
+        MatGridListModule,
+        MatInputModule,
+        RecEditModule // imports key pair edit
+    ]
 })
 export class RefImportModule { }

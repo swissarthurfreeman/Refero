@@ -3,7 +3,7 @@ import { FormArray, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Colfig } from '../../../../../shared/models/Colfig.model';
 import { ColfigService } from '../../../../../shared/services/colfig.service';
-import { Entry } from '../../../../../shared/models/record.model';
+import { Entry, Record } from '../../../../../shared/models/record.model';
 import { EntryService } from '../../../../../shared/services/entry.service';
 
 @Component({
@@ -23,13 +23,14 @@ export class KeyValuePresentationalComponent {
       if(colfig.colType === 'FK') {
         console.log("Getting Entries of Foreign Ref with ID", colfig.pointedRefId);
         this.foreignEntries$ = this.es.getEntriesOf(colfig.pointedRefId);
-        this.foreignEntries$.subscribe((entries) => { console.log(entries )});
+        this.foreignEntries$.subscribe((entries) => { console.log(entries) });
       }
     })
   }
   
   @Input() colId!: string;   
-  @Input() FormControl!: FormControl; // contains colId and value
+  @Input() FormControl!: FormControl; // contains colId and value 
 
-
+  @Input() ErrorMap!: Record;
+  @Input() readOnly: boolean = false;
 }

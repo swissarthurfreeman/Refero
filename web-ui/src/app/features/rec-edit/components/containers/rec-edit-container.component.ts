@@ -6,12 +6,12 @@ import { RefService } from '../../../../shared/services/ref.service';
 import { Injection } from '../../../../shared/models/injection.model';
 import { Referential } from '../../../../shared/models/referential.model';
 import { View } from '../../../../shared/models/view.model';
-import { Entry } from '../../../../shared/models/record.model';
+import { Entry, Record } from '../../../../shared/models/record.model';
 import { SetInjection } from '../../../../shared/stores/ref-view/ref-view.action';
 import { RecEditState } from '../../../../shared/stores/rec-edit/rec-edit.state';
 import { SetInjectionSourceRef, SetInjectionSourceRefView } from '../../../../shared/stores/rec-edit/rec-edit.action';
 import { EntryService } from '../../../../shared/services/entry.service';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Colfig } from '../../../../shared/models/Colfig.model';
 
 
@@ -36,6 +36,9 @@ export class RecEditContainerComponent implements OnInit {
       keypairs: this.fb.array([])
     });
     this.AddKeyPairs();
+    this.EntryForm.markAllAsTouched();
+    this.EntryForm.markAsDirty();
+    this.EntryForm.markAsTouched();
   }
 
   get keypairs() {
@@ -51,9 +54,13 @@ export class RecEditContainerComponent implements OnInit {
         colId: colfig.id,
         value: this.CurrentEntry.fields[colfig.id],
       });
+      mapForm.controls.colId.markAsTouched();
+      mapForm.markAsTouched();
       this.keypairs.push(mapForm);
     }
   }
+
+  ErrorMap: Record = {};
 
   SaveEntry() {
     // read values from formArray, update CurrentEntry based on it, PUT changes to database.
@@ -61,8 +68,13 @@ export class RecEditContainerComponent implements OnInit {
       this.CurrentEntry.fields[keypair['colId']] = keypair['value']
     
     console.log("PUT :", this.CurrentEntry);
-    this.es.putEntry(this.CurrentEntry).subscribe((value) => {
-      console.log("PUT response :", value); // TODO : add confirmation popups in the frontend.
+    this.es.putEntry(this.CurrentEntry).subscribe({
+      next: (value) => console.log("PUT :", value) ,
+      error: (error) => { 
+        let jsonEntryError: Record = JSON.parse(error.error.message);
+        this.ErrorMap = jsonEntryError;
+        console.log("error message :", jsonEntryError)
+      }
     })
   }
 

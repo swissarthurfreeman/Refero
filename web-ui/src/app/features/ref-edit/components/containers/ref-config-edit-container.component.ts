@@ -111,8 +111,11 @@ export class RefConfigEditContainerComponent implements OnInit {
         entry.fields = {};
 
         for (let colfig of ref.columns) {
+          console.log(colfig);
           entry.fields[colfig.id] = record[colfig.fileColName];
         }
+
+        console.log("POST :", entry);
         this.es.postEntry(entry).subscribe((newEntry) => {
           console.log("Posted Entry :", newEntry);
         });
@@ -140,6 +143,9 @@ export class RefConfigEditContainerComponent implements OnInit {
 
     this.rs.putReferential(this.Ref).subscribe((uRef) => {  // uRef is either an new referential or an existing, updated one
       this.UpdateColfigsOf(uRef.id).subscribe((uColfigs) => {
+        this.Ref.columns = uColfigs;
+        console.log("POSTED COLFIGS :", uColfigs);
+        console.log(this.Ref.columns);
         if(this.Ref.id === undefined) {                     // if this is a new referential, post the entries and create a default view.
           this.PostCSVEntriesOf(uRef.id);
           this.PostDefaultViewOf(uRef.id);

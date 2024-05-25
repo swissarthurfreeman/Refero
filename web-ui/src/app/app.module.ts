@@ -14,6 +14,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { RefConfigState } from './shared/stores/ref-config-edit/ref-config.state';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { RecEditState } from './shared/stores/rec-edit/rec-edit.state';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core'; 
 
 @NgModule({
     declarations: [
@@ -26,7 +27,8 @@ import { RecEditState } from './shared/stores/rec-edit/rec-edit.state';
         //    {component: ViewComponent, path: 'view'}    // makes @Input() work on ViewComponent...
         ],
         withComponentInputBinding()),
-        provideAnimationsAsync()
+        provideAnimationsAsync(),
+        { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }
         
     ],
     bootstrap: [AppComponent],

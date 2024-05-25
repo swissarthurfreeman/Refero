@@ -17,24 +17,27 @@ import { ViewModule } from '../view/view.module';
 
 
 @NgModule({
-  declarations: [
-    RecEditContainerComponent,
-    KeyValuePresentationalComponent,
-    InjectionPanelPresentationalComponent,
-    RecEditRoutableComponent
-  ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RecEditRoutingModule,
-    MatGridListModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule, 
-    MatSelectModule, 
-    MatDividerModule, 
-    MatButtonModule,
-    ViewModule
-  ]
+    declarations: [
+        RecEditContainerComponent,
+        KeyValuePresentationalComponent,
+        InjectionPanelPresentationalComponent,
+        RecEditRoutableComponent
+    ],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RecEditRoutingModule,
+        MatGridListModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatSelectModule,
+        MatDividerModule,
+        MatButtonModule,
+        ViewModule
+    ],
+    exports: [
+        KeyValuePresentationalComponent
+    ]
 })
 export class RecEditModule { }

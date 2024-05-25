@@ -20,13 +20,14 @@
 </div>
 <hr>
 <mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
-    <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length">
+    <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length*1.25">
         <div [formGroup]="EntryForm">
             <ng-container formArrayName="keypairs">
                 @for (keyPairFormControl of keypairs.controls; track $index) {
                     <app-key-value-presentational 
                         [colId]="keyPairFormControl.getRawValue()['colId']" 
-                        [FormControl]="$any(keyPairFormControl)">
+                        [FormControl]="$any(keyPairFormControl)"
+                        [ErrorMap]="ErrorMap">
                     </app-key-value-presentational>
                 }
             </ng-container>

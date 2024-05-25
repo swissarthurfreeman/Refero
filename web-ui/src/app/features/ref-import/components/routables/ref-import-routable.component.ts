@@ -1,9 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { RefViewState } from '../../../../shared/stores/ref-view/ref-view.state';
 import { Observable } from 'rxjs';
-import { Referential } from '../../../../shared/models/referential.model';
-import { Select } from '@ngxs/store';
+import { Component, Input, OnInit } from '@angular/core';
 import { RefService } from '../../../../shared/services/ref.service';
+import { Referential } from '../../../../shared/models/referential.model';
+
 
 @Component({
   selector: 'app-ref-import-routable',

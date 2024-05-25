@@ -12,3 +12,43 @@
     </div>
 </div>
 <hr>
+
+@if(!isEmpty(errorReport)) {
+    <!-- TODO : make sure this doesn't appear if just a required field conflict -->
+    <mat-grid-list cols="2" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
+        <!-- Destination Entry in conflict (if BK conflict) -->
+        <ng-container *ngIf="DestinationKeyPairs.length > 0">
+            <mat-grid-tile colspan="1" [rowspan]="Ref!.columns.length*1.5">
+                <div [formGroup]="DestinationEntryForm">
+                    <h1>Destination Entry</h1>
+                    <ng-container formArrayName="keypairs">
+                        @for (keyPairFormControl of DestinationKeyPairs.controls; track $index) {
+                            <app-key-value-presentational 
+                                [colId]="keyPairFormControl.getRawValue()['colId']" 
+                                [ErrorMap]="errorReport"
+                                [FormControl]="$any(keyPairFormControl)"
+                                [readOnly]="true">
+                            </app-key-value-presentational>
+                        }
+                    </ng-container>
+                    <button mat-raised-button color="primary" (click)="emitChoice('keepDest')">Keep Destination</button>
+                </div>
+            </mat-grid-tile>
+        </ng-container>
+        <mat-grid-tile colspan="1" [rowspan]="Ref!.columns.length*1.5">
+            <div [formGroup]="IncomingEntryForm">
+                <h1>Incoming Entry</h1>
+                <ng-container formArrayName="keypairs">
+                    @for (keyPairFormControl of IncomingKeypairs.controls; track $index) {
+                        <app-key-value-presentational 
+                            [colId]="keyPairFormControl.getRawValue()['colId']" 
+                            [ErrorMap]="errorReport"
+                            [FormControl]="$any(keyPairFormControl)">
+                        </app-key-value-presentational>
+                    }
+                </ng-container>
+                <button mat-raised-button color="primary" (click)="emitChoice('takeIncoming')">Take Incoming</button>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+}
