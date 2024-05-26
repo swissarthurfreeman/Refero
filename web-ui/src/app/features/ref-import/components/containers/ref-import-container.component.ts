@@ -22,7 +22,6 @@ export class RefImportContainerComponent {
       let parsedCSV = Papa.parse(value, { header: true });
       parsedCSV.data.pop(); // pop empty crap at end
 
-      console.log(parsedCSV.data);
       let rawRecords = parsedCSV.data as Record[];
       this.importEntries(rawRecords);
     });
@@ -39,71 +38,87 @@ export class RefImportContainerComponent {
 
   async importEntries(rawRecords: Record[]) {
     for (let rawEntry of rawRecords) {
+      this.resetForms();
       const incomingEntry: Entry = new Entry();
       incomingEntry.ref_id = this.Ref.id;
       incomingEntry.fields = {};
 
-      for (let colfig of this.Ref.columns) {
-        // TODO : deal with case when fileColName is empty (for example, column that only exists in Refero)
+      for (let colfig of this.Ref.columns) // TODO : deal with case when fileColName is empty (for example, column that only exists in Refero)
         incomingEntry.fields[colfig.id] = rawEntry[colfig.fileColName]; // re-use the import mapping 
-      }
+      
+      while(true) {
+        console.log("incomingEntry :", incomingEntry);
+        const response: any = await firstValueFrom(this.es.putEntry(incomingEntry)).catch((err) => { return err; });
+        console.log("response :", response);    // response could be the created entry or an error
 
-      var validationPassed = false;
-      do {
-        const obs: Observable<any> = this.es.putEntry(incomingEntry);    // could be the created entry or an error
-        const response: any = await firstValueFrom(obs).catch((err) => {
-          return err;
-        });
-        console.log("Reponse =", response);
-
-        if('error' in response) { // handle error
+        if('error' in response) {               // handle error
           this.errorReport = JSON.parse(response.error.message); 
-          //this.erroredEntry = incomingEntry;
-
           this.createIncomingEntryForm(incomingEntry);
 
-          console.log("dupEntry =", this.errorReport['dupEntry'])
-
-          if('dupEntry' in this.errorReport) {   // if it's a BK conflict, retrieve conflicting entry
-            console.log("Creating destination form");
-            this.createDestinationEntryForm(JSON.parse(this.errorReport['dupEntry']))
-          }
-
-          console.group("errorReport =", this.errorReport);
-
           this.decision = new Subject<String>();
-          const choice: String = await firstValueFrom(this.decision);
-
-          if(choice === 'keepDest') {
-            console.log("We keep destination, do not import line.")
+          
+          if('dupEntry' in this.errorReport) {  // if it's a BK conflict, retrieve conflicting entry, else it's a required / FK conflict
+            var dupEntry: Entry = JSON.parse(this.errorReport['dupEntry']);
+            this.createDestinationEntryForm(dupEntry);
+              
+            const choice: String = await firstValueFrom(this.decision);
+            if(choice === 'keepDest') {
+              console.log("We keep do not import the entry.");
+              break;
+            }
+        
+            if(choice === 'takeIncoming') {
+              await this.updateIncomingForm(incomingEntry, dupEntry);    // modifies incomingEntry if user chooses keep incoming
+              continue;
+            }
+          } else {
+            // deal with required field error or invalid FK error
+            console.log("No flow to deal with this.");
+            const choice: String = await firstValueFrom(this.decision);
+            if(choice === 'takeIncoming') {
+              await this.updateIncomingFormForRequiredFields(incomingEntry);
+              continue;
+            }
           }
-
-          if(choice === 'takeIncoming') {
-
-            // TODO : read values from the incoming formArray and update incomingEntry based on that
-            // this needs to be done to deal with required key errors
-
-            console.log("We overwite the record, e.g. POST with the entry ID assigned to the (updates Entry with that ID)");
-            incomingEntry.id = JSON.parse(this.errorReport['dupEntry']).id;
-            console.log("incomingEntry", incomingEntry);
-          }
-          console.log("User chose :", choice);
-        } else {
-          validationPassed = true;  // if no error, move to next entry
         }
-      } while(!validationPassed);
-
-      console.log("Reset Forms")
-      this.IncomingEntryForm = this.fb.group({
-        keypairs: this.fb.array([])
-      });
-
-      this.IncomingEntryForm = this.fb.group({
-        keypairs: this.fb.array([])
-      }); 
-
-      this.errorReport = {};
+        break;  // no error happened, return to next entry
+      }
     }
+    this.resetForms();
+    console.log("Import done.");
+  }
+
+  async updateIncomingFormForRequiredFields(incomingEntry: Entry) {
+    for(let mapFormControl of this.IncomingKeypairs.controls) {
+      const keypair = mapFormControl.getRawValue();
+      const colId = keypair['colId'];
+      const value = keypair['value'];
+      incomingEntry.fields[colId] = value;
+    }
+    return;
+  }
+
+  async updateIncomingForm(incomingEntry: Entry, dupEntry: Entry) {
+    incomingEntry.id = dupEntry.id;
+    for(let mapFormControl of this.IncomingKeypairs.controls) {
+      const keypair = mapFormControl.getRawValue();
+      const colId = keypair['colId'];
+      const value = keypair['value'];
+      incomingEntry.fields[colId] = value;
+    }
+    return;
+  }
+
+  resetForms() {
+    this.IncomingEntryForm = this.fb.group({
+      keypairs: this.fb.array([])
+    });
+
+    this.DestinationEntryForm = this.fb.group({
+      keypairs: this.fb.array([])
+    }); 
+
+    this.errorReport = {};
   }
 
   emitChoice(choice: String) {
