@@ -5,18 +5,9 @@ services:
     image: refero-backend
     ports:
       - 8080:8080
-
-    networks:
-      - net
   refero-web-ui:
     image: refero-web-ui
     ports:
       - 4200:4200
       - 80:4200
       - 443:4200
-    networks:
-      - net
-
-networks:
-  net:
-    name: refero-network
