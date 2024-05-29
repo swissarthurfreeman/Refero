@@ -8,6 +8,8 @@ content-type: application/json
 @ref_id1 = {{getRef.response.body.0.id}}
 @ref_id2 = {{getRef.response.body.1.id}}
 
+### 
+GET {{url}}/cols HTTP/1.1
 
 ### 
 POST http://localhost:8080/cols HTTP/1.1

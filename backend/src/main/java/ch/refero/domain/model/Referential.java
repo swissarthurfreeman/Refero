@@ -24,7 +24,6 @@ public class Referential {
     public String name;
 
     @Column
-    @NotBlank(message = "Description cannot be blank!")
     public String description;
 
     @OneToMany(targetEntity = Entry.class, fetch = FetchType.EAGER)
