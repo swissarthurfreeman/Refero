@@ -72,7 +72,7 @@ export class RefImportContainerComponent {
               continue;
             }
           } else {
-            // deal with required field error or invalid FK error
+            // deal with required field error or TODO invalid FK error
             console.log("No flow to deal with this.");
             const choice: String = await firstValueFrom(this.decision);
             if(choice === 'takeIncoming') {

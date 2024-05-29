@@ -57,10 +57,6 @@ export class RefConfigEditContainerComponent implements OnInit {
 
   addColFormsFor(ref: Referential) {
     for (let colfig of ref.columns) {
-      if(colfig.name === "STATUS") {
-        console.log(colfig);
-      }
-
       this.columns.push(
         this.getColfigGroupOf(
           colfig.id, colfig.colType, colfig.required, colfig.dateFormat,
@@ -137,15 +133,14 @@ export class RefConfigEditContainerComponent implements OnInit {
 
   UpdateReferential() {
     let refconfig: any = this.RefConfigForm.getRawValue();
-
+    console.log(this.RefConfigForm);
+    
     this.Ref.name = refconfig['name'];                      // manualy populate formcontrols for this to work
     this.Ref.description = refconfig['description'];
 
     this.rs.putReferential(this.Ref).subscribe((uRef) => {  // uRef is either an new referential or an existing, updated one
       this.UpdateColfigsOf(uRef.id).subscribe((uColfigs) => {
         this.Ref.columns = uColfigs;
-        console.log("POSTED COLFIGS :", uColfigs);
-        console.log(this.Ref.columns);
         if(this.Ref.id === undefined) {                     // if this is a new referential, post the entries and create a default view.
           this.PostCSVEntriesOf(uRef.id);
           this.PostDefaultViewOf(uRef.id);
@@ -183,11 +178,11 @@ export class RefConfigEditContainerComponent implements OnInit {
         colfig.fileColName = colName;
         colfig.name = colName.toUpperCase(); // TODO : deal with spaces, special characters etc
         colfig.colType = "NONE";
-        colfig.required = true;
+        colfig.required = false;
         this.Ref.columns.push(colfig);      // TODO : don't forget to add ref_id to every column (first post Ref, then get id from response)
       }
 
-      this.Ref.name = this.file!.name;
+      this.RefConfigForm.controls['name'].setValue(this.file!.name);
 
       parsedCSV.data.pop()  // pop crap at end
       let records = parsedCSV.data as Record[];
