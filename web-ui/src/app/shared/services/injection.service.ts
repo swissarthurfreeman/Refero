@@ -13,6 +13,6 @@ export class InjectionService {
   constructor(public rs: RefService, public http: HttpClient) {}
 
   postInjection(injection: Injection): Observable<Injection> {
-    return this.http.post<Injection>(`http://localhost:8080/injections`, injection);
+    return this.http.post<Injection>(`api/injections`, injection);
   }
 }

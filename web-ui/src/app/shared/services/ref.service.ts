@@ -21,15 +21,15 @@ export class RefService {
   constructor(private http: HttpClient) {}
 
   getReferentialBy(refId: string): Observable<Referential> {
-    return this.http.get<Referential>(`http://localhost:8080/refs/${refId}`);
+    return this.http.get<Referential>(`api/refs/${refId}`);
   }
 
   getReferentials(): Observable<Referential[]> {
-    return this.http.get<Referential[]>(`http://localhost:8080/refs`);
+    return this.http.get<Referential[]>(`api/refs`);
   }
 
   putReferential(referential: Referential): Observable<Referential> {
-    return this.http.put<Referential>(`http://localhost:8080/refs/${referential.id}`, {
+    return this.http.put<Referential>(`api/refs/${referential.id}`, {
       "name": referential.name,
       "description": referential.description
     })

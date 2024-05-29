@@ -17,14 +17,14 @@ export class ColfigService {
   constructor(private http: HttpClient) {}
 
   getColfigsOf(refId: string): Observable<Colfig[]> {
-    return this.http.get<Colfig[]>(`http://localhost:8080/cols?ref_id=${refId}`);
+    return this.http.get<Colfig[]>(`api/cols?ref_id=${refId}`);
   }
 
   getColfigBy(colfigId: string): Observable<Colfig>  {
-    return this.http.get<Colfig>(`http://localhost:8080/cols/${colfigId}`);
+    return this.http.get<Colfig>(`api/cols/${colfigId}`);
   }
 
   postColfig(colfig: Colfig): Observable<Colfig> {
-    return this.http.post<Colfig>(`http://localhost:8080/cols`, colfig);
+    return this.http.post<Colfig>(`api/cols`, colfig);
   }
 }

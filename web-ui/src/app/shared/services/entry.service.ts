@@ -14,25 +14,25 @@ export class EntryService {
   constructor(private http: HttpClient) {}
 
   getEntryBy(id: string): Observable<Entry> {
-    return this.http.get<Entry>(`http://localhost:8080/entries/${id}`);
+    return this.http.get<Entry>(`api/entries/${id}`);
   }
 
   getEntriesOf(refId: string): Observable<Entry[]> {
-    return this.http.get<Entry[]>(`http://localhost:8080/entries?ref_id=${refId}`);
+    return this.http.get<Entry[]>(`api/entries?ref_id=${refId}`);
   }
 
   getEntries(): Observable<Entry[]> {
-    return this.http.get<Entry[]>(`http://localhost:8080/entries`);
+    return this.http.get<Entry[]>(`api/entries`);
   }
 
   postEntry(entry: Entry): Observable<Entry> {
-    return this.http.post<Entry>(`http://localhost:8080/entries`, {
+    return this.http.post<Entry>(`api/entries`, {
       "ref_id": entry.ref_id,
       "fields": entry.fields
     })
   }
 
   putEntry(entry: Entry): Observable<Entry> {
-    return this.http.put<Entry>(`http://localhost:8080/entries/${entry.id}`, entry);
+    return this.http.put<Entry>(`api/entries/${entry.id}`, entry);
   }
 }

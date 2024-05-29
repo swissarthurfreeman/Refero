@@ -13,14 +13,14 @@ export class ViewService {
   constructor(public http: HttpClient) {}
 
   getViewsOf(refId: string): Observable<View[]> {
-    return this.http.get<View[]>(`http://localhost:8080/views?ref_id=${refId}`);
+    return this.http.get<View[]>(`api/views?ref_id=${refId}`);
   }
 
   getView(viewId: string): Observable<View> {
-    return this.http.get<View>(`http://localhost:8080/views/${viewId}`);
+    return this.http.get<View>(`api/views/${viewId}`);
   }
   postView(view: View): Observable<View> {
-    return this.http.post<View>(`http://localhost:8080/views`, {
+    return this.http.post<View>(`api/views`, {
       name: view.name,
       dispColIds: view.dispColIds,
       searchColIds: view.searchColIds,
