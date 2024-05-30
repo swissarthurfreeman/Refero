@@ -187,12 +187,12 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) {
-        Referential ref1 = createRef1();
+        /*Referential ref1 = createRef1();
         createEntriesOfRef1(ref1.id);
 
         Referential ref2 = createRef2();
         createEntriesOfRef2(ref2.id);
         CreateInjection(ref1, ref2);
-        createCols();
+        createCols();*/
     }
 }
