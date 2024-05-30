@@ -1,6 +1,6 @@
 {
     "/api": {
-        "target": "http://cd-ghww603.isis.unige.ch:8080", 
+        "target": "http://localhost:8080", 
         "secure": false,
         "changeOrigin": true,
         "pathRewrite": {"^/api" : ""}

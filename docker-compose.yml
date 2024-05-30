@@ -5,9 +5,35 @@ services:
     image: refero-backend
     ports:
       - 8080:8080
+    environment:
+    - MYSQL_HOST=mysql-database
+    - MYSQL_PORT=3306
+    - MYSQL_DATABASE=refero
+    - MYSQL_ROOT_PASSWORD=secret
+    networks:
+      - net
+
+  database:
+    image: mysql
+    ports:
+      - 3306:3306
+    container_name: mysql-database
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=refero
+    networks:
+      - net
+    volumes:
+      - data:/var/lib/mysql
+
   refero-web-ui:
     image: refero-web-ui
     ports:
       - 4200:4200
       - 80:4200
       - 443:4200
+volumes:
+  data:
+
+networks:
+  net:
