@@ -6,25 +6,27 @@ services:
     ports:
       - 8080:8080
     environment:
-    - MYSQL_HOST=mysql-database
-    - MYSQL_PORT=3306
-    - MYSQL_DATABASE=refero
-    - MYSQL_ROOT_PASSWORD=secret
+    - POSTGRES_USER=sample
+    - POSTGRES_PASSWORD=secret
+    - POSTGRES_DB=refero
+    - POSTGRES_HOST=postgres-database
+    - POSTGRES_PORT=5432
     networks:
       - net
 
   database:
-    image: mysql
+    image: postgres
     ports:
-      - 3306:3306
-    container_name: mysql-database
+      - 5432:5432
+    container_name: postgres-database
     environment:
-      - MYSQL_ROOT_PASSWORD=secret
-      - MYSQL_DATABASE=refero
+      - POSTGRES_USER=sample
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=refero
     networks:
       - net
     volumes:
-      - data:/var/lib/mysql
+      - data:/var/lib/postgresql/data
 
   refero-web-ui:
     image: refero-web-ui

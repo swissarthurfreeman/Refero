@@ -51,10 +51,9 @@ public class Entry {
         joinColumns = {@JoinColumn(name = "entry_id", referencedColumnName = "id")
     })
     @MapKeyColumn(name = "col_id")  // the key of the map is in the col_id column of the Coll table.
-    @Column(name = "val")           // the value of the map is in the val column of the Coll table. (value is sql reserved)
+    @Column(name = "val", columnDefinition="TEXT")           // the value of the map is in the val column of the Coll table. (value is sql reserved)
     @NotEmpty(message = "Entry must contain a fields map.")
     @Expose
-    @Lob
     public Map<String, String> fields;
 
     @ValidColfigIdConstraint
