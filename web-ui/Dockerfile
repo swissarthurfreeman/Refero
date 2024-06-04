@@ -2,11 +2,14 @@ FROM node:20 as build
 
 WORKDIR /usr/local/app
 
-RUN npm install -g @angular/cli@17.3.2
+COPY . ./
 
-COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --loglevel verbose
+RUN npm run build
 
-COPY . .
+FROM nginx:alpine
 
-CMD [ "ng",  "serve", "--host", "0.0.0.0" ]
+COPY --from=build /usr/local/app/dist/web-ui /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
