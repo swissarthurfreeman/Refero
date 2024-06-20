@@ -5,7 +5,7 @@ export class Injection {
     id!: string;
     srcId!: string;          // referential from the which we're taking a line
     srcName!: string;
-    ref_id!: string;         // referential to the which we're inserting
+    refid!: string;         // referential to the which we're inserting
     srcColIds!: string[];    // injection is essentially two arrays of same size
     destColIds!: string[];   // of source col ids and destination col ids. 
     

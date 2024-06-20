@@ -15,11 +15,11 @@ public class ValidColfigIdConstraintValidator implements ConstraintValidator<Val
     
 
     @Override
-    public boolean isValid(Pair<String, List<String>> refIdFieldsPair, ConstraintValidatorContext context) {
-        if(refIdFieldsPair.getFirst() == null || refIdFieldsPair.getSecond() == null) 
+    public boolean isValid(Pair<String, List<String>> refidFieldsPair, ConstraintValidatorContext context) {
+        if(refidFieldsPair.getFirst() == null || refidFieldsPair.getSecond() == null) 
             return false;   // this makes me angry, not caught by @NotBlank first
 
-        for(var colfigId: refIdFieldsPair.getSecond()) {
+        for(var colfigId: refidFieldsPair.getSecond()) {
             var colfig = colfigRepo.findById(colfigId);
             if(colfig.isEmpty()) {                              // if colfig doesn't exist
                 context.disableDefaultConstraintViolation();    
@@ -27,8 +27,8 @@ public class ValidColfigIdConstraintValidator implements ConstraintValidator<Val
                     .buildConstraintViolationWithTemplate("Invalid colfigId " + colfigId)
                     .addConstraintViolation();
                 return false;
-            }  else {                                                // if colfig exists, but belongs to another ref_id
-                if(!colfig.get().ref_id.equals(refIdFieldsPair.getFirst())) {
+            }  else {                                                // if colfig exists, but belongs to another refid
+                if(!colfig.get().refid.equals(refidFieldsPair.getFirst())) {
                     context.disableDefaultConstraintViolation();   
                     context
                         .buildConstraintViolationWithTemplate("Column with id '" + colfig.get().id + "' belongs to another referential")

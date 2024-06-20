@@ -3,7 +3,7 @@ package ch.refero.domain.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import ch.refero.domain.model.constraints.ValidRefIdConstraint;
+import ch.refero.domain.model.constraints.ValidrefidConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Table(
     uniqueConstraints=
-        @UniqueConstraint(columnNames={"ref_id", "name"})   // cannot same name for columns of same referential
+        @UniqueConstraint(columnNames={"refid", "name"})   // cannot same name for columns of same referential
 )
 @Entity
 public class Colfig {
@@ -26,10 +26,10 @@ public class Colfig {
     public String id;
 
     
-    @Column(name = "ref_id")
-    @ValidRefIdConstraint
-    @NotBlank(message = "ref_id cannot be blank")
-    public String ref_id;
+    @Column(name = "refid")
+    @ValidrefidConstraint
+    @NotBlank(message = "refid cannot be blank")
+    public String refid;
 
     @Column()
     public String name;
@@ -50,7 +50,7 @@ public class Colfig {
 
     @Column
     @JsonInclude(Include.NON_NULL)
-    public String pointedRefId;
+    public String pointedrefid;
 
     @Column
     @JsonInclude(Include.NON_NULL)
@@ -63,7 +63,7 @@ public class Colfig {
 
     @AssertTrue(message = "pointedRef and pointedRefColId are required when colType is FK")
     private boolean isValidFk() {
-        return !("FK".equals(this.colType)) || !(pointedRefId == null || pointedRefColId == null || pointedRefColLabelId == null);
+        return !("FK".equals(this.colType)) || !(pointedrefid == null || pointedRefColId == null || pointedRefColLabelId == null);
     }
 
     @AssertTrue(message = "dateFormat must be proivded when colType is DATE")

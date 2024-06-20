@@ -1,4 +1,4 @@
-<p>RecEditContainer</p>
+<h1>{{CurrentRef.name}}</h1>
 
 <div class="d-flex">
     <div class="p-2 me-auto">
@@ -12,11 +12,13 @@
         </mat-form-field>
     </div>
     <div class="p-2">
-        <button mat-raised-button color="primary" style="height:4em; width: 6em;" (click)="SaveEntry()">Save</button>
+        <button mat-raised-button color="primary" style="height:4em;width:8em" color="success" (click)="SaveEntry()">Sauvegarder</button>
     </div>
-    <div class="p-2">
-        <button mat-raised-button color="primary" style="height:4em; width: 6em;">Delete</button>
-    </div>
+    @if (this.CurrentEntry.id != null) {
+        <div class="p-2">
+            <button mat-raised-button color="primary" style="height:4em; width: 7em;" color="danger" (click)="DeleteEntry()">Supprimer</button>
+        </div>
+    }
 </div>
 <hr>
 <mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">

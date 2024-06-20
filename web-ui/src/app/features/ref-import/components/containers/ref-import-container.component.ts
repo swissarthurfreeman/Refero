@@ -40,7 +40,7 @@ export class RefImportContainerComponent {
     for (let rawEntry of rawRecords) {
       this.resetForms();
       const incomingEntry: Entry = new Entry();
-      incomingEntry.ref_id = this.Ref.id;
+      incomingEntry.refid = this.Ref.id;
       incomingEntry.fields = {};
 
       for (let colfig of this.Ref.columns) // TODO : deal with case when fileColName is empty (for example, column that only exists in Refero)

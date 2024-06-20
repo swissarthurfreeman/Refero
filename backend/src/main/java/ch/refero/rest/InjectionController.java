@@ -31,8 +31,8 @@ public class InjectionController {
 
     @GetMapping("")
     @CrossOrigin
-    public HttpEntity<List<Injection>> list(@RequestParam(required = false) String ref_id) {
-        var entries = injectionService.findAll(Optional.ofNullable(ref_id));
+    public HttpEntity<List<Injection>> list(@RequestParam(required = false) String refid) {
+        var entries = injectionService.findAll(Optional.ofNullable(refid));
         return new ResponseEntity<>(entries, HttpStatus.OK);
     }
 

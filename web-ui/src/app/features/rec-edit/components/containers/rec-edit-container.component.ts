@@ -13,6 +13,7 @@ import { SetInjectionSourceRef, SetInjectionSourceRefView } from '../../../../sh
 import { EntryService } from '../../../../shared/services/entry.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Colfig } from '../../../../shared/models/Colfig.model';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -21,7 +22,9 @@ import { Colfig } from '../../../../shared/models/Colfig.model';
   styleUrl: './rec-edit-container.component.scss'
 })
 export class RecEditContainerComponent implements OnInit {
-  constructor(public rs: RefService, public es: EntryService, public is: InjectionService, public store: Store, private fb: FormBuilder) {}
+  constructor(
+    public rs: RefService, public es: EntryService, public is: InjectionService, 
+    public store: Store, private fb: FormBuilder, private location: Location) {}
 
   @Input() CurrentEntry!: Entry;
   @Input() CurrentRef!: Referential;
@@ -76,6 +79,12 @@ export class RecEditContainerComponent implements OnInit {
         console.log("error message :", jsonEntryError)
       }
     })
+  }
+
+  DeleteEntry() {
+    this.es.delEntry(this.CurrentEntry.id).subscribe(() => {
+      this.location.back();
+    });
   }
 
   SelectInjection(injection: Injection) {

@@ -34,6 +34,7 @@ export class RefConfigEditContainerComponent implements OnInit {
   ngOnInit(): void {
     this.RefConfigForm = this.fb.group({
       name: this.Ref.name,
+      code: this.Ref.code,
       description: this.Ref.description,
       columns: this.fb.array([])  // contains all the colfigs.
     });
@@ -41,7 +42,7 @@ export class RefConfigEditContainerComponent implements OnInit {
   }
 
   getColfigGroupOf(id: string, colType: string, required: boolean, dateFormat: string, name: string,
-    fileColName: string, pointedRefId: string, pointedRefColId: string, pointedRefColLabelId: string) {
+    fileColName: string, pointedrefid: string, pointedRefColId: string, pointedRefColLabelId: string) {
     return this.fb.group({
       id: id,
       colType: colType,
@@ -49,7 +50,7 @@ export class RefConfigEditContainerComponent implements OnInit {
       dateFormat: dateFormat,
       name: name.toUpperCase(),
       fileColName: fileColName,
-      pointedRefId: pointedRefId,
+      pointedrefid: pointedrefid,
       pointedRefColId: pointedRefColId,
       pointedRefColLabelId: pointedRefColLabelId,
     })
@@ -60,7 +61,7 @@ export class RefConfigEditContainerComponent implements OnInit {
       this.columns.push(
         this.getColfigGroupOf(
           colfig.id, colfig.colType, colfig.required, colfig.dateFormat,
-          colfig.name, colfig.fileColName, colfig.pointedRefId,
+          colfig.name, colfig.fileColName, colfig.pointedrefid,
           colfig.pointedRefColId, colfig.pointedRefColLabelId
         )
       );
@@ -75,15 +76,15 @@ export class RefConfigEditContainerComponent implements OnInit {
     return this.RefConfigForm.controls["columns"] as FormArray;
   }
 
-  PostDefaultViewOf(refId: string) {
-    this.rs.getReferentialBy(refId).subscribe((ref) => {      // POST default FULL_VIEW...
+  PostDefaultViewOf(refid: string) {
+    this.rs.getReferentialBy(refid).subscribe((ref) => {      // POST default FULL_VIEW...
       let dispColIds = []
 
       for (let colfig of ref.columns)
         dispColIds.push(colfig.id);
 
       let defaultView = new View();
-      defaultView.ref_id = ref.id;
+      defaultView.refid = ref.id;
       defaultView.name = "DEFAULT_VIEW";
 
       defaultView.dispColIds = dispColIds;
@@ -99,11 +100,11 @@ export class RefConfigEditContainerComponent implements OnInit {
    * Post all entries read from CSV. 
    * @param ref the newly created referential.
    */
-  PostCSVEntriesOf(refId: string) {
-    this.rs.getReferentialBy(refId).subscribe((ref) => {
+  PostCSVEntriesOf(refid: string) {
+    this.rs.getReferentialBy(refid).subscribe((ref) => {
       for (let record of this.records) {
         const entry: Entry = new Entry();
-        entry.ref_id = refId;
+        entry.refid = refid;
         entry.fields = {};
 
         for (let colfig of ref.columns) {
@@ -119,12 +120,12 @@ export class RefConfigEditContainerComponent implements OnInit {
     })
   }
 
-  UpdateColfigsOf(refId: string): Observable<Colfig[]> {
+  UpdateColfigsOf(refid: string): Observable<Colfig[]> {
     let refconfig: any = this.RefConfigForm.getRawValue();
     let createdColfigObservables: Observable<Colfig>[] = [];
 
     for (let colfig of refconfig['columns']) {
-      colfig.ref_id = refId;                                     // create or update every column config
+      colfig.refid = refid;                                     // create or update every column config
       createdColfigObservables.push(this.cs.postColfig(colfig));
     }
 
@@ -133,10 +134,11 @@ export class RefConfigEditContainerComponent implements OnInit {
 
   UpdateReferential() {
     let refconfig: any = this.RefConfigForm.getRawValue();
-    console.log(this.RefConfigForm);
+    console.log(refconfig);
     
     this.Ref.name = refconfig['name'];                      // manualy populate formcontrols for this to work
     this.Ref.description = refconfig['description'];
+    this.Ref.code = refconfig['code'];
 
     this.rs.putReferential(this.Ref).subscribe((uRef) => {  // uRef is either an new referential or an existing, updated one
       this.UpdateColfigsOf(uRef.id).subscribe((uColfigs) => {
@@ -179,7 +181,7 @@ export class RefConfigEditContainerComponent implements OnInit {
         colfig.name = colName.toUpperCase(); // TODO : deal with spaces, special characters etc
         colfig.colType = "NONE";
         colfig.required = false;
-        this.Ref.columns.push(colfig);      // TODO : don't forget to add ref_id to every column (first post Ref, then get id from response)
+        this.Ref.columns.push(colfig);      // TODO : don't forget to add refid to every column (first post Ref, then get id from response)
       }
 
       this.RefConfigForm.controls['name'].setValue(this.file!.name);

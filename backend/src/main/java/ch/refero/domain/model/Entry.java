@@ -8,7 +8,7 @@ import org.springframework.data.util.Pair;
 import com.google.gson.annotations.Expose;
 
 import ch.refero.domain.model.constraints.ValidColfigIdConstraint;
-import ch.refero.domain.model.constraints.ValidRefIdConstraint;
+import ch.refero.domain.model.constraints.ValidrefidConstraint;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -31,15 +31,15 @@ public class Entry {
     @GeneratedValue(strategy = GenerationType.UUID)
     public String id;
     
-    @JoinColumn(name = "ref_id", insertable = false, updatable = false)
+    @JoinColumn(name = "refid", insertable = false, updatable = false)
     @ManyToOne(targetEntity = Referential.class)
     private Referential ref;
 
-    @Column(name = "ref_id")
+    @Column(name = "refid")
     @Expose
-    @NotBlank(message = "ref_id cannot be blank")
-    @ValidRefIdConstraint
-    public String ref_id;
+    @NotBlank(message = "refid cannot be blank")
+    @ValidrefidConstraint
+    public String refid;
 
     /**
      * Persisting this requires a table of record_id (parent_id), key (col_id), 
@@ -58,6 +58,6 @@ public class Entry {
 
     @ValidColfigIdConstraint
     private Pair<String, List<String>> getFields() {                  // getFields name is obligatory for the validation to work correctly
-        return Pair.of(this.ref_id, new ArrayList<>(this.fields.keySet())); 
+        return Pair.of(this.refid, new ArrayList<>(this.fields.keySet())); 
     }
 }

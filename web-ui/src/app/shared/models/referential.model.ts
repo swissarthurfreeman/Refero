@@ -5,6 +5,7 @@ import { View } from "./view.model";
 export class Referential {
     id!: string;
     name!: string;
+    code!: string;
     description!: string;
     columns!: Colfig[];
     injections!: Injection[];

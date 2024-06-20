@@ -18,7 +18,7 @@ import com.google.gson.GsonBuilder;
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.model.Entry;
 import ch.refero.domain.repository.EntryRepository;
-import ch.refero.domain.repository.specifications.FilterByRefIdSpecification;
+import ch.refero.domain.repository.specifications.FilterByrefidSpecification;
 
 @Service
 public class EntryService {
@@ -30,9 +30,9 @@ public class EntryService {
 
     Logger logger = LoggerFactory.getLogger(ReferentialService.class);
 
-    public List<Entry> findAll(Optional<String> ref_id) {
-        if(ref_id.isPresent()) {
-            var spec = new FilterByRefIdSpecification<Entry>().filterColfig(ref_id.get());
+    public List<Entry> findAll(Optional<String> refid) {
+        if(refid.isPresent()) {
+            var spec = new FilterByrefidSpecification<Entry>().filterColfig(refid.get());
             var entries = entryRepo.findAll(spec);
             return entries;
         }
@@ -97,7 +97,7 @@ public class EntryService {
             for(var bkColfig: bkColfigs)
                 newEntryBkSlice += entry.fields.get(bkColfig.id);
 
-            List<Entry> entries = this.findAll(Optional.of(entry.ref_id));
+            List<Entry> entries = this.findAll(Optional.of(entry.refid));
             List<String> bkStringSlices = new ArrayList<>();
 
             for(var existingEntry: entries) {
@@ -140,5 +140,9 @@ public class EntryService {
             }
         }
         return reqFieldErrors;
+    }
+
+    public void delete(String id) {
+        entryRepo.deleteById(id);
     }
 }

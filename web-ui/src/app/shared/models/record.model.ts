@@ -5,6 +5,6 @@ export interface Record {
 
 export class Entry {
     id!: string;
-    ref_id!: string;
+    refid!: string;
     fields!: Record;
 }

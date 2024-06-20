@@ -1,4 +1,6 @@
 package ch.refero.domain.service;
+
+
 import java.util.List;
 import java.util.Optional;
 
@@ -10,17 +12,17 @@ import org.springframework.stereotype.Service;
 
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.repository.ColfigRepository;
-import ch.refero.domain.repository.specifications.FilterByRefIdSpecification;
+import ch.refero.domain.repository.specifications.FilterByrefidSpecification;
 
 @Service
 public class ColfigService {
     @Autowired
     private ColfigRepository colRepo;
 
-    public List<Colfig> findAll(Optional<String> ref_id) {
-        if(ref_id.isPresent()) {
+    public List<Colfig> findAll(Optional<String> refid) {
+        if(refid.isPresent()) {
             
-            var spec = new FilterByRefIdSpecification<Colfig>().filterColfig(ref_id.get());
+            var spec = new FilterByrefidSpecification<Colfig>().filterColfig(refid.get());
             var cols = colRepo.findAll(spec);
             return cols;
         }
@@ -31,13 +33,10 @@ public class ColfigService {
         return colRepo.findById(id);
     }
 
-    @Autowired
-    ReferentialService refService;
-
     Logger logger = LoggerFactory.getLogger(ColfigService.class);
 
     /**
-     * Save the Colfig object to the database. If the ref_id
+     * Save the Colfig object to the database. If the refid
      * does not reference a valid referential, nothing is saved
      * and return optional is null.
      * @param col the correctly formatted Colfig object to save.

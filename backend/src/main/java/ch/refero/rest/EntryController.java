@@ -1,6 +1,7 @@
 package ch.refero.rest;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +35,8 @@ public class EntryController {
 
     @GetMapping("")
     @CrossOrigin
-    public HttpEntity<List<Entry>> list(@RequestParam(required = false) String ref_id) {
-        var entries = entryService.findAll(Optional.ofNullable(ref_id)); // ref_id can be null, will work.
+    public HttpEntity<List<Entry>> list(@RequestParam(required = false) String refid) {
+        var entries = entryService.findAll(Optional.ofNullable(refid)); // refid can be null, will work.
         return new ResponseEntity<>(entries, HttpStatus.OK);
     }
 
@@ -54,10 +55,16 @@ public class EntryController {
         return new ResponseEntity<>(this.entryService.create(entry), HttpStatus.CREATED);
     }
 
-
     @PutMapping("{id}")
     @CrossOrigin
     public HttpEntity<Entry> put(@PathVariable String id, @RequestBody @Valid Entry entry) {    // TODO : id is useless here, create takes care of this...
         return new ResponseEntity<Entry>(this.entryService.create(entry), HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    @CrossOrigin
+    public HttpEntity<Object> delete(@PathVariable String id) {
+        this.entryService.delete(id);
+        return new ResponseEntity<Object>("", HttpStatus.OK);
     }
 }

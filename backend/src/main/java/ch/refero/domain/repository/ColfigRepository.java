@@ -15,4 +15,5 @@ import ch.refero.domain.model.Colfig;
 public interface ColfigRepository extends JpaRepository<Colfig, String>, JpaSpecificationExecutor<Colfig> {
     @NonNull Optional<Colfig> findById(@NonNull String id);
     @NonNull List<Colfig> findAll(@NonNull Specification<Colfig> spec);
+    List<Colfig> findByRefid(String refid);
 }

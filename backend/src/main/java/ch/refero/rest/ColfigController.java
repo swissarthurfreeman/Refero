@@ -36,8 +36,8 @@ public class ColfigController {
 
     @GetMapping("")
     @CrossOrigin
-    public HttpEntity<List<Colfig>> list(@RequestParam(required = false) String ref_id) {
-        var colfigs = colfigService.findAll(Optional.ofNullable(ref_id));
+    public HttpEntity<List<Colfig>> list(@RequestParam(required = false) String refid) {
+        var colfigs = colfigService.findAll(Optional.ofNullable(refid));
         return new ResponseEntity<>(colfigs, HttpStatus.OK);
     }
 

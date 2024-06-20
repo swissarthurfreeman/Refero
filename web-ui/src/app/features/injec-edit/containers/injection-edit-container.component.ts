@@ -69,7 +69,7 @@ export class InjectionEditContainerComponent implements OnInit {
     
     let injection = new Injection();
     injection.srcId = (raw['SourceRef']! as Referential).id;
-    injection.ref_id = this.Ref.id;
+    injection.refid = this.Ref.id;
     injection.srcName = this.Ref.name;
     injection.srcColIds = srcColIds;
     injection.destColIds = destColIds;

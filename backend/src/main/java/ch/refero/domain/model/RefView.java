@@ -7,9 +7,9 @@ import org.springframework.data.util.Pair;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import ch.refero.domain.model.constraints.UniqueRefIdViewNameConstraint;
+import ch.refero.domain.model.constraints.UniquerefidViewNameConstraint;
 import ch.refero.domain.model.constraints.ValidColfigIdConstraint;
-import ch.refero.domain.model.constraints.ValidRefIdConstraint;
+import ch.refero.domain.model.constraints.ValidrefidConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -22,10 +22,10 @@ import jakarta.validation.constraints.NotBlank;
 
 @Table(
     uniqueConstraints=
-        @UniqueConstraint(columnNames={"ref_id", "name"})   // cannot have duplicate id, name pairs
+        @UniqueConstraint(columnNames={"refid", "name"})   // cannot have duplicate id, name pairs
 )
 @Entity
-@UniqueRefIdViewNameConstraint   // for catching this at validation level
+@UniquerefidViewNameConstraint   // for catching this at validation level
 public class RefView {
     @Id
     @Column
@@ -35,10 +35,10 @@ public class RefView {
     @NotBlank(message = "Name of view cannot be blank.")
     public String name;
 
-    @Column(name = "ref_id")
-    @NotBlank(message = "ref_id cannot be blank")
-    @ValidRefIdConstraint
-    public String ref_id;
+    @Column(name = "refid")
+    @NotBlank(message = "refid cannot be blank")
+    @ValidrefidConstraint
+    public String refid;
 
     @Column
     @ElementCollection
@@ -46,7 +46,7 @@ public class RefView {
 
     @ValidColfigIdConstraint
     private Pair<String, List<String>> getDispColIds() {
-        return Pair.of(this.ref_id, this.dispColIds);
+        return Pair.of(this.refid, this.dispColIds);
     }
     
     @Column
@@ -55,6 +55,6 @@ public class RefView {
 
     @ValidColfigIdConstraint
     private Pair<String, List<String>> getSearchColIds() {
-        return Pair.of(this.ref_id, this.searchColIds);
+        return Pair.of(this.refid, this.searchColIds);
     }
 }

@@ -14,18 +14,18 @@ import { Colfig } from '../../../../shared/models/Colfig.model';
 export class RecEditRoutableComponent implements OnInit {
   constructor(public store: Store, public rs: RefService, public es: EntryService) {}
   @Input() RecId!: string;  // from URL
-  @Input() RefId!: string;
+  @Input() refid!: string;
 
   CurrentRef$!: Observable<Referential>;
   CurrentEntry$!: Observable<Entry>;
 
   ngOnInit(): void {
-    this.CurrentRef$ = this.rs.getReferentialBy(this.RefId);
+    this.CurrentRef$ = this.rs.getReferentialBy(this.refid);
     if(this.RecId === '') {
       console.log("RecId is empty, new Rec time");
       this.CurrentEntry$ = new Observable<Entry>((sub) => { // create a new Entry wrapped in an observable
         let e = new Entry();
-        e.ref_id = this.RefId;
+        e.refid = this.refid;
         this.CurrentRef$.subscribe((ref) => {
           e.fields = this.getEmptyRecordFromColfigs(ref.columns);
           sub.next(e);

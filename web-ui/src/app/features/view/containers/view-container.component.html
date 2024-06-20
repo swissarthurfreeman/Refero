@@ -13,18 +13,19 @@
         <ng-container *ngIf="currRef$ | async as CurrRef"> 
             <div class="d-flex align-items-end flex-column">
                 <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(CurrRef.id)">
-                        Configurer
-                    </button>
+                    <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(CurrRef.id)">Configurer</button>
                 </div>
                 <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToNewRecord(CurrRef.id)">New Record</button>
+                    <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToNewRecord(CurrRef.id)">Nouvel Enregistrement</button>
                 </div>
                 <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em;"(click)="exportReferential()">Export</button>
+                    <button mat-raised-button color="primary" style="width: 14em;"(click)="exportReferential()">Exporter</button>
                 </div>
                 <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;" (click)="importFile(CurrRef.id)">Import File</button>
+                    <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;" (click)="importFile(CurrRef.id)">Importer</button>
+                </div>
+                <div class="p-2">
+                    <button mat-raised-button color="warn" style="width: 14em; margin-left: auto;" (click)="DeleteRef(CurrRef)">Supprimer</button>
                 </div>
             </div>
         </ng-container>

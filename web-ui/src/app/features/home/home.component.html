@@ -4,50 +4,52 @@
       <h1>Refero</h1>
     </div>
     <div class="p-2">
-      <button mat-raised-button color="primary" style="width: 12em; height:4em;" (click)="createReferential()">Create New Referential</button>
+      <button mat-raised-button color="primary" style="width: 12em; height:4em;" (click)="createReferential()">Créer un
+        Référentiel</button>
     </div>
   </div>
-  <div class="d-flex flex-column" style="width:50%">
-    <div class="p-2">
-      <div class="input-group mb-3">
-        <span class="input-group-text">Nom</span>
-        <input type="text" class="form-control">
-        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+  <hr>
+  <div [formGroup]="$any(filterGroup)">
+    <div class="d-flex flex-column" style="width:50%">
+      <div class="p-2">
+        <mat-form-field style="width:20em" subscriptSizing="dynamic">
+          <mat-label>Code</mat-label>
+          <input matInput formControlName="codeFilterVal">
+        </mat-form-field>
       </div>
-    </div>
-    <div class="p-2">
-      <div class="input-group mb-3">
-        <span class="input-group-text">Description</span>
-        <input type="text" class="form-control">
-        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Description</button>
+      <div class="p-2">
+        <mat-form-field style="width:20em" subscriptSizing="dynamic">
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="nameFilterVal">
+        </mat-form-field>
       </div>
-    </div>
-    <div class="p-2">
-      <div class="input-group mb-3">
-        <span class="input-group-text">Code</span>
-        <input type="text" class="form-control">
-        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Code</button>
+      <div class="p-2">
+        <mat-form-field style="width:20em" subscriptSizing="dynamic">
+          <mat-label>Description</mat-label>
+          <input matInput formControlName="descFilterVal">
+        </mat-form-field>
       </div>
     </div>
   </div>
 </div>
 <hr>
-<table class="table table-hover">
-  <thead>
-    <tr class="table-light">
-      <th scope="col">Nom</th>
-      <th scope="col">Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <ng-container *ngIf="refs$ | async as Referentials;">
-      @for (ref of Referentials; track $index) {
-        <tr class="table-light" (click)="viewReferential(ref.id)">
-          <th scope="row">{{ref.name}}</th>
-          <td>{{ref.description}}</td>
-        </tr>
-      }
-    </ng-container>
-  </tbody>
-</table>
+<table mat-table [dataSource]="dataSource">
+  <ng-container matColumnDef="CODE">
+    <th mat-header-cell *matHeaderCellDef>Code</th>
+    <td mat-cell *matCellDef="let ref"> {{ ref.code }} </td>
+  </ng-container>
 
+  <ng-container matColumnDef="NAME">
+    <th mat-header-cell *matHeaderCellDef>Nom</th>
+    <td mat-cell *matCellDef="let ref"> {{ ref.name }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="DESCRIPTION">
+    <th mat-header-cell *matHeaderCellDef>Description</th>
+    <td mat-cell *matCellDef="let ref"> {{ ref.description }} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['CODE', 'NAME', 'DESCRIPTION']"></tr>
+  <tr mat-row *matRowDef="let myRowData; columns: ['CODE', 'NAME', 'DESCRIPTION']"
+    (click)="viewReferential(myRowData.id)"></tr>
+</table>

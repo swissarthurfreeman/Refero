@@ -11,10 +11,10 @@ import { Referential } from '../../../../shared/models/referential.model';
 export class RefImportRoutableComponent implements OnInit {
   constructor(private rs: RefService) {}
   
-  @Input() RefId!: string;
+  @Input() refid!: string;
   
   ngOnInit(): void {
-    this.ref$ = this.rs.getReferentialBy(this.RefId);
+    this.ref$ = this.rs.getReferentialBy(this.refid);
   }
   
   ref$!: Observable<Referential>;

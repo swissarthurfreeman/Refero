@@ -19,10 +19,10 @@ export class ViewComponent implements OnInit {
     public store: Store, public router: Router) {}
 
 
-  @Input() RefId!: string;
+  @Input() refid!: string;
 
   ngOnInit(): void {
-    this.ds.getReferentialBy(this.RefId).subscribe((ref) => {
+    this.ds.getReferentialBy(this.refid).subscribe((ref) => {
       this.store.dispatch([
         new SetCurrentRef(ref),
         new SetCurrentView(ref.views[0])

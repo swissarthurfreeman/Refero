@@ -1,6 +1,7 @@
 package ch.refero.rest;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,5 +58,12 @@ public class ReferentialController {
     @CrossOrigin
     public HttpEntity<Referential> post(@Valid @RequestBody Referential ref) {
         return new ResponseEntity<>(refService.create(ref), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("{id}")
+    @CrossOrigin
+    public HttpEntity<Object> delete(@PathVariable String id) {
+        refService.delete(id);
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 }

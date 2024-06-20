@@ -13,15 +13,14 @@ export class ColConfigPresentationalComponent implements OnInit {
   
   ngOnInit(): void {
     this.refs$ = this.rs.getReferentials();
-    this.pointedRef$ = this.rs.getReferentialBy(this.FormControl.getRawValue()['pointedRefId']); // we get formControl from parent with colfig
+    this.pointedRef$ = this.rs.getReferentialBy(this.FormControl.getRawValue()['pointedrefid']); // we get formControl from parent with colfig
   }
 
   refs$!: Observable<Referential[]>; 
   pointedRef$!: Observable<Referential>; 
 
-  SelectPointedRef(refId: string) {
-    console.log("Select", refId);
-    this.pointedRef$ = this.rs.getReferentialBy(refId);
+  SelectPointedRef(refid: string) {
+    this.pointedRef$ = this.rs.getReferentialBy(refid);
   }
 
 

@@ -15,13 +15,13 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class RefService {
-  getRecordById(RefId: string, RecId: string): import("../models/record.model").Record {
+  getRecordById(refid: string, RecId: string): import("../models/record.model").Record {
     throw new Error('Method not implemented.');
   }
   constructor(private http: HttpClient) {}
 
-  getReferentialBy(refId: string): Observable<Referential> {
-    return this.http.get<Referential>(`api/refs/${refId}`);
+  getReferentialBy(refid: string): Observable<Referential> {
+    return this.http.get<Referential>(`api/refs/${refid}`);
   }
 
   getReferentials(): Observable<Referential[]> {
@@ -31,7 +31,12 @@ export class RefService {
   putReferential(referential: Referential): Observable<Referential> {
     return this.http.put<Referential>(`api/refs/${referential.id}`, {
       "name": referential.name,
-      "description": referential.description
+      "description": referential.description,
+      "code": referential.code
     })
+  }
+
+  delReferential(id: String): Observable<Object> {
+    return this.http.delete<Object>(`api/refs/${id}`);
   }
 }

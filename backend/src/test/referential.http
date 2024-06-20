@@ -3,19 +3,19 @@
 GET http://localhost:8080/refs HTTP/1.1
 content-type: application/json
 
-@firstRefId = {{getFirstRef.response.body.0.id}}
+@firstrefid = {{getFirstRef.response.body.0.id}}
 
 ###
 GET http://localhost:8080/entries HTTP/1.1
 content-type: application/json
 
 ###
-GET http://localhost:8080/entries?ref_id={{firstRefId}} HTTP/1.1
+GET http://localhost:8080/entries?refid={{firstrefid}} HTTP/1.1
 content-type: application/json
 
 
 ###
-GET http://localhost:8080/refs/{{firstRefId}} HTTP/1.1
+GET http://localhost:8080/refs/{{firstrefid}} HTTP/1.1
 content-type: application/json
 
 ###
@@ -32,10 +32,10 @@ content-type: application/json
     "name": "Papaya Ref AAA"
 }
 
-@createdFirstRefId = {{createFirstRef.response.body.id}}
+@createdFirstrefid = {{createFirstRef.response.body.id}}
 
 ###
-PUT http://localhost:8080/refs/{{createdFirstRefId}}
+PUT http://localhost:8080/refs/{{createdFirstrefid}}
 content-type: application/json
 
 {
@@ -44,7 +44,7 @@ content-type: application/json
 }
 
 ### 
-GET http://localhost:8080/refs/{{createdFirstRefId}} HTTP/1.1
+GET http://localhost:8080/refs/{{createdFirstrefid}} HTTP/1.1
 content-type: application/json
 
 

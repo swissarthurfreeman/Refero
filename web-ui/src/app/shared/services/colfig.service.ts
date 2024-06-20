@@ -16,8 +16,8 @@ export class ColfigService {
 
   constructor(private http: HttpClient) {}
 
-  getColfigsOf(refId: string): Observable<Colfig[]> {
-    return this.http.get<Colfig[]>(`api/cols?ref_id=${refId}`);
+  getColfigsOf(refid: string): Observable<Colfig[]> {
+    return this.http.get<Colfig[]>(`api/cols?refid=${refid}`);
   }
 
   getColfigBy(colfigId: string): Observable<Colfig>  {

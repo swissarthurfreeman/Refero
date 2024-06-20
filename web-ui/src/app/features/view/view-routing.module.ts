@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ViewComponent } from './routables/view.component';
 
 const routes: Routes = [
-  { path: ':RefId', component: ViewComponent }
+  { path: ':refid', component: ViewComponent }
 ];
 
 @NgModule({

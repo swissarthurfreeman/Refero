@@ -10,3 +10,8 @@ docker compose up -d database    # then wait a couple of seconds
 docker compose up refero-backend
 docker compose up refero-web-ui
 ```
+
+## To Build the Project
+
+Make sure your .m2 configuration is correct. Backup the previous .xml settings file, and delete
+.m2 repository, then run `mvn clean && mvn spring-boot:run`. 

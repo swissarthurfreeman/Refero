@@ -12,4 +12,5 @@ import org.springframework.lang.NonNull;
 public interface EntryRepository extends JpaRepository<Entry, String>, JpaSpecificationExecutor<Entry> {
     @NonNull List<Entry> findAll(@NonNull Specification<Entry> spec);
     @NonNull Optional<Entry> findById(@NonNull String id);
+    List<Entry> findByRefid(String refid);
 }

@@ -5,8 +5,8 @@
 GET {{url}}/refs HTTP/1.1
 content-type: application/json
 
-@ref_id1 = {{getRef.response.body.0.id}}
-@ref_id2 = {{getRef.response.body.1.id}}
+@refid1 = {{getRef.response.body.0.id}}
+@refid2 = {{getRef.response.body.1.id}}
 
 ### 
 GET {{url}}/cols HTTP/1.1
@@ -18,7 +18,7 @@ content-type: application/json
 {
     "name": "REE_NOGAAAAAA_DATE",
     "colType": "DATE",
-    "ref_id": "{{ref_id1}}",
+    "refid": "{{refid1}}",
     "dateFormat": "DD MM AAAA"
 }
 
@@ -30,8 +30,8 @@ content-type: application/json
 {
     "name": "REE_NOGA_NUMBER",
     "colType": "FK",
-    "ref_id": "{{ref_id1}}",
-    "pointedRefId": "blabla",
+    "refid": "{{refid1}}",
+    "pointedrefid": "blabla",
     "pointedRefColId": "lalalalala"
 }
 
@@ -42,7 +42,7 @@ content-type: application/json
 {
     "name": "REE_ADDRESSE",
     "colType": "NONE",
-    "ref_id": "{{ref_id2}}"
+    "refid": "{{refid2}}"
 }
 
 ### 
@@ -53,5 +53,5 @@ content-type: application/json
 GET http://localhost:8080/refs/b8cfc092-4d08-4a0d-9cfc-4471b8f5c865
 
 ### 
-GET http://localhost:8080/cols?ref_id={{ref_id2}} HTTP/1.1
+GET http://localhost:8080/cols?refid={{refid2}} HTTP/1.1
 content-type: application/json

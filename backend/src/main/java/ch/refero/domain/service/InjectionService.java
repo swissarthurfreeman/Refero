@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import ch.refero.domain.model.Injection;
 import ch.refero.domain.repository.InjectionRepository;
-import ch.refero.domain.repository.specifications.FilterByRefIdSpecification;
+import ch.refero.domain.repository.specifications.FilterByrefidSpecification;
 
 @Service
 public class InjectionService {
@@ -19,9 +19,9 @@ public class InjectionService {
     @Autowired
     private InjectionRepository injecRepo;
 
-    public List<Injection> findAll(Optional<String> ref_id) {
-        if(ref_id.isPresent()) {
-            var spec = new FilterByRefIdSpecification<Injection>().filterColfig(ref_id.get());
+    public List<Injection> findAll(Optional<String> refid) {
+        if(refid.isPresent()) {
+            var spec = new FilterByrefidSpecification<Injection>().filterColfig(refid.get());
             var injections = injecRepo.findAll(spec);
             return injections;
         }

@@ -14,18 +14,18 @@ import { RefService } from '../../../../shared/services/ref.service';
 export class RefConfigEditComponent implements OnInit {
   constructor(public store: Store, public rs: RefService) {}
   
-  @Input() RefId: string | undefined = undefined;         // routable is reached from config/:RefId or config/
+  @Input() refid: string | undefined = undefined;         // routable is reached from config/:refid or config/
   @Select(RefConfigState.getRef) ref$!: Observable<Referential>;
   
   ngOnInit(): void {
-    if (this.RefId === undefined) {
+    if (this.refid === undefined) {
       let ref = new Referential();
       ref.columns = [];
       ref.injections = [];
       ref.views = [];
       this.store.dispatch(new SelectRefConfigToEdit(ref));  // then we're creating a new referential, observable emits.
     } else {
-      this.rs.getReferentialBy(this.RefId).subscribe((ref) => {
+      this.rs.getReferentialBy(this.refid).subscribe((ref) => {
         this.store.dispatch(new SelectRefConfigToEdit(ref));
       });
     }

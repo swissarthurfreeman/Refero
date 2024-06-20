@@ -12,8 +12,8 @@ import { HttpClient } from '@angular/common/http';
 export class ViewService {
   constructor(public http: HttpClient) {}
 
-  getViewsOf(refId: string): Observable<View[]> {
-    return this.http.get<View[]>(`api/views?ref_id=${refId}`);
+  getViewsOf(refid: string): Observable<View[]> {
+    return this.http.get<View[]>(`api/views?refid=${refid}`);
   }
 
   getView(viewId: string): Observable<View> {
@@ -24,7 +24,7 @@ export class ViewService {
       name: view.name,
       dispColIds: view.dispColIds,
       searchColIds: view.searchColIds,
-      ref_id: view.ref_id
+      refid: view.refid
     })
   }
 }

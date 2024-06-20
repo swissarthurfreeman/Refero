@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Referential {
@@ -20,26 +21,33 @@ public class Referential {
     public String id;
     
     @Column(unique = true)
+    @NotBlank(message = "Code cannot be blank!")
+    @NotNull
+    public String code;
+
+    @Column(unique = true)
     @NotBlank(message = "Name cannot be blank!")
+    @NotNull
     public String name;
 
     @Column
+    @NotNull
     public String description;
 
     @OneToMany(targetEntity = Entry.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "ref_id")
+    @JoinColumn(name = "refid")
     private List<Entry> entries;
 
     @OneToMany(targetEntity = Colfig.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "ref_id")
+    @JoinColumn(name = "refid")
     public List<Colfig> columns;
 
     @OneToMany(targetEntity = Injection.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "ref_id")
+    @JoinColumn(name = "refid")
     public List<Injection> injections;
 
     @OneToMany(targetEntity = RefView.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "ref_id")
+    @JoinColumn(name = "refid")
     public List<RefView> views;
 
     @Override

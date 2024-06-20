@@ -10,13 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ch.refero.domain.model.Referential;
+import ch.refero.domain.repository.ColfigRepository;
+import ch.refero.domain.repository.EntryRepository;
 import ch.refero.domain.repository.ReferentialRepository;
 
 @Service
 public class ReferentialService {
-
     @Autowired
     private ReferentialRepository refRepository;
+    
+    @Autowired
+    private EntryRepository entryRepository;
+    
+    @Autowired
+    private ColfigRepository colRepository;
     
     Logger logger = LoggerFactory.getLogger(ReferentialService.class);
 
@@ -25,8 +32,8 @@ public class ReferentialService {
         return refs;
     }
 
-    public Optional<Referential> findById(String refId) {
-        var ref = refRepository.findById(refId);
+    public Optional<Referential> findById(String refid) {
+        var ref = refRepository.findById(refid);
         return ref;
     }
 
@@ -44,5 +51,27 @@ public class ReferentialService {
         }                                                      // PUT of non existent creates the resource
         var newRef = this.create(ref);
         return newRef; 
+    }
+
+    public void delete(String refId) {
+        logger.warn("HELLOOO");
+        var savedRefOpt = refRepository.findById(refId);   
+        if(savedRefOpt.isPresent()) {
+            logger.warn("Trying to delete entries and columns...");
+            var entries = this.entryRepository.findByRefid(refId);
+            logger.warn("Entries found :" + entries.size());
+            for(var entry: entries) {
+                logger.warn("Deleting : " + entry.id);
+                this.entryRepository.deleteById(entry.id);
+            }
+            
+            var columns = this.colRepository.findByRefid(refId);
+            for(var col: columns) {
+                logger.warn("Deleting : " + col.id);
+                colRepository.deleteById(col.id);
+            }
+
+            this.refRepository.deleteById(refId);
+        }
     }
 }

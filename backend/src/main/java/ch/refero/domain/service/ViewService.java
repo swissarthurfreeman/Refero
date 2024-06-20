@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import ch.refero.domain.model.RefView;
 import ch.refero.domain.repository.ColfigRepository;
 import ch.refero.domain.repository.ViewRepository;
-import ch.refero.domain.repository.specifications.FilterByRefIdSpecification;
+import ch.refero.domain.repository.specifications.FilterByrefidSpecification;
 
 @Service
 public class ViewService {
@@ -24,9 +24,9 @@ public class ViewService {
 
     Logger logger = LoggerFactory.getLogger(ReferentialService.class);
 
-    public List<RefView> findAll(Optional<String> ref_id) {
-        if(ref_id.isPresent()) {
-            var spec = new FilterByRefIdSpecification<RefView>().filterColfig(ref_id.get());
+    public List<RefView> findAll(Optional<String> refid) {
+        if(refid.isPresent()) {
+            var spec = new FilterByrefidSpecification<RefView>().filterColfig(refid.get());
             return viewRepo.findAll(spec);
         }
         return viewRepo.findAll();

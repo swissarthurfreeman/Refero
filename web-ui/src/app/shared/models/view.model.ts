@@ -1,7 +1,7 @@
 export class View {
     id!: string;
     name!: string;
-    ref_id!: string;
+    refid!: string;
     dispColIds!: Array<string>;
     searchColIds!: Array<string>;
 }

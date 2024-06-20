@@ -4,27 +4,33 @@
             <div class="input-group mb-3">
                 <!-- File upload form -->
                 @if (this.Ref.id === undefined) {
-                    <input #uploadFile (change)="upload($event)" type='file' class="form-control">
+                    <input #uploadFile (change)="upload($event)" type='file' class="form-control" title="">
                 }
             </div> 
         </div>
         <div class="p-2">
-            <button mat-raised-button color="primary" (click)="EditInjection()" >Injection Editor</button>
+            <button mat-raised-button color="primary" (click)="EditInjection()" >Configurer Injection</button>
         </div>
         <div class="p-2" (click)="UpdateReferential()">
-            <button mat-raised-button color="primary">Save</button>
+            <button mat-raised-button color="primary">Enregistrer</button>
         </div>
     </div>
     <div class="d-flex">
         <div class="p-2" style="width: 30%;">
             <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
-                <mat-label>Ref. Name</mat-label>
+                <mat-label>Code</mat-label>
+                <input matInput formControlName="code">
+            </mat-form-field>
+        </div>
+        <div class="p-2" style="width: 30%;">
+            <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
+                <mat-label>Nom</mat-label>
                 <input matInput formControlName="name">
             </mat-form-field>
         </div>
         <div class="p-2 flex-grow-1">
             <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
-                <mat-label>Ref. Description.</mat-label>
+                <mat-label>Description.</mat-label>
                 <input matInput formControlName="description">
             </mat-form-field>
         </div>

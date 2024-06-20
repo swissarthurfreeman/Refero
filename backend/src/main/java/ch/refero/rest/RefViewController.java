@@ -29,8 +29,8 @@ public class RefViewController {
     
     @GetMapping("")
     @CrossOrigin
-    public HttpEntity<List<RefView>> list(@RequestParam(required = false) String ref_id) {
-        var views = viewService.findAll(Optional.ofNullable(ref_id));
+    public HttpEntity<List<RefView>> list(@RequestParam(required = false) String refid) {
+        var views = viewService.findAll(Optional.ofNullable(refid));
         return new ResponseEntity<>(views, HttpStatus.OK);
     }
 

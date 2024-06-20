@@ -2,7 +2,7 @@ package ch.refero.domain.model;
 
 import java.util.List;
 
-import ch.refero.domain.model.constraints.ValidRefIdConstraint;
+import ch.refero.domain.model.constraints.ValidrefidConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -28,14 +28,14 @@ public class Injection {
     @NotBlank(message = "srcName cannot be blank")
     public String srcName;
     
-    @JoinColumn(name = "ref_id", insertable = false, updatable = false)
+    @JoinColumn(name = "refid", insertable = false, updatable = false)
     @ManyToOne(targetEntity = Referential.class)
     private Referential ref;
 
-    @Column(name = "ref_id")
-    @NotBlank(message = "ref_id cannot be blank")
-    @ValidRefIdConstraint
-    public String ref_id;
+    @Column(name = "refid")
+    @NotBlank(message = "refid cannot be blank")
+    @ValidrefidConstraint
+    public String refid;
 
     @ElementCollection
     public List<String> srcColIds;

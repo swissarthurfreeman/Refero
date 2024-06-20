@@ -12,7 +12,7 @@ content-type: application/json
 GET {{url}}/refs HTTP/1.1
 content-type: application/json
 
-@ref_id1 = {{getRefForView.response.body.0.id}}
+@refid1 = {{getRefForView.response.body.0.id}}
 @ref1_colid1 = {{getRefForView.response.body.0.columns.0.id}}
 @ref2_colid1 = {{getRefForView.response.body.1.columns.0.id}}
 
@@ -32,14 +32,14 @@ content-type: application/json
 
 {
     "colType": "NONE",
-    "ref_id": " "
+    "refid": " "
 }
 
 ###aaaaPOST {{url}}/entries HTTP/1.1
 Content-Type: application/json
 
 {
-    "ref_id": "{{ref_id1}}",
+    "refid": "{{refid1}}",
     "fields": {
         "35b5aac2-3f8e-4796-ad99-e7f909b2a931": "asljsdkg"
     }
@@ -50,7 +50,7 @@ POST {{url}}/views HTTP/1.1
 Content-Type: application/json
 
 {
-    "ref_id": "{{ref_id1}}",
+    "refid": "{{refid1}}",
     "dispColIds": ["{{ref1_colid1}}"]
 }
 

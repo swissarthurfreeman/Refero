@@ -1,12 +1,12 @@
 export class Colfig {
     id!: string;
-    ref_id!: string;
+    refid!: string;
     name!: string;
     fileColName!: string;
     required!: boolean;
     colType!: string;
     dateFormat!: string;
-    pointedRefId!: string;
+    pointedrefid!: string;
     pointedRefColId!: string;
     pointedRefColLabelId!: string;
 }

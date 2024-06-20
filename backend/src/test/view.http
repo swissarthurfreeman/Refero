@@ -5,7 +5,7 @@
 GET {{url}}/refs HTTP/1.1
 content-type: application/json
 
-@ref_id1 = {{getRefForView.response.body.0.id}}
+@refid1 = {{getRefForView.response.body.0.id}}
 
 ### 
 POST {{url}}/cols HTTP/1.1
@@ -14,7 +14,7 @@ content-type: application/json
 {
     "name": "Nom",
     "colType": "NONE",
-    "ref_id": "{{ref_id1}}"
+    "refid": "{{refid1}}"
 }
 
 ### 
@@ -24,7 +24,7 @@ content-type: application/json
 {
     "name": "Numéro",
     "colType": "NONE",
-    "ref_id": "{{ref_id1}}"
+    "refid": "{{refid1}}"
 }
 
 ### 
@@ -34,12 +34,12 @@ content-type: application/json
 {
     "name": "Description",
     "colType": "NONE",
-    "ref_id": "{{ref_id1}}"
+    "refid": "{{refid1}}"
 }
 
 ###
 # @name getRefColumns
-GET {{url}}/cols?ref_id={{ref_id1}}
+GET {{url}}/cols?refid={{refid1}}
 
 
 @col_id1 = {{getRefColumns.response.body.0.id}}
@@ -52,7 +52,7 @@ content-type: application/json
 
 {
     "name": "AWESOME_VIEW2",
-    "ref_id": "{{ref_id1}}",
+    "refid": "{{refid1}}",
     "dispColIds": ["{{col_id1}}", "{{col_id3}}"],
     "searchColIds": ["{{col_id2}}"]
 }

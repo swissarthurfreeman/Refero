@@ -8,6 +8,7 @@ import { Referential } from '../../../shared/models/referential.model';
 import { SetInjectionMode } from '../../../shared/stores/ref-view/ref-view.action';
 import { View } from '../../../shared/models/view.model';
 import { TableComponent } from '../presentationals/table/table.component';
+import { RefService } from '../../../shared/services/ref.service';
 
 @Component({
   selector: 'app-view-container',
@@ -15,7 +16,7 @@ import { TableComponent } from '../presentationals/table/table.component';
   styleUrl: './view-container.component.scss'
 })
 export class ViewContainerComponent implements OnInit {
-  constructor(public store: Store, public location: Location, public router: Router, private cd: ChangeDetectorRef) {}
+  constructor(public rs: RefService, public store: Store, public location: Location, public router: Router, private cd: ChangeDetectorRef) {}
   
   @Select(RefViewState.getCurrentRef) currRef$!: Observable<Referential>;  // TODO : check if dispatching action to change RefViewStateModel's ref re-emits a value
   @Select(RefViewState.isInjectionMode) injectionMode$!: Observable<boolean>;
@@ -31,21 +32,32 @@ export class ViewContainerComponent implements OnInit {
     this.cd.detectChanges();  
   }
 
-  consultationToEditView(refId: string) {
-    this.router.navigate(['config', refId]);
+  consultationToEditView(refid: string) {
+    this.router.navigate(['config', refid]);
   }
 
-  consultationToNewRecord(refId: string) {
-    this.router.navigate(['entry', refId, '']);
+  consultationToNewRecord(refid: string) {
+    this.router.navigate(['entry', refid, '']);
   }
 
-  importFile(refId: string) {
-    this.router.navigate(['import', refId]);
+  importFile(refid: string) {
+    this.router.navigate(['import', refid]);
   }
 
   @ViewChild(TableComponent) table!: TableComponent;
 
   exportReferential() {
     this.table.exportTable();
+  }
+
+  DeleteRef(ref: Referential) {
+    if(confirm(
+      `Êtes vous sur de vouloir supprimer le référentiel suivant ? \n ${ref.name} 
+      \nCette action supprimera toutes les lignes et colonnes du référentiel et est irréversible !  Veuillez faire les sauvegardes appropriées.`)) {
+      console.log("Implement delete functionality here");
+      this.rs.delReferential(ref.id).subscribe(() => {
+        this.location.back();
+      })
+    }
   }
 }

@@ -17,8 +17,8 @@ export class EntryService {
     return this.http.get<Entry>(`api/entries/${id}`);
   }
 
-  getEntriesOf(refId: string): Observable<Entry[]> {
-    return this.http.get<Entry[]>(`api/entries?ref_id=${refId}`);
+  getEntriesOf(refid: string): Observable<Entry[]> {
+    return this.http.get<Entry[]>(`api/entries?refid=${refid}`);
   }
 
   getEntries(): Observable<Entry[]> {
@@ -27,12 +27,17 @@ export class EntryService {
 
   postEntry(entry: Entry): Observable<Entry> {
     return this.http.post<Entry>(`api/entries`, {
-      "ref_id": entry.ref_id,
+      "refid": entry.refid,
       "fields": entry.fields
     })
   }
 
   putEntry(entry: Entry): Observable<Entry> {
     return this.http.put<Entry>(`api/entries/${entry.id}`, entry);
+  }
+  
+  delEntry(id: String): Observable<Object> {
+    console.log("Delete entry : " + id);
+    return this.http.delete<Object>(`api/entries/${id}`);
   }
 }
