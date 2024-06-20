@@ -1,0 +1,8 @@
+spring.jpa.show-sql=false
+spring.jpa.generate-ddl=true
+logging.level.org.springframework.web=DEBUG
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/refero
+spring.datasource.username=sample
+spring.datasource.password=secret
+spring.datasource.driver-class-name=org.postgresql.Driver
