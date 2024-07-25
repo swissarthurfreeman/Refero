@@ -34,7 +34,7 @@ GET {{url}}/refs
 
 
 ###
-# @name getColfig
+# @name getColfig1
 POST {{url}}/cols
 
 {
@@ -45,13 +45,13 @@ POST {{url}}/cols
   "coltype": "BK"
 }
 
-@colfigId = {{getColfig.response.body.id}}
+@colfigId1 = {{getColfig1.response.body.id}}
 
 ###
-PUT {{url}}/cols/{{colfigId}}
+PUT {{url}}/cols/{{colfigId1}}
 
 {
-  "id": "{{colfigId}}",
+  "id": "{{colfigId1}}",
   "refid": "{{refid}}",
   "name": "COLUMN_1_BK",
   "required": false,
@@ -60,18 +60,145 @@ PUT {{url}}/cols/{{colfigId}}
 }
 
 ###
+# @name getColfig2
 POST {{url}}/cols
 
 {
   "refid": "{{refid}}",
-  "name": "COLUMN_2",
+  "name": "COLUMN_2_BK",
   "required": false,
   "filecolname": "Column 2",
   "coltype": "BK"
 }
 
+
+@colfigId2 = {{getColfig2.response.body.id}}
+
+###
+# @name getColfig3
+POST {{url}}/cols
+
+{
+  "refid": "{{refid}}",
+  "name": "COLUMN_3_REQ",
+  "required": true,
+  "filecolname": "Column 3",
+  "coltype": "NONE"
+}
+
+@colfigId3 = {{getColfig3.response.body.id}}
+
+
 ###
 GET {{url}}/cols
 
+### missing entry exception
+POST {{url}}/entries HTTP/1.1
+content-type: application/json
+
+{
+  "refid": "{{refid}}",
+  "fields": {
+    "{{colfigId1}}": "value1",
+    "{{colfigId2}}": "value2"
+  }
+}
+
+
 ###
+POST {{url}}/entries HTTP/1.1
+content-type: application/json
+
+{
+  "refid": "{{refid}}",
+  "fields": {
+    "{{colfigId1}}": "value1",
+    "{{colfigId2}}": "value2",
+    "{{colfigId3}}": "value3"
+  }
+}
+
+
+### dup value exception
+POST {{url}}/entries HTTP/1.1
+content-type: application/json
+
+{
+  "refid": "{{refid}}",
+  "fields": {
+    "{{colfigId1}}": "value1",
+    "{{colfigId2}}": "value2",
+    "{{colfigId3}}": "yayayay"
+  }
+}
+
+### post with different bk
+POST {{url}}/entries HTTP/1.1
+content-type: application/json
+
+{
+  "refid": "{{refid}}",
+  "fields": {
+    "{{colfigId1}}": "value1",
+    "{{colfigId2}}": "NEW SUPER VALUE",
+    "{{colfigId3}}": "yayayay"
+  }
+}
+
+###
+GET {{url}}/cols
+
+### posting required column fails as entries don't havea a value
+POST {{url}}/cols
+
+{
+  "refid": "{{refid}}",
+  "name": "COLUMN_3_REQ_DATE",
+  "required": true,
+  "filecolname": "Date Column 4",
+  "coltype": "NONE",
+  "dateformat": "yyyy-MM-dd"
+}
+
+
+
+###
+# @name postColfig4
+POST {{url}}/cols
+
+{
+  "refid": "{{refid}}",
+  "name": "COLUMN_4_NREQ_DATE",
+  "required": false,
+  "filecolname": "Date Column 4",
+  "coltype": "NONE",
+  "dateformat": "yyyy-MM-dd"
+}
+
+@colfigId4 = {{postColfig4.response.body.id}}
+
+### post of entry with invalid date format
 POST {{url}}/entries
+
+{
+  "refid": "{{refid}}",
+  "fields": {
+    "{{colfigId1}}": "xxx",
+    "{{colfigId2}}": "yyy",
+    "{{colfigId3}}": "zzz",
+    "{{colfigId4}}": "02-05-2024"
+  }
+}
+
+### post of entry with valid date format
+POST {{url}}/entries
+
+{
+  "refid": "{{refid}}",
+  "fields": {
+    "{{colfigId1}}": "xxx",
+    "{{colfigId2}}": "yyy",
+    "{{colfigId3}}": "zzz",
+    "{{colfigId4}}": "2024-10-01"
+  }
+}

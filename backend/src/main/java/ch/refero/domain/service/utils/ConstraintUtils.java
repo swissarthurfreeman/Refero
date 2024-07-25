@@ -1,6 +1,6 @@
 package ch.refero.domain.service.utils;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.HashSet;
@@ -40,15 +40,16 @@ public class ConstraintUtils {
     public void CheckBkUnicityWhenUpdatingOrAddingAn(Entry entry) {
         var entries = entryRepo.findByRefid(entry.refid);
         var colfigs = colfigRepo.findByRefidAndColtype(entry.refid, ColType.BK);
+        logger.info("Found # of BK colfigs for ref :" + String.valueOf(colfigs.size()));
 
         String entryBkSlice = getBkSliceOf(entry, colfigs); 
         Set<String> bkSlices = new HashSet<>(); 
 
         for(var e: entries)
             if(!e.id.equals(entry.id))
-                bkSlices.add(getBkSliceOf(entry, colfigs));
+                bkSlices.add(getBkSliceOf(e, colfigs));
 
-
+        logger.info(bkSlices.toString());
         if(bkSlices.contains(entryBkSlice))
             throw new EntryContainsDuplicateBkValuesException();
     }
@@ -84,7 +85,7 @@ public class ConstraintUtils {
 
         for(var col: colfigs) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(col.dateformat);
-            LocalDateTime.parse(entry.fields.get(col.id), formatter);
+            LocalDate.parse(entry.fields.get(col.id), formatter);
         }
     }
 
@@ -99,7 +100,8 @@ public class ConstraintUtils {
         
         for(var e: entries) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(colfig.dateformat);
-            LocalDateTime.parse(e.fields.get(colfig.id), formatter);
+            if(e.fields.get(colfig.id) != null)                             // TODO : validate this is correct behavior
+                LocalDate.parse(e.fields.get(colfig.id), formatter);    // if non required, this will not throw if value is null.
         }
     }
 
@@ -108,10 +110,10 @@ public class ConstraintUtils {
      * @param entry the entry with said colfig in it's fields map. 
      */
     public void CheckRequiredConstraintOn(Entry entry) {
-        var colfigs = colfigRepo.findByRefidAndRequiredTrue(entry.id);
-
+        var colfigs = colfigRepo.findByRefidAndRequired(entry.refid, true);
+        logger.info("Found # of required columns : " + String.valueOf(colfigs.size()));
         for(var col: colfigs)
-            if(entry.fields.get(col.id).isBlank())
+            if(entry.fields.get(col.id) == null || entry.fields.get(col.id).isBlank())
                 throw new EntryHasMissingRequiredValuesException();
     }
 
@@ -122,8 +124,8 @@ public class ConstraintUtils {
     public void CheckRequiredConstraintOf(Colfig colfig) {
         var entries = entryRepo.findByRefid(colfig.refid);
 
-        for(var e: entries)
-            if(e.fields.get(colfig.id).isBlank())
+        for(var e: entries) // java lazy checks, first check prevents error
+            if(e.fields.get(colfig.id) == null || e.fields.get(colfig.id).isBlank())
                 throw new ColfigUpdateRequiredMissingValuesInRefEntriesException();
     }
 

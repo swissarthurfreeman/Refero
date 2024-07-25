@@ -21,5 +21,5 @@ public interface ColfigRepository extends JpaRepository<Colfig, String>, JpaSpec
     @NonNull List<Colfig> findByRefidAndColtype(@NonNull String refid, @NonNull ColType coltype);
     @NonNull List<Colfig> findByRefidAndColtypeAndIdNot(@NonNull String refid, @NonNull ColType coltype, @NonNull String id);
     @NonNull List<Colfig> findByRefidAndDateformatNotNull(@NonNull String refid);
-    @NonNull List<Colfig> findByRefidAndRequiredTrue(@NonNull String refid);
+    @NonNull List<Colfig> findByRefidAndRequired(@NonNull String refid, boolean required);
 }

@@ -67,7 +67,7 @@ public class EntryService {
      * @return
      */
     public Entry create(Entry entry) {
-        entry.id = UUID.randomUUID().toString();
+        entry.id = UUID.randomUUID().toString();    // TODO : force if BK for value to be required
         return save(entry);
     }
     

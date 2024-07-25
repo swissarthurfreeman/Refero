@@ -9,11 +9,11 @@ import ch.refero.domain.repository.ColfigRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+// TODO : revamp this to apply directly on fields map.
 public class ValidColfigIdConstraintValidator implements ConstraintValidator<ValidColfigIdConstraint, Pair<String, List<String>>> {
     @Autowired
     ColfigRepository colfigRepo;
     
-
     @Override
     public boolean isValid(Pair<String, List<String>> refidFieldsPair, ConstraintValidatorContext context) {
         if(refidFieldsPair.getFirst() == null || refidFieldsPair.getSecond() == null) 

@@ -19,6 +19,7 @@ import ch.refero.domain.service.business.EntryContainsDuplicateBkValuesException
 import ch.refero.domain.service.business.EntryHasMissingRequiredValuesException;
 import jakarta.validation.Valid;
 
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public class EntryController {
 
     @PostMapping
     @CrossOrigin
-    public HttpEntity<Entry> post(@RequestBody @Valid Entry entry) {
+    public ResponseEntity<Entry> post(@RequestBody Entry entry) {
         return new ResponseEntity<>(this.entryService.create(entry), HttpStatus.CREATED);
     }
 
@@ -71,7 +72,8 @@ public class EntryController {
 
     @ExceptionHandler({
         EntryHasMissingRequiredValuesException.class,
-        EntryContainsDuplicateBkValuesException.class
+        EntryContainsDuplicateBkValuesException.class,
+        DateTimeParseException.class
     })
     @ResponseBody
     public HttpEntity<Object> handleBusinessRuntimeException(RuntimeException exception) {

@@ -60,9 +60,9 @@ public class ColfigService {
      */
     public void ValidateItemSpecificRules(Colfig colfig) {
         CheckColfigNameIsUnique(colfig);                                                                // 1. check column name unicity
-        if(colfig.coltype.equals(ColType.BK)) cUtils.CheckBkUnicityWhenUpdatingOrAddingA(colfig);       // 2. check Bk unicity   
-        if(colfig.dateformat != null) cUtils.CheckDateFormatConstraintOf(colfig);                       // 3. check date format
-        if(colfig.required) cUtils.CheckRequiredConstraintOf(colfig);                                   // 4. check required constraint
+        if(colfig.required) cUtils.CheckRequiredConstraintOf(colfig);                                   // 2. check required constraint
+        if(colfig.coltype.equals(ColType.BK)) cUtils.CheckBkUnicityWhenUpdatingOrAddingA(colfig);       // 3. check Bk unicity   
+        if(colfig.dateformat != null) cUtils.CheckDateFormatConstraintOf(colfig);                       // 4. check date format
         if(colfig.coltype.equals(ColType.FK)) {}                                                        // 5. TODO check FK validity
     }      
     

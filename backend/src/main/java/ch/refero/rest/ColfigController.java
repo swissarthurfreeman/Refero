@@ -18,6 +18,7 @@ import ch.refero.domain.model.Colfig;
 import ch.refero.domain.service.ColfigService;
 import ch.refero.domain.service.business.ColfigDoesNotExistException;
 import ch.refero.domain.service.business.ColfigUpdateBkContainsDuplicateValuesException;
+import ch.refero.domain.service.business.ColfigUpdateRequiredMissingValuesInRefEntriesException;
 import ch.refero.domain.service.business.ColfigWithSameNameAlreadyExistsException;
 import jakarta.validation.Valid;
 
@@ -76,7 +77,8 @@ public class ColfigController {
         IllegalArgumentException.class, // handles invalid dateTime Syntax
         DateTimeParseException.class,
         ColfigWithSameNameAlreadyExistsException.class,
-        ColfigUpdateBkContainsDuplicateValuesException.class
+        ColfigUpdateBkContainsDuplicateValuesException.class,
+        ColfigUpdateRequiredMissingValuesInRefEntriesException.class
     })
     @ResponseBody
     public HttpEntity<Object> handleBusinessRuntimeException(RuntimeException exception) {
