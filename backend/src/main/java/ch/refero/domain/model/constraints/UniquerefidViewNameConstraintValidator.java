@@ -1,19 +1,11 @@
 package ch.refero.domain.model.constraints;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 
 import ch.refero.domain.model.RefView;
 import ch.refero.domain.repository.ReferentialRepository;
-import ch.refero.domain.repository.ViewRepository;
-import ch.refero.domain.repository.specifications.FilterByrefidSpecification;
-import ch.refero.domain.service.ReferentialService;
-import ch.refero.domain.service.ViewService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

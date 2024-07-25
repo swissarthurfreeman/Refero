@@ -1,18 +1,16 @@
 package ch.refero.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import ch.refero.domain.model.constraints.ValidrefidConstraint;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.AssertTrue;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import ch.refero.domain.model.constraints.ValidrefidConstraint;
 
 @Table(
     uniqueConstraints=
@@ -21,32 +19,31 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 public class Colfig {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column
     public String id;
-
     
-    @Column(name = "refid")
+    @Column
     @ValidrefidConstraint
     @NotBlank(message = "refid cannot be blank")
     public String refid;
 
-    @Column()
+    @Column
+    @NotBlank(message = "name cannot be blank")
     public String name;
 
-    @Column()
+    @Column
     public boolean required = true;
 
-    @Column()
-    public String fileColName;  // name of corresponding column in original source
+    @Column
+    public String filecolname;  // name of corresponding column in original source
     
     @Column
-    @NotBlank(message = "ColType has to be one of FK, BK or NONE")
-    public String colType;  // TODO : change this to enum of col types.
+    @NotNull
+    public ColType coltype;  // If jackson tries to serialize a string that's not in the enum, it fails and yields a cannot serialize error to frontend. 
 
     @Column
     @JsonInclude(Include.NON_NULL)
-    public String dateFormat; 
+    public String dateformat; 
 
     @Column
     @JsonInclude(Include.NON_NULL)
@@ -54,21 +51,16 @@ public class Colfig {
 
     @Column
     @JsonInclude(Include.NON_NULL)
-    public String pointedRefColId;
+    public String pointedrefcolid;
 
     @Column
     @JsonInclude(Include.NON_NULL)
-    public String pointedRefColLabelId;
+    public String pointedrefcollabelid;
     
 
     @AssertTrue(message = "pointedRef and pointedRefColId are required when colType is FK")
     private boolean isValidFk() {
-        return !("FK".equals(this.colType)) || !(pointedrefid == null || pointedRefColId == null || pointedRefColLabelId == null);
-    }
-
-    @AssertTrue(message = "dateFormat must be proivded when colType is DATE")
-    private boolean isValidDate() {
-        return !("DATE".equals(colType)) || !(dateFormat == null);
+        return !(ColType.FK.equals(this.coltype)) || !(pointedrefid == null || pointedrefcolid == null || pointedrefcollabelid == null);
     }
 
     public Colfig() {};

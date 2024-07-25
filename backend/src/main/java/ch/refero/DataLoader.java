@@ -46,6 +46,7 @@ public class DataLoader implements ApplicationRunner {
 
     }
 
+    /*
     public Referential createRef2() {
         var ref2 = new Referential();
         ref2.name = "Chiquita Bananas Referential";
@@ -167,7 +168,7 @@ public class DataLoader implements ApplicationRunner {
         viewRepository.save(view);
         return ref1;
     }
-
+ 
     public void CreateInjection(Referential ref1, Referential ref2) {
         var dest = this.refRepository.findById(ref1.id).get();
         var src = this.refRepository.findById(ref2.id).get();
@@ -185,7 +186,7 @@ public class DataLoader implements ApplicationRunner {
         inj.srcColIds = Arrays.asList(srcColIds);
         injectionRepository.save(inj);
     }
-
+    */
     public void run(ApplicationArguments args) {
         /*Referential ref1 = createRef1();
         createEntriesOfRef1(ref1.id);

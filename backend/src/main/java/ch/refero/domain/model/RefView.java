@@ -4,17 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.util.Pair;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import ch.refero.domain.model.constraints.UniquerefidViewNameConstraint;
 import ch.refero.domain.model.constraints.ValidColfigIdConstraint;
 import ch.refero.domain.model.constraints.ValidrefidConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -29,7 +24,6 @@ import jakarta.validation.constraints.NotBlank;
 public class RefView {
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.UUID)
     public String id;
 
     @NotBlank(message = "Name of view cannot be blank.")
@@ -42,19 +36,19 @@ public class RefView {
 
     @Column
     @ElementCollection
-    public List<String> dispColIds = new ArrayList<>();
+    public List<String> dispcolids = new ArrayList<>();
 
     @ValidColfigIdConstraint
     private Pair<String, List<String>> getDispColIds() {
-        return Pair.of(this.refid, this.dispColIds);
+        return Pair.of(this.refid, this.dispcolids);
     }
     
     @Column
     @ElementCollection
-    public List<String> searchColIds = new ArrayList<>();  
+    public List<String> searchcolids = new ArrayList<>();  
 
     @ValidColfigIdConstraint
     private Pair<String, List<String>> getSearchColIds() {
-        return Pair.of(this.refid, this.searchColIds);
+        return Pair.of(this.refid, this.searchcolids);
     }
 }

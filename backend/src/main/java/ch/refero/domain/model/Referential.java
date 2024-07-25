@@ -1,57 +1,55 @@
 package ch.refero.domain.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Setter
+@Getter
 public class Referential {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column
     public String id;
     
     @Column(unique = true)
-    @NotBlank(message = "Code cannot be blank!")
-    @NotNull
+    @NotBlank(message = "code cannot be blank mate")
     public String code;
 
     @Column(unique = true)
-    @NotBlank(message = "Name cannot be blank!")
-    @NotNull
+    @NotBlank(message = "name cannot be blank")
     public String name;
 
     @Column
-    @NotNull
     public String description;
 
     @OneToMany(targetEntity = Entry.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "refid")
-    private List<Entry> entries;
+    private List<Entry> entries = new ArrayList<>();
 
     @OneToMany(targetEntity = Colfig.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "refid")
-    public List<Colfig> columns;
+    public List<Colfig> columns = new ArrayList<>();
 
     @OneToMany(targetEntity = Injection.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "refid")
-    public List<Injection> injections;
+    public List<Injection> injections = new ArrayList<>();
 
     @OneToMany(targetEntity = RefView.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "refid")
-    public List<RefView> views;
+    public List<RefView> views = new ArrayList<>();
 
     @Override
     public String toString() {
-        return "{ name:" + name + "," + "description:" + description + "}";
+        return "{ code: " + code + ", name:" + name + "," + "description:" + description + "}";
     }
 }

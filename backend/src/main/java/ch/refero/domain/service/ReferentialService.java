@@ -1,7 +1,7 @@
 package ch.refero.domain.service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,10 @@ import ch.refero.domain.model.Referential;
 import ch.refero.domain.repository.ColfigRepository;
 import ch.refero.domain.repository.EntryRepository;
 import ch.refero.domain.repository.ReferentialRepository;
+import ch.refero.domain.service.business.ReferentialDoesNotExistException;
+import ch.refero.domain.service.business.ReferentialWithSameCodeAlreadyExistsException;
+import ch.refero.domain.service.business.ReferentialWithSameNameAlreadyExistsException;
+import jakarta.validation.Valid;
 
 @Service
 public class ReferentialService {
@@ -32,46 +36,71 @@ public class ReferentialService {
         return refs;
     }
 
-    public Optional<Referential> findById(String refid) {
+    /**
+     * Find a referential by refId, if refId is null, this throws a 
+     * NullPointerException, if refId does not refer to anything, it 
+     * throws ReferentialDoesNotExistException.
+     */
+    public Referential findById(String refid) {
         var ref = refRepository.findById(refid);
-        return ref;
+        
+        if(ref.isPresent())
+          return ref.get();
+        
+        throw new ReferentialDoesNotExistException();
     }
 
-    public Referential create(Referential ref) {
+    private void CheckRefNameUnicity(Referential ref) {
+        var sRef = refRepository.findByName(ref.name);
+        if(sRef.size() > 0)
+            if(!sRef.get(0).id.equals(ref.id))
+                throw new ReferentialWithSameNameAlreadyExistsException();
+    }
+
+    private void CheckRefCodeUnicity(Referential ref) {
+        var sRef = refRepository.findByCode(ref.code);
+        if(sRef.size() > 0)
+            if(!sRef.get(0).id.equals(ref.id))
+                throw new ReferentialWithSameCodeAlreadyExistsException();
+    }
+
+    public void ValidateItemSpecificRules(Referential ref) {
+        CheckRefNameUnicity(ref);
+        CheckRefCodeUnicity(ref);
+    }
+
+    public Referential save(Referential ref) {
+        ValidateItemSpecificRules(ref);
         return refRepository.save(ref);
     }
 
+    public Referential create(Referential ref) {
+        ref.id = UUID.randomUUID().toString();
+        return save(ref);
+    }
+
+    /**
+     * Update will yield a not found error if referential does not exist. 
+     * Front end will have to deal with this. 
+     */
     public Referential update(String id, Referential ref) {       
-        var savedRefOpt = refRepository.findById(id);   
-        if(savedRefOpt.isPresent()) {
-            var savedRef = savedRefOpt.get();                   // simply calling save yields a constraint violation...
-            savedRef.name = ref.name;                        // PUT replaces the resource at that URI, necesarily a valid Referential. 
-            savedRef.description = ref.description;  
-            return refRepository.save(savedRef);               // don't forget to resave
-        }                                                      // PUT of non existent creates the resource
-        var newRef = this.create(ref);
-        return newRef; 
+        var sRef = findById(id);                  
+        sRef.setCode(ref.getCode()); 
+        sRef.setName(ref.getName());                        
+        sRef.setDescription(ref.getDescription());  
+
+        return save(sRef); 
     }
 
     public void delete(String refId) {
-        logger.warn("HELLOOO");
-        var savedRefOpt = refRepository.findById(refId);   
-        if(savedRefOpt.isPresent()) {
-            logger.warn("Trying to delete entries and columns...");
-            var entries = this.entryRepository.findByRefid(refId);
-            logger.warn("Entries found :" + entries.size());
-            for(var entry: entries) {
-                logger.warn("Deleting : " + entry.id);
-                this.entryRepository.deleteById(entry.id);
-            }
-            
-            var columns = this.colRepository.findByRefid(refId);
-            for(var col: columns) {
-                logger.warn("Deleting : " + col.id);
-                colRepository.deleteById(col.id);
-            }
+        findById(refId);   
+        
+        var entries = this.entryRepository.findByRefid(refId);
+        for(var entry: entries) this.entryRepository.deleteById(entry.id);
+        
+        var columns = this.colRepository.findByRefid(refId);
+        for(var col: columns) colRepository.deleteById(col.id);
 
-            this.refRepository.deleteById(refId);
-        }
+        this.refRepository.deleteById(refId);
     }
 }

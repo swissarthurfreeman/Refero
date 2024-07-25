@@ -2,19 +2,26 @@ package ch.refero.rest;
 
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.service.ColfigService;
+import ch.refero.domain.service.business.ColfigDoesNotExistException;
+import ch.refero.domain.service.business.ColfigUpdateBkContainsDuplicateValuesException;
+import ch.refero.domain.service.business.ColfigWithSameNameAlreadyExistsException;
 import jakarta.validation.Valid;
 
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,28 +41,58 @@ public class ColfigController {
     @Autowired
     public ColfigService colfigService;
 
-    @GetMapping("")
+    @GetMapping
     @CrossOrigin
     public HttpEntity<List<Colfig>> list(@RequestParam(required = false) String refid) {
         var colfigs = colfigService.findAll(Optional.ofNullable(refid));
         return new ResponseEntity<>(colfigs, HttpStatus.OK);
     }
 
-    @GetMapping("{id}")
-    @CrossOrigin
-    public HttpEntity<Optional<Colfig>> get(@PathVariable String id) {
-        var colfig = colfigService.findById(id);
-        if(colfig.isPresent())
-            return new ResponseEntity<>(colfig, HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PostMapping("")
+    @PostMapping
     @CrossOrigin
     public ResponseEntity<Colfig> post(@RequestBody @Valid Colfig col) {
-        return new ResponseEntity<Colfig>(colfigService.save(col).get(), HttpStatus.CREATED);
+        return new ResponseEntity<Colfig>(colfigService.create(col), HttpStatus.CREATED);
     }
 
-    // TODO : make sure a column that's a FK doesn't have a date format, etc. 
-    // TODO : Add PUT mapping for updating columns. 
+    @GetMapping("{id}")
+    @CrossOrigin
+    public HttpEntity<Colfig> get(@PathVariable String id) {
+        return new ResponseEntity<>(colfigService.findById(id), HttpStatus.OK);
+    }
+
+    @PutMapping("{id}")
+    @CrossOrigin
+    public ResponseEntity<Colfig> put(@PathVariable String id, @RequestBody @Valid Colfig col) {
+        return new ResponseEntity<Colfig>(colfigService.update(id, col), HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> delete(@PathVariable String id) {
+        // TODO : add delete logic to service and call here.
+        return null;
+    }
+
+    @ExceptionHandler({
+        IllegalArgumentException.class, // handles invalid dateTime Syntax
+        DateTimeParseException.class,
+        ColfigWithSameNameAlreadyExistsException.class,
+        ColfigUpdateBkContainsDuplicateValuesException.class
+    })
+    @ResponseBody
+    public HttpEntity<Object> handleBusinessRuntimeException(RuntimeException exception) {
+        return new ResponseEntity<>(
+            exception.getMessage(),
+            HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({
+        ColfigDoesNotExistException.class
+    })
+    @ResponseBody
+    public HttpEntity<Object> handleNotFoundRuntimeException(RuntimeException exception) {
+        return new ResponseEntity<>(
+            exception.getMessage(),
+            HttpStatus.NOT_FOUND);
+    }
+
 }

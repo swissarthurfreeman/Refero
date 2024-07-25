@@ -1,47 +1,61 @@
 package ch.refero.domain.service;
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import java.util.UUID;
 import org.slf4j.Logger;
+import java.util.Optional;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import ch.refero.domain.model.Colfig;
 import ch.refero.domain.model.Entry;
 import ch.refero.domain.repository.EntryRepository;
-import ch.refero.domain.repository.specifications.FilterByrefidSpecification;
+import ch.refero.domain.service.utils.ConstraintUtils;
+import ch.refero.domain.service.business.EntryDoesNotExistException;
 
 @Service
 public class EntryService {
     @Autowired
     private EntryRepository entryRepo;
 
-    @Autowired
-    private ColfigService colfigService;
-
-    Logger logger = LoggerFactory.getLogger(ReferentialService.class);
+    Logger logger = LoggerFactory.getLogger(EntryService.class);
 
     public List<Entry> findAll(Optional<String> refid) {
-        if(refid.isPresent()) {
-            var spec = new FilterByrefidSpecification<Entry>().filterColfig(refid.get());
-            var entries = entryRepo.findAll(spec);
-            return entries;
-        }
+        if(refid.isPresent())
+            return entryRepo.findByRefid(refid.get());
+        
         return entryRepo.findAll();
     }
 
-    public Optional<Entry> findById(String entryId) {
+    public Entry findById(String entryId) {
         var entry = entryRepo.findById(entryId);
-        return entry;
+        if(entry.isPresent()) return entry.get();
+        
+        throw new EntryDoesNotExistException();
+    }
+
+    @Autowired
+    private ConstraintUtils cUtils;
+   
+    /**
+     * Upon updating or creating an Entry, we check the following :
+     * 1. Check entry's BK constraint.
+     * 2. Check required fields. 
+     * @param entry the entry to create or update. 
+     */
+    public void ValidateItemSpecificRules(Entry entry) {
+        cUtils.CheckBkUnicityWhenUpdatingOrAddingAn(entry);
+        cUtils.CheckDateFormatConstraintOn(entry);
+        cUtils.CheckRequiredConstraintOn(entry);
+    }
+
+    public Entry save(Entry entry) {
+        ValidateItemSpecificRules(entry);
+        return entryRepo.save(entry);     // TODO : make sure all columns of ref appear in map. 
+    }
+
+    public Entry update(String id, Entry entry) {
+        return null;
     }
 
     /**
@@ -53,95 +67,10 @@ public class EntryService {
      * @return
      */
     public Entry create(Entry entry) {
-
-        List<Colfig> bkColfigs = new ArrayList<>();
-        List<Colfig> reqColfigs = new ArrayList<>();
-
-        for(var colId: entry.fields.keySet()) {
-            var colfig = this.colfigService.findById(colId).get();  // Entry has been validated before
-            if(colfig.colType.equals("BK"))
-                bkColfigs.add(colfig);
-            
-            if(colfig.required)
-                reqColfigs.add(colfig);   // TODO : check foreign key validity if required
-        }
-
-        var reqFieldsErrors = this.validateRequiredFields(entry, reqColfigs);
-        var errMap = this.validateBusinessKeys(entry, bkColfigs);
-        
-        errMap.putAll(reqFieldsErrors);
-
-        for(var key: errMap.keySet()) {
-            logger.info("key: " + key + " object: " + errMap.get(key).toString());
-        }
-
-        if(errMap.size() > 0) {
-            Gson gson = new Gson();
-            String gsonData = gson.toJson(errMap);
-            logger.info("\n\nHEREEEEEEEEEEEEE\n\n");
-            throw new DataIntegrityViolationException(gsonData);
-        }
-        return entryRepo.save(entry);
+        entry.id = UUID.randomUUID().toString();
+        return save(entry);
     }
     
-    /**
-     * Check if business key of entry (composed or not) is unique within the already existing 
-     * entries in the referential. Throws a DuplicateKeyException if it's not the case. 
-     */
-    private Map<String, Object> validateBusinessKeys(Entry entry, List<Colfig> bkColfigs) {
-        var bkFieldsError = new HashMap<String, Object>();
-        
-        if(bkColfigs.size() > 0) {                              // we build a list of strings of bk1 bk2 ... bkn strings present in the ref 
-            var newEntryBkSlice = "";                           
-
-            for(var bkColfig: bkColfigs)
-                newEntryBkSlice += entry.fields.get(bkColfig.id);
-
-            List<Entry> entries = this.findAll(Optional.of(entry.refid));
-            List<String> bkStringSlices = new ArrayList<>();
-
-            for(var existingEntry: entries) {
-                var bkStringSlice = "";
-                for(var bkColfig: bkColfigs) {
-                    bkStringSlice += existingEntry.fields.get(bkColfig.id);
-                }
-                bkStringSlices.add(bkStringSlice);
-            }
-
-            var idx = bkStringSlices.indexOf(newEntryBkSlice);  // we check if the bk1 bk2 ... bkn string of the entry to create is already there
-            if(idx != -1) {
-                logger.info("\n\nDUP KEY\n\n");
-                // TODO : This could mean we're updating an already existing record, hence the check here.
-                if(!entries.get(idx).id.equals(entry.id)) {
-                    for(var bkColfig: bkColfigs) {
-                        bkFieldsError.put(bkColfig.id, "Entry with BK (" + newEntryBkSlice + ") already exists.");
-                        
-                        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-                        logger.info("\n\nENTRY TO JSON\n\n");
-                        logger.info("\n\n"+entries.get(idx).toString()+"\n\n");
-                        bkFieldsError.put("dupEntry", gson.toJson(entries.get(idx)));
-                    }
-                    return bkFieldsError;
-                }
-            }
-        }
-        return bkFieldsError;
-    }
-
-    private Map<String, String> validateRequiredFields(Entry entry, List<Colfig> reqColfigs) {
-        var reqFieldErrors = new HashMap<String, String>();
-        if(reqColfigs.size() > 0) {
-            for(var reqColfig: reqColfigs) {
-                
-                if(entry.fields.get(reqColfig.id).isBlank()) {
-                    reqFieldErrors.put(reqColfig.id, "field is required");
-                    // throw new DataIntegrityViolationException("Missing Required field '" + reqColfig.name + "' is blank.");
-                }
-            }
-        }
-        return reqFieldErrors;
-    }
-
     public void delete(String id) {
         entryRepo.deleteById(id);
     }

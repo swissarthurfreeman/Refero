@@ -15,3 +15,31 @@ docker compose up refero-web-ui
 
 Make sure your .m2 configuration is correct. Backup the previous .xml settings file, and delete
 .m2 repository, then run `mvn clean && mvn spring-boot:run`. 
+
+
+## Deploy
+
+To deploy to the VM make sure to build the backend jar with the appropriate application.properties
+of the VM environment on the host machine. 
+
+Local properties : 
+
+spring.jpa.show-sql=false
+spring.jpa.generate-ddl=true
+logging.level.org.springframework.web=DEBUG
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/refero
+spring.datasource.username=sample
+spring.datasource.password=secret
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+Server properties : 
+
+spring.jpa.show-sql=false
+spring.jpa.generate-ddl=true
+logging.level.org.springframework.web=DEBUG
+
+spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+spring.datasource.username=${POSTGRES_USER}
+spring.datasource.password=${POSTGRES_PASSWORD}
+spring.datasource.driver-class-name=org.postgresql.Driver

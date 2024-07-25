@@ -26,8 +26,8 @@ services:
       - POSTGRES_DB=refero
     #networks:
     #  - net
-    volumes:
-      - data:/var/lib/postgresql/data
+    #volumes:
+    #  - data:/var/lib/postgresql/data
 
   refero-web-ui:
     image: refero-web-ui

@@ -1,50 +1,77 @@
-### 
-# @name getFirstRef
-GET http://localhost:8080/refs HTTP/1.1
-content-type: application/json
+@url = http://localhost:8080
 
-@firstrefid = {{getFirstRef.response.body.0.id}}
-
-###
-GET http://localhost:8080/entries HTTP/1.1
-content-type: application/json
+######################################################
+#                  TEST REFERENTIALS                 #
+######################################################
 
 ###
-GET http://localhost:8080/entries?refid={{firstrefid}} HTTP/1.1
-content-type: application/json
-
-
-###
-GET http://localhost:8080/refs/{{firstrefid}} HTTP/1.1
-content-type: application/json
-
-###
-GET http://localhost:8080/refs/randomjunk HTTP/1.1
-content-type: application/json
-
-### 
-# @name createFirstRef 
-POST http://localhost:8080/refs HTTP/1.1
-content-type: application/json
+# @name getRef
+POST {{url}}/refs
 
 {
-    "description": "Papayas and Cie Data",
-    "name": "Papaya Ref AAA"
+  "code": "X25",
+  "name": "REF_BANANAS"
 }
 
-@createdFirstrefid = {{createFirstRef.response.body.id}}
+@refid = {{getRef.response.body.id}}
 
 ###
-PUT http://localhost:8080/refs/{{createdFirstrefid}}
-content-type: application/json
+PUT {{url}}/refs/{{refid}}
 
 {
-  "name": "New Papaya Ref",
-  "description": "Papayas SA"
+  "code": null,
+  "name": " ",
+  "description": "this is a test"
 }
 
-### 
-GET http://localhost:8080/refs/{{createdFirstrefid}} HTTP/1.1
-content-type: application/json
+###
+GET {{url}}/refs
 
 
+######################################################
+#                    TEST COLFIGS                    #
+######################################################
+
+
+###
+# @name getColfig
+POST {{url}}/cols
+
+{
+  "refid": "{{refid}}",
+  "name": "COLUMN_1",
+  "required": false,
+  "filecolname": "Column 1",
+  "coltype": "BK"
+}
+
+@colfigId = {{getColfig.response.body.id}}
+
+###
+PUT {{url}}/cols/{{colfigId}}
+
+{
+  "id": "{{colfigId}}",
+  "refid": "{{refid}}",
+  "name": "COLUMN_1_BK",
+  "required": false,
+  "filecolname": " ",
+  "coltype": "BK"
+}
+
+###
+POST {{url}}/cols
+
+{
+  "refid": "{{refid}}",
+  "name": "COLUMN_2",
+  "required": false,
+  "filecolname": "Column 2",
+  "coltype": "BK"
+}
+
+###
+GET {{url}}/cols
+
+###
+POST {{url}}/entries

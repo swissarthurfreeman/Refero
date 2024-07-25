@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/views")
-public class RefViewController {
+public class RefViewController {        // TODO : revamp controller
 
     @Autowired
     private ViewService viewService;

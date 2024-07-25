@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import ch.refero.domain.model.RefView;
 import ch.refero.domain.repository.ColfigRepository;
 import ch.refero.domain.repository.ViewRepository;
-import ch.refero.domain.repository.specifications.FilterByrefidSpecification;
 
 @Service
 public class ViewService {
@@ -26,8 +25,7 @@ public class ViewService {
 
     public List<RefView> findAll(Optional<String> refid) {
         if(refid.isPresent()) {
-            var spec = new FilterByrefidSpecification<RefView>().filterColfig(refid.get());
-            return viewRepo.findAll(spec);
+            return viewRepo.findByRefid(refid.get());
         }
         return viewRepo.findAll();
     }
@@ -36,12 +34,12 @@ public class ViewService {
         return viewRepo.findById(id);
     }
 
-    public Optional<RefView> create(RefView RefView) {
-        for(String dispColId : RefView.dispColIds)          // check all columns are valid
+    public Optional<RefView> create(RefView RefView) {      // TODO : this and view controller needs revamping
+        for(String dispColId : RefView.dispcolids)          // check all columns are valid
             if(colRepo.findById(dispColId).isEmpty())
                 return Optional.empty();
 
-        for(String searchColId : RefView.searchColIds)
+        for(String searchColId : RefView.searchcolids)
             if(colRepo.findById(searchColId).isEmpty())
                 return Optional.empty();
         
