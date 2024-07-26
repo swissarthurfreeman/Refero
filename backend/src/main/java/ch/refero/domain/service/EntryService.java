@@ -1,5 +1,7 @@
 package ch.refero.domain.service;
 
+import ch.refero.domain.service.business.EntryUpdateConstraintViolationException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -44,9 +46,12 @@ public class EntryService {
      * @param entry the entry to create or update. 
      */
     public void ValidateItemSpecificRules(Entry entry) {
-        cUtils.CheckBkUnicityWhenUpdatingOrAddingAn(entry);
-        cUtils.CheckDateFormatConstraintOn(entry);
-        cUtils.CheckRequiredConstraintOn(entry);
+        var errorMap = new HashMap<String, String>();
+        cUtils.CheckBkUnicityWhenUpdatingOrAddingAn(entry, errorMap);
+        cUtils.CheckDateFormatConstraintOn(entry, errorMap);
+        cUtils.CheckRequiredConstraintOn(entry, errorMap);
+
+        if(!errorMap.isEmpty()) throw new EntryUpdateConstraintViolationException(errorMap);
     }
 
     public Entry save(Entry entry) {

@@ -1,5 +1,9 @@
 package ch.refero.rest;
 
+import ch.refero.domain.error.ReferoRuntimeException;
+import ch.refero.domain.service.business.EntryUpdateConstraintViolationException;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,11 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ch.refero.domain.model.Entry;
 import ch.refero.domain.service.EntryService;
-import ch.refero.domain.service.business.EntryContainsDuplicateBkValuesException;
-import ch.refero.domain.service.business.EntryHasMissingRequiredValuesException;
 import jakarta.validation.Valid;
 
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ public class EntryController {
 
     @PostMapping
     @CrossOrigin
-    public ResponseEntity<Entry> post(@RequestBody Entry entry) {
+    public ResponseEntity<Entry> post(@RequestBody @Valid Entry entry) {
         return new ResponseEntity<>(this.entryService.create(entry), HttpStatus.CREATED);
     }
 
@@ -59,7 +60,7 @@ public class EntryController {
     
     @PutMapping("{id}")
     @CrossOrigin
-    public HttpEntity<Entry> put(@PathVariable String id, @RequestBody Entry entry) {
+    public HttpEntity<Entry> put(@PathVariable String id, @RequestBody @Valid  Entry entry) {
         return new ResponseEntity<Entry>(this.entryService.update(id, entry), HttpStatus.OK);
     }
 
@@ -67,18 +68,18 @@ public class EntryController {
     @CrossOrigin
     public HttpEntity<Object> delete(@PathVariable String id) {
         this.entryService.delete(id);
-        return new ResponseEntity<Object>("", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ExceptionHandler({
-        EntryHasMissingRequiredValuesException.class,
-        EntryContainsDuplicateBkValuesException.class,
-        DateTimeParseException.class
+        EntryUpdateConstraintViolationException.class
     })
     @ResponseBody
-    public HttpEntity<Object> handleBusinessRuntimeException(RuntimeException exception) {
+    public HttpEntity<Object> handleBusinessRuntimeException(ReferoRuntimeException exception) {
+        Map<String, Map<String, String>> errorMap = new HashMap<>();
+        errorMap.put("fields", exception.fieldsErrorMap);
         return new ResponseEntity<>(
-            exception.getMessage(),
+            errorMap,
             HttpStatus.BAD_REQUEST);
     }
 }

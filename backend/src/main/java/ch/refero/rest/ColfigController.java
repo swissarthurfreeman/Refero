@@ -1,6 +1,8 @@
 package ch.refero.rest;
 
 
+import ch.refero.domain.error.ReferoRuntimeException;
+import ch.refero.domain.service.business.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,10 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.service.ColfigService;
-import ch.refero.domain.service.business.ColfigDoesNotExistException;
-import ch.refero.domain.service.business.ColfigUpdateBkContainsDuplicateValuesException;
-import ch.refero.domain.service.business.ColfigUpdateRequiredMissingValuesInRefEntriesException;
-import ch.refero.domain.service.business.ColfigWithSameNameAlreadyExistsException;
 import jakarta.validation.Valid;
 
 import java.time.format.DateTimeParseException;
@@ -74,16 +72,13 @@ public class ColfigController {
     }
 
     @ExceptionHandler({
-        IllegalArgumentException.class, // handles invalid dateTime Syntax
-        DateTimeParseException.class,
-        ColfigWithSameNameAlreadyExistsException.class,
-        ColfigUpdateBkContainsDuplicateValuesException.class,
-        ColfigUpdateRequiredMissingValuesInRefEntriesException.class
+        // IllegalArgumentException.class, // handles invalid dateTime Syntax
+        ColfigUpdateConstraintViolationException.class
     })
     @ResponseBody
-    public HttpEntity<Object> handleBusinessRuntimeException(RuntimeException exception) {
+    public HttpEntity<Object> handleBusinessRuntimeException(ReferoRuntimeException exception) {
         return new ResponseEntity<>(
-            exception.getMessage(),
+            exception.fieldsErrorMap,
             HttpStatus.BAD_REQUEST);
     }
 
@@ -96,5 +91,4 @@ public class ColfigController {
             exception.getMessage(),
             HttpStatus.NOT_FOUND);
     }
-
 }

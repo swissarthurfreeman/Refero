@@ -26,7 +26,8 @@ public class ReferoExceptionHandler extends ResponseEntityExceptionHandler {
     @Nullable   // returns a map of errors for every field that failed validation. 
     protected ResponseEntity<Object> handleMethodArgumentNotValid(@NonNull MethodArgumentNotValidException ex,
             @NonNull HttpHeaders headers, @NonNull HttpStatusCode status, @NonNull WebRequest request) {
-        
+
+        logger.warn("HERE");
         Map<String, String> errorMap = new HashMap<>();
         
         for (final FieldError error : ex.getBindingResult().getFieldErrors())

@@ -1,5 +1,6 @@
 package ch.refero.domain.model;
 
+import jakarta.validation.constraints.NotBlank;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,6 +32,7 @@ public class Entry {
 
     @Column
     @ValidrefidConstraint
+    @NotBlank(message = "refid cannot be blank")
     public String refid;
 
     @JsonIgnore

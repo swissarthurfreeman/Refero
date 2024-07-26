@@ -11,12 +11,20 @@ import jakarta.validation.constraints.AssertTrue;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import ch.refero.domain.model.constraints.ValidrefidConstraint;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(
     uniqueConstraints=
         @UniqueConstraint(columnNames={"refid", "name"})   // cannot same name for columns of same referential
 )
 @Entity
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Colfig {
     @Id
     @Column
@@ -56,12 +64,4 @@ public class Colfig {
     @Column
     @JsonInclude(Include.NON_NULL)
     public String pointedrefcollabelid;
-    
-
-    @AssertTrue(message = "pointedRef and pointedRefColId are required when colType is FK")
-    private boolean isValidFk() {
-        return !(ColType.FK.equals(this.coltype)) || !(pointedrefid == null || pointedrefcolid == null || pointedrefcollabelid == null);
-    }
-
-    public Colfig() {};
 }

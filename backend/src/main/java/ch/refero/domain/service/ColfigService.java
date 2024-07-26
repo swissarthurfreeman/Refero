@@ -1,10 +1,9 @@
 package ch.refero.domain.service;
 
 
-import java.util.List;
-import java.util.UUID;
+import ch.refero.domain.service.business.ColfigUpdateConstraintViolationException;
+import java.util.*;
 import org.slf4j.Logger;
-import java.util.Optional;
 import org.slf4j.LoggerFactory;
 
 import ch.refero.domain.model.ColType;
@@ -12,7 +11,6 @@ import ch.refero.domain.model.Colfig;
 import org.springframework.stereotype.Service;
 import ch.refero.domain.repository.ColfigRepository;
 import ch.refero.domain.service.business.ColfigDoesNotExistException;
-import ch.refero.domain.service.business.ColfigWithSameNameAlreadyExistsException;
 import ch.refero.domain.service.utils.ConstraintUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +23,7 @@ public class ColfigService {
 
     public List<Colfig> findAll(Optional<String> refid) {
         if(refid.isPresent())
-            colRepo.findByRefid(refid.get());
+            return colRepo.findByRefid(refid.get());
 
         return colRepo.findAll();
     }
@@ -39,12 +37,12 @@ public class ColfigService {
         throw new ColfigDoesNotExistException();
     }
     
-    private void CheckColfigNameIsUnique(Colfig colfig) {
+    private void CheckColfigNameIsUnique(Colfig colfig, Map<String, String> errorMap) {
         var cols = colRepo.findByRefid(colfig.refid);
         
         for(var col: cols) // 1. if another column with a different name exists, error. 
             if(col.name.equals(colfig.name) && !colfig.id.equals(col.id))
-                throw new ColfigWithSameNameAlreadyExistsException();
+                errorMap.put("name", "Column with same name already exists for  this referential.");
     }
 
     @Autowired
@@ -56,14 +54,16 @@ public class ColfigService {
      * 3. if date format is provided, check all values for coherence. 
      * 4. if column becomes an FK, check pointedRefId, pointedRefColId, pointedRefColLabel
      *    are all valid. 
-     * @param col the colfig to create or update, will have an already assigned id. 
+     * @param colfig the colfig to create or update, will have an already assigned id.
      */
     public void ValidateItemSpecificRules(Colfig colfig) {
-        CheckColfigNameIsUnique(colfig);                                                                // 1. check column name unicity
-        if(colfig.required) cUtils.CheckRequiredConstraintOf(colfig);                                   // 2. check required constraint
-        if(colfig.coltype.equals(ColType.BK)) cUtils.CheckBkUnicityWhenUpdatingOrAddingA(colfig);       // 3. check Bk unicity   
-        if(colfig.dateformat != null) cUtils.CheckDateFormatConstraintOf(colfig);                       // 4. check date format
-        if(colfig.coltype.equals(ColType.FK)) {}                                                        // 5. TODO check FK validity
+        var errorMap = new HashMap<String, String>();
+        CheckColfigNameIsUnique(colfig, errorMap);                                                                // 1. check column name unicity
+        if(colfig.required) cUtils.CheckRequiredConstraintOf(colfig, errorMap);                                   // 2. check required constraint
+        if(colfig.coltype.equals(ColType.BK)) cUtils.CheckBkUnicityWhenUpdatingOrAddingA(colfig, errorMap);       // 3. check Bk unicity
+        if(colfig.dateformat != null) cUtils.CheckDateFormatConstraintOf(colfig, errorMap);                       // 4. check date format
+        if(colfig.coltype.equals(ColType.FK)) cUtils.CheckFkValidityOf(colfig, errorMap);                         // 5. TODO check FK validity
+        if(!errorMap.isEmpty()) throw new ColfigUpdateConstraintViolationException(errorMap);
     }      
     
     /**
@@ -88,7 +88,6 @@ public class ColfigService {
         return save(col);
     }
 
-
     /**
      * Update of a new colfigId creates a new Colfig. 
      * @param colfigId
@@ -97,6 +96,7 @@ public class ColfigService {
      */
     public Colfig update(String colfigId, Colfig col) {  // in this case, we update, transfer all fields over
         findById(colfigId);
+        col.setId(colfigId);                             // TODO : meditate on this.
         return save(col);
     }
 }

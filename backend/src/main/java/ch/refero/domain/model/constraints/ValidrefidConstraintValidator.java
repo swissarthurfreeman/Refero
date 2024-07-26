@@ -11,7 +11,6 @@ public class ValidrefidConstraintValidator implements ConstraintValidator<Validr
 
     @Autowired
     ReferentialRepository refRepo;
-    
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
