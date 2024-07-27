@@ -59,7 +59,7 @@ public class Colfig {
 
     @Column
     @JsonInclude(Include.NON_NULL)
-    public String pointedrefcolid;
+    public String pointedrefcolid;          // either the id of a BK col, or '0', which means we point to PK.
 
     @Column
     @JsonInclude(Include.NON_NULL)

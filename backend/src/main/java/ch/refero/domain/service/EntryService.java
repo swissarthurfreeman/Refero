@@ -50,7 +50,7 @@ public class EntryService {
         cUtils.CheckBkUnicityWhenUpdatingOrAddingAn(entry, errorMap);
         cUtils.CheckDateFormatConstraintOn(entry, errorMap);
         cUtils.CheckRequiredConstraintOn(entry, errorMap);
-
+        // TODO : check foreign key constraint
         if(!errorMap.isEmpty()) throw new EntryUpdateConstraintViolationException(errorMap);
     }
 

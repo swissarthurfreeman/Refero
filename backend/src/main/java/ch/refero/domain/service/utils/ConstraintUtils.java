@@ -189,57 +189,121 @@ public class ConstraintUtils {
     return newEntryBkSlice;
   }
 
-  public void CheckFkValidityOf(Colfig colfig, Map<String, String> errorMap) {
+  /***
+   * Check basic properties of the FK configuration.
+   * 1. The pointedrefid must be valid
+   * 2. The pointedrefcolid is either the string '0' or the id of a colfig marked as BK.
+   * 3. If pointedrefcolid is an id, the pointed colfig must be a BK
+   * 4. If pointedrefcolid the pointed ref cannot have a composed BK.
+   * 5. The pointedrefcollabelid must be valid.
+   * @param colfig the column configured as a foreign key
+   * @param errorMap the error map containing all the things
+   */
+  private void CheckFkConfigValidityOf(Colfig colfig, Map<String, String> errorMap) {
     if (colfig.pointedrefid == null) {
       errorMap.put("pointedrefid", "value is required");
-    } else {
-      var ref = refRepo.findById(colfig.pointedrefid);
-      if (ref.isEmpty()) {
-        errorMap.put("pointedrefid", "invalid referential id");
-      } else {
-        if (colfig.pointedrefcolid == null) {
-          errorMap.put("pointedrefcolid", "value is required");
-        } else {
-          if (colfig.pointedrefcolid.equals("PK")) {
-            // TODO :deal with pointing on PK case here.
-          } else {
-            // TODO : make sure it's not possible to point to a multiple value BK
-            var bkColfigs = colfigRepo.findByRefidAndColtype(colfig.pointedrefid, ColType.BK);
-            if (bkColfigs.size() > 1) {
-              errorMap.put("pointedrefcolid", "cannot point to anything else than BK with ref with multiple columns");
-            } else {
-              var pointedColfig = colfigRepo.findById(colfig.pointedrefcolid);
-              if (pointedColfig.isEmpty()) {
-                errorMap.put("pointedrefcolid", "invalid colfig id");
-              } else {
-                if (!pointedColfig.get().getColtype().equals(ColType.BK)) {
-                  errorMap.put("pointedrefcolid", "cannot point to non BK column");
-                } else {
-                  var entries = entryRepo.findByRefid(colfig.refid);
-                  var foreignEntries = entryRepo.findByRefid(colfig.pointedrefid);
+      return;
+    }
 
-                  Set<String> foreignBkValues = new HashSet<>();
-                  for (var fe : foreignEntries) {
-                    foreignBkValues.add(fe.fields.get(colfig.pointedrefcolid));
-                  }
+    var ref = refRepo.findById(colfig.pointedrefid);
+    if (ref.isEmpty()) {
+      errorMap.put("pointedrefid", "invalid referential id");
+      return;
+    }
 
-                  for (var e : entries) {
-                    String fkValue = e.fields.get(colfig.id);
-                    if (fkValue == null) {
-                      continue;
-                    }
+    if (colfig.pointedrefcolid == null) {
+      errorMap.put("pointedrefcolid", "value is required");
+      return;
+    }
 
-                    if (!foreignBkValues.contains(fkValue)) {
-                      errorMap.put("pointedrefcolid",
-                          "Referential contains entries with invalid foreign key values.");
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+    if(colfig.pointedrefcollabelid == null) {
+      errorMap.put("pointedrefcollabelid", "value is required");
+      return;
+    }
+
+    var pointedRefColLabel = colfigRepo.findById(colfig.pointedrefcollabelid);
+    if(pointedRefColLabel.isEmpty()) {
+      errorMap.put("pointedrefcollabelid", "invalid colfig id");
+      return;
+    }
+
+    // if we're not pointing towards the PK, make sure pointed column exists
+    if(!colfig.pointedrefcolid.equals("0")) {
+      var pointedColfig = colfigRepo.findById(colfig.pointedrefcolid);
+      if (pointedColfig.isEmpty()) {
+        errorMap.put("pointedrefcolid", "invalid colfig id");
+        return;
       }
+
+      if(!pointedColfig.get().getRefid().equals(colfig.pointedrefid)) {
+        errorMap.put("pointedrefcolid", "pointed colfig does not belong to pointedref");
+      }
+
+      if (pointedColfig.get().getColtype().equals(ColType.BK)) {
+        // make sure pointed ref doesn't have a composed BK
+        var bkColfigs = colfigRepo.findByRefidAndColtype(colfig.pointedrefid, ColType.BK);
+        if (bkColfigs.size() > 1) {
+          errorMap.put("pointedrefcolid", "cannot point to composed BK, use PK instead.");
+          return;
+        }
+      } else {
+        errorMap.put("pointedrefcolid", "cannot point to non BK column");
+        return;
+      }
+    }
+  }
+
+  // TODO : merge function with CheckEntriesHaveValidFkValuesWhenPointedColIsBk, do if else.
+  public void CheckEntriesHaveValidFkValuesWhenPointedColIsPk(Colfig colfig, Map<String, String> errorMap) {
+    var entries = entryRepo.findByRefid(colfig.refid);
+    var foreignEntries = entryRepo.findByRefid(colfig.pointedrefid);
+
+    Set<String> foreignPkValues = new HashSet<>();
+    for (var fe : foreignEntries) {
+      foreignPkValues.add(fe.id);   // build list of foreign BKs
+    }
+
+    for(var e: entries) {
+      String fkValue = e.fields.get(colfig.id);
+      if(fkValue == null) continue;
+
+      if(!foreignPkValues.contains(fkValue)) {
+        errorMap.put("pointedrefcolid", "Referential contains entries with invalid FK (foreign PK) values.");
+      }
+    }
+  }
+
+  public void CheckEntriesHaveValidFkValuesWhenPointedColIsBk(Colfig colfig, Map<String, String> errorMap) {
+    // check FK values of entries are either valid or null.
+    var entries = entryRepo.findByRefid(colfig.refid);
+    var foreignEntries = entryRepo.findByRefid(colfig.pointedrefid);
+
+    Set<String> foreignBkValues = new HashSet<>();
+    for (var fe : foreignEntries) {
+      foreignBkValues.add(fe.fields.get(colfig.pointedrefcolid));   // build list of foreign BKs
+    }
+
+    for (var e : entries) {
+      String fkValue = e.fields.get(colfig.id);
+      if (fkValue == null) {
+        continue;
+      }
+
+      if (!foreignBkValues.contains(fkValue)) {
+        errorMap.put("pointedrefcolid",
+            "Referential contains entries with invalid FK (foreign BK) values.");
+        return;
+      }
+    }
+  }
+
+  public void CheckFkValidityOf(Colfig colfig, Map<String, String> errorMap) {
+    CheckFkConfigValidityOf(colfig, errorMap);
+
+    if (colfig.pointedrefcolid.equals("0")) {
+      CheckEntriesHaveValidFkValuesWhenPointedColIsPk(colfig, errorMap); // TODO :deal with pointing on PK case here.
+    } else {
+      CheckEntriesHaveValidFkValuesWhenPointedColIsBk(colfig, errorMap);
     }
 
     // TODO : cycle over all entries, if colfig is not required, assert that for the non null

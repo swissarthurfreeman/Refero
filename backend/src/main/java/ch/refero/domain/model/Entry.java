@@ -1,6 +1,9 @@
 package ch.refero.domain.model;
 
+import ch.refero.domain.model.constraints.ValidColfigIdConstraint;
 import jakarta.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.util.Pair;
 
 @Entity
 @Setter
@@ -54,9 +58,9 @@ public class Entry {
     @NotEmpty(message = "Entry must contain a fields map.")
     public Map<String, String> fields;
 
-    /*@ValidColfigIdConstraint
+    // check all keys of fields map are valid columns.
+    @ValidColfigIdConstraint
     private Pair<String, List<String>> getFields() {                  // getFields name is obligatory for the validation to work correctly
-        return Pair.of(this.refid, new ArrayList<>(this.fields.keySet())); 
-    }*/
-
+        return Pair.of(this.refid, new ArrayList<>(this.fields.keySet()));
+    }
 }
