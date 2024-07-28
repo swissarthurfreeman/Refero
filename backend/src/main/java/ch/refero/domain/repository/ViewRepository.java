@@ -11,5 +11,6 @@ import ch.refero.domain.model.RefView;
 
 public interface ViewRepository extends JpaRepository<RefView, String>, JpaSpecificationExecutor<RefView> {
     @NonNull List<RefView> findByRefid(@NonNull String refid);
+    @NonNull List<RefView> findByRefidAndName(@NonNull String refid, @NonNull String name);
     @NonNull Optional<RefView> findById(@NonNull String id);
 }

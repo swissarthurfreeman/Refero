@@ -10,19 +10,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Referential {
     @Id
     @Column
     public String id;
     
     @Column(unique = true)
-    @NotBlank(message = "code cannot be blank mate")
+    @NotBlank(message = "code cannot be blank")
     public String code;
 
     @Column(unique = true)

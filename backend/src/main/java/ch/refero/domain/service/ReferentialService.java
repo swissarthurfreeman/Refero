@@ -1,6 +1,9 @@
 package ch.refero.domain.service;
 
+import ch.refero.domain.service.business.ReferentialUpdateConstraintViolation;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -14,9 +17,6 @@ import ch.refero.domain.repository.ColfigRepository;
 import ch.refero.domain.repository.EntryRepository;
 import ch.refero.domain.repository.ReferentialRepository;
 import ch.refero.domain.service.business.ReferentialDoesNotExistException;
-import ch.refero.domain.service.business.ReferentialWithSameCodeAlreadyExistsException;
-import ch.refero.domain.service.business.ReferentialWithSameNameAlreadyExistsException;
-import jakarta.validation.Valid;
 
 @Service
 public class ReferentialService {
@@ -50,23 +50,27 @@ public class ReferentialService {
         throw new ReferentialDoesNotExistException();
     }
 
-    private void CheckRefNameUnicity(Referential ref) {
+    private void CheckRefNameUnicity(Referential ref, Map<String, String> errorMap) {
         var sRef = refRepository.findByName(ref.name);
-        if(sRef.size() > 0)
+        if(!sRef.isEmpty())
             if(!sRef.get(0).id.equals(ref.id))
-                throw new ReferentialWithSameNameAlreadyExistsException();
+                errorMap.put("name", "A referential with that name already exists.");
     }
 
-    private void CheckRefCodeUnicity(Referential ref) {
+    private void CheckRefCodeUnicity(Referential ref, Map<String, String> errorMap) {
         var sRef = refRepository.findByCode(ref.code);
-        if(sRef.size() > 0)
+        if(!sRef.isEmpty())
             if(!sRef.get(0).id.equals(ref.id))
-                throw new ReferentialWithSameCodeAlreadyExistsException();
+                errorMap.put("code", "A referential with that code already exists.");
     }
 
     public void ValidateItemSpecificRules(Referential ref) {
-        CheckRefNameUnicity(ref);
-        CheckRefCodeUnicity(ref);
+        var errorMap = new HashMap<String, String>();
+        CheckRefNameUnicity(ref, errorMap);
+        CheckRefCodeUnicity(ref, errorMap);
+
+        if(!errorMap.isEmpty())
+            throw new ReferentialUpdateConstraintViolation(errorMap);
     }
 
     public Referential save(Referential ref) {

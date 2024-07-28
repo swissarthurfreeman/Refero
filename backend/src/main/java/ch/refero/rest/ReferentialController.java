@@ -1,5 +1,7 @@
 package ch.refero.rest;
 
+import ch.refero.domain.error.ReferoRuntimeException;
+import ch.refero.domain.service.business.ReferentialUpdateConstraintViolation;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ch.refero.domain.model.Referential;
 import ch.refero.domain.service.ReferentialService;
 import ch.refero.domain.service.business.ReferentialDoesNotExistException;
-import ch.refero.domain.service.business.ReferentialWithSameCodeAlreadyExistsException;
-import ch.refero.domain.service.business.ReferentialWithSameNameAlreadyExistsException;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -64,18 +64,15 @@ public class ReferentialController {
     @CrossOrigin
     public HttpEntity<Object> delete(@PathVariable String id) {
         refService.delete(id);
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ExceptionHandler({
-        ReferentialWithSameNameAlreadyExistsException.class,
-        ReferentialWithSameCodeAlreadyExistsException.class
+        ReferentialUpdateConstraintViolation.class
     })
     @ResponseBody
-    public HttpEntity<Object> handleBusinessRuntimeException(RuntimeException exception) {
-        return new ResponseEntity<>(
-            exception.getMessage(),
-            HttpStatus.BAD_REQUEST);
+    public HttpEntity<Object> handleBusinessRuntimeException(ReferoRuntimeException exception) {
+        return new ResponseEntity<>(exception.fieldsErrorMap, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({
@@ -83,9 +80,7 @@ public class ReferentialController {
     })
     @ResponseBody
     public HttpEntity<Object> handleNotFoundRuntimeException(RuntimeException exception) {
-        return new ResponseEntity<>(
-            exception.getMessage(),
-            HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
 

@@ -1,54 +1,44 @@
 package ch.refero.domain.model;
 
+import ch.refero.domain.model.constraints.ValidrefidConstraint;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.data.util.Pair;
-import ch.refero.domain.model.constraints.UniquerefidViewNameConstraint;
-import ch.refero.domain.model.constraints.ValidColfigIdConstraint;
-import ch.refero.domain.model.constraints.ValidrefidConstraint;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(
-    uniqueConstraints=
-        @UniqueConstraint(columnNames={"refid", "name"})   // cannot have duplicate id, name pairs
+    uniqueConstraints = @UniqueConstraint(
+        columnNames = {"refid", "name"}
+    )
 )
-@Entity
-@UniquerefidViewNameConstraint   // for catching this at validation level
+@Entity     // cannot have duplicate (id, name) pairs
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RefView {
-    @Id
-    @Column
-    public String id;
 
-    @NotBlank(message = "Name of view cannot be blank.")
-    public String name;
+  @Id
+  @Column
+  public String id;
 
-    @Column(name = "refid")
-    @NotBlank(message = "refid cannot be blank")
-    @ValidrefidConstraint
-    public String refid;
+  @Column(name = "name")
+  @NotBlank(message = "name cannot be blank.")
+  public String name;
 
-    @Column
-    @ElementCollection
-    public List<String> dispcolids = new ArrayList<>();
+  @Column(name = "refid")
+  @NotBlank(message = "refid cannot be blank.")
+  @ValidrefidConstraint
+  public String refid;
 
-    @ValidColfigIdConstraint
-    private Pair<String, List<String>> getDispColIds() {
-        return Pair.of(this.refid, this.dispcolids);
-    }
-    
-    @Column
-    @ElementCollection
-    public List<String> searchcolids = new ArrayList<>();  
+  @ElementCollection
+  public List<@NotNull String> dispcolids = new ArrayList<>();
 
-    @ValidColfigIdConstraint
-    private Pair<String, List<String>> getSearchColIds() {
-        return Pair.of(this.refid, this.searchcolids);
-    }
+  @ElementCollection
+  public List<@NotNull String> searchcolids = new ArrayList<>();
 }

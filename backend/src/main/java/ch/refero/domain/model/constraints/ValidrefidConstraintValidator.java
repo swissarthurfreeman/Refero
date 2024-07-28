@@ -17,8 +17,6 @@ public class ValidrefidConstraintValidator implements ConstraintValidator<Validr
         if(value == null) 
             return false;   // this makes me angry, not caught by @NotBlank first
 
-        if(refRepo.findById(value).isPresent())
-            return true;
-        return false;
+      return refRepo.findById(value).isPresent();
     }
 }

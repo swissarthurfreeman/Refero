@@ -9,7 +9,8 @@ import ch.refero.domain.repository.ColfigRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-// TODO : revamp this to apply directly on fields map.
+// used in Entry to validate refId, list<colId> pairs...
+// TODO : move this to EntryService validation method instead.
 public class ValidColfigIdConstraintValidator implements ConstraintValidator<ValidColfigIdConstraint, Pair<String, List<String>>> {
     @Autowired
     ColfigRepository colfigRepo;

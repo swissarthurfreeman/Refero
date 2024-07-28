@@ -1,5 +1,10 @@
 package ch.refero.rest;
 
+import ch.refero.domain.error.ReferoRuntimeException;
+import ch.refero.domain.service.business.InjectionDoesNotExistException;
+import ch.refero.domain.service.business.InjectionUpdateConstraintViolationException;
+import ch.refero.domain.service.business.ViewDoesNotExistException;
+import ch.refero.domain.service.business.ViewUpdateConstraintViolation;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,45 +12,64 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ch.refero.domain.model.RefView;
 import ch.refero.domain.service.ViewService;
 import jakarta.validation.Valid;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/views")
-public class RefViewController {        // TODO : revamp controller
+public class RefViewController {
 
     @Autowired
     private ViewService viewService;
     
-    @GetMapping("")
-    @CrossOrigin
+    @GetMapping
     public HttpEntity<List<RefView>> list(@RequestParam(required = false) String refid) {
         var views = viewService.findAll(Optional.ofNullable(refid));
         return new ResponseEntity<>(views, HttpStatus.OK);
     }
 
-    @GetMapping("{id}")
-    @CrossOrigin
-    public HttpEntity<Optional<RefView>> get(@PathVariable String id) {
-        var col = viewService.findById(id);
-        if(col.isPresent())
-            return new ResponseEntity<>(col, HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PostMapping
+    public HttpEntity<RefView> post(@RequestBody @Valid RefView view) {
+        return new ResponseEntity<>(viewService.create(view), HttpStatus.OK);
     }
 
-    @PostMapping("")
-    @CrossOrigin
-    public HttpEntity<RefView> post(@RequestBody @Valid RefView view) {
-        return new ResponseEntity<RefView>(viewService.create(view).get(), HttpStatus.OK); 
+    @GetMapping("{id}")
+    public HttpEntity<RefView> get(@PathVariable String id) {
+        return new ResponseEntity<>(viewService.findById(id), HttpStatus.OK);
+    }
+
+    @PutMapping("{id}")
+    public HttpEntity<RefView> put(@PathVariable String id, @RequestBody @Valid RefView view) {
+        return new ResponseEntity<>(viewService.update(id, view), HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    public HttpEntity<Object> delete(@PathVariable String id) {
+        viewService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ExceptionHandler({
+        ViewUpdateConstraintViolation.class
+    })
+    @ResponseBody
+    public HttpEntity<Object> handleBusinessRuntimeException(ReferoRuntimeException exception) {
+        return new ResponseEntity<>(
+            exception.fieldsErrorMap,
+            HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({
+        ViewDoesNotExistException.class
+    })
+    @ResponseBody
+    public HttpEntity<Object> handleNotFoundRuntimeException(RuntimeException exception) {
+        return new ResponseEntity<>(
+            exception.getMessage(),
+            HttpStatus.NOT_FOUND);
     }
 }

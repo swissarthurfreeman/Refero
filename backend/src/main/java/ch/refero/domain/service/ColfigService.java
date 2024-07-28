@@ -42,7 +42,7 @@ public class ColfigService {
         
         for(var col: cols) // 1. if another column with a different name exists, error. 
             if(col.name.equals(colfig.name) && !colfig.id.equals(col.id))
-                errorMap.put("name", "Column with same name already exists for  this referential.");
+                errorMap.put("name", "Column with same name already exists for this referential.");
     }
 
     @Autowired
@@ -60,9 +60,10 @@ public class ColfigService {
         var errorMap = new HashMap<String, String>();
         CheckColfigNameIsUnique(colfig, errorMap);                                                                // 1. check column name unicity
         if(colfig.required) cUtils.CheckRequiredConstraintOf(colfig, errorMap);                                   // 2. check required constraint
-        if(colfig.coltype.equals(ColType.BK)) cUtils.CheckBkUnicityWhenUpdatingOrAddingA(colfig, errorMap);       // 3. check Bk unicity
-        if(colfig.dateformat != null) cUtils.CheckDateFormatConstraintOf(colfig, errorMap);                       // 4. check date format
-        if(colfig.coltype.equals(ColType.FK)) cUtils.CheckFkValidityOf(colfig, errorMap);                         // 5. TODO check FK validity
+        if(colfig.dateformat != null) cUtils.CheckDateFormatConstraintOf(colfig, errorMap);                       // 3. check date format
+        if(colfig.coltype.equals(ColType.BK)) cUtils.CheckBkUnicityWhenUpdatingOrAddingA(colfig, errorMap);       // 4. check Bk unicity
+        if(colfig.coltype.equals(ColType.FK)) cUtils.CheckFkValidityOf(colfig, errorMap);                         // 5. check FK validity
+
         if(!errorMap.isEmpty()) throw new ColfigUpdateConstraintViolationException(errorMap);
     }      
     
@@ -98,5 +99,9 @@ public class ColfigService {
         findById(colfigId);
         col.setId(colfigId);                             // TODO : meditate on this.
         return save(col);
+    }
+
+    public void delete(String colfigId) {
+        // TODO : implement column deletion. Delete from all entries, injections and views.
     }
 }

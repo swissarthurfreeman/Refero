@@ -41,14 +41,14 @@ public class InjectionService {
   }
 
   /**
-   * Upon updating or creating an injection, validate the following constraints : 1. A target column
-   * can only appear once in the injection. 2. Every target column must be valid and part of target
-   * referential. 3. Every source column must be valid and part of source referential.
+   * Upon updating or creating an injection, validate the following constraints :
+   * 1. A target column can only appear once in the injection.
+   * 2. Every target column must be valid and part of target referential.
+   * 3. Every source column must be valid and part of source referential.
    *
    * @param inj injection to create or update.
    */
-  private void ValidateItemSpecificRules(
-      Injection inj) {     // TODO : check columns ids are all valid, etc and other constraints.
+  private void ValidateItemSpecificRules(Injection inj) {
     var errorMap = new HashMap<String, String>();
     CheckTargetColumnsUnicity(inj, errorMap);
     CheckTargetColumnsValidity(inj, errorMap);

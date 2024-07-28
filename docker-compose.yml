@@ -24,8 +24,8 @@ services:
       - POSTGRES_USER=sample
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=refero
-    #networks:
-    #  - net
+#    networks:
+#      - net
     #volumes:
     #  - data:/var/lib/postgresql/data
 
