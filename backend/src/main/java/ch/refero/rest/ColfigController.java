@@ -62,7 +62,7 @@ public class ColfigController {
     @PutMapping("{id}")
     @CrossOrigin
     public ResponseEntity<Colfig> put(@PathVariable String id, @RequestBody @Valid Colfig col) {
-        return new ResponseEntity<Colfig>(colfigService.update(id, col), HttpStatus.OK);
+        return new ResponseEntity<>(colfigService.update(id, col), HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")

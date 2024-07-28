@@ -4,6 +4,7 @@ import ch.refero.domain.model.Colfig;
 import ch.refero.domain.model.Injection;
 import ch.refero.domain.repository.ColfigRepository;
 import ch.refero.domain.repository.InjectionRepository;
+import ch.refero.domain.service.business.InjectionDoesNotExistException;
 import ch.refero.domain.service.business.InjectionUpdateConstraintViolationException;
 import java.util.*;
 import org.slf4j.Logger;
@@ -23,8 +24,13 @@ public class InjectionService {
   @Autowired
   private ColfigRepository colRepo;
 
-  @Autowired
-  private View error;
+  private Injection findById(String id) {
+    var inj = injecRepo.findById(id);
+    if (inj.isPresent()) {
+      return inj.get();
+    }
+    throw new InjectionDoesNotExistException();
+  }
 
   public List<Injection> findAll(Optional<String> refid) {
     if (refid.isPresent()) {
@@ -88,6 +94,12 @@ public class InjectionService {
     }
   }
 
+  public Injection update(String id, Injection injection) {
+    findById(id);
+    injection.setId(id);
+    return save(injection);
+  }
+
   private Injection save(Injection inj) {
     ValidateItemSpecificRules(inj);
     return injecRepo.save(inj);
@@ -96,5 +108,9 @@ public class InjectionService {
   public Injection create(Injection injection) {
     injection.id = UUID.randomUUID().toString();
     return save(injection);
+  }
+
+  public void delete(String id) {
+    injecRepo.deleteById(id);
   }
 }

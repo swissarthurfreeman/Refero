@@ -28,19 +28,31 @@ public class InjectionController {
     @Autowired
     private InjectionService injectionService;
 
-    @GetMapping("")
+    @GetMapping
     @CrossOrigin
     public HttpEntity<List<Injection>> list(@RequestParam(required = false) String refid) {
         var entries = injectionService.findAll(Optional.ofNullable(refid));
         return new ResponseEntity<>(entries, HttpStatus.OK);
     }
 
-    @PostMapping("")
+    @PostMapping
     @CrossOrigin
     public HttpEntity<Injection> post(@Valid @RequestBody Injection injection) {
         return new ResponseEntity<>(injectionService.create(injection), HttpStatus.CREATED);
     }
 
+    @PutMapping("{id}")
+    @CrossOrigin
+    public HttpEntity<Injection> put(@PathVariable String id, @RequestBody @Valid Injection injection) {
+        return new ResponseEntity<>(injectionService.update(id, injection), HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    @CrossOrigin
+    public HttpEntity<Object> delete(@PathVariable String id) {
+        injectionService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @ExceptionHandler({
         InjectionUpdateConstraintViolationException.class

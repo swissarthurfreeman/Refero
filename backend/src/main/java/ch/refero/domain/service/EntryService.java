@@ -60,7 +60,9 @@ public class EntryService {
     }
 
     public Entry update(String id, Entry entry) {
-        return null;
+        findById(id);
+        entry.setId(id);
+        return save(entry);
     }
 
     /**

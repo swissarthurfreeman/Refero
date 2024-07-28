@@ -61,7 +61,7 @@ public class EntryController {
     @PutMapping("{id}")
     @CrossOrigin
     public HttpEntity<Entry> put(@PathVariable String id, @RequestBody @Valid  Entry entry) {
-        return new ResponseEntity<Entry>(this.entryService.update(id, entry), HttpStatus.OK);
+        return new ResponseEntity<>(this.entryService.update(id, entry), HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
