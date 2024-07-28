@@ -1,11 +1,10 @@
 package ch.refero.rest;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import ch.refero.domain.error.ReferoRuntimeException;
+import ch.refero.domain.service.business.ColfigDoesNotExistException;
+import ch.refero.domain.service.business.ColfigUpdateConstraintViolationException;
+import ch.refero.domain.service.business.InjectionDoesNotExistException;
+import ch.refero.domain.service.business.InjectionUpdateConstraintViolationException;
+import org.springframework.web.bind.annotation.*;
 
 import ch.refero.domain.model.Injection;
 import ch.refero.domain.service.InjectionService;
@@ -40,5 +39,26 @@ public class InjectionController {
     @CrossOrigin
     public HttpEntity<Injection> post(@Valid @RequestBody Injection injection) {
         return new ResponseEntity<>(injectionService.create(injection), HttpStatus.CREATED);
+    }
+
+
+    @ExceptionHandler({
+        InjectionUpdateConstraintViolationException.class
+    })
+    @ResponseBody
+    public HttpEntity<Object> handleBusinessRuntimeException(ReferoRuntimeException exception) {
+        return new ResponseEntity<>(
+            exception.fieldsErrorMap,
+            HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({
+        InjectionDoesNotExistException.class
+    })
+    @ResponseBody
+    public HttpEntity<Object> handleNotFoundRuntimeException(RuntimeException exception) {
+        return new ResponseEntity<>(
+            exception.getMessage(),
+            HttpStatus.NOT_FOUND);
     }
 }

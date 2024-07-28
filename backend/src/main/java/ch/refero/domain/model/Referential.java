@@ -40,6 +40,7 @@ public class Referential {
     @JoinColumn(name = "refid")
     public List<Colfig> columns = new ArrayList<>();
 
+    // list of injections to that referential.
     @OneToMany(targetEntity = Injection.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "refid")
     public List<Injection> injections = new ArrayList<>();

@@ -301,13 +301,11 @@ public class ConstraintUtils {
     CheckFkConfigValidityOf(colfig, errorMap);
 
     if (colfig.pointedrefcolid.equals("0")) {
-      CheckEntriesHaveValidFkValuesWhenPointedColIsPk(colfig, errorMap); // TODO :deal with pointing on PK case here.
+      CheckEntriesHaveValidFkValuesWhenPointedColIsPk(colfig, errorMap);
     } else {
       CheckEntriesHaveValidFkValuesWhenPointedColIsBk(colfig, errorMap);
     }
 
-    // TODO : cycle over all entries, if colfig is not required, assert that for the non null
-    // ones the provided value is a valid FK.
-    // TODO : validate syntax when we'll have decided on how to implement it.
+    // TODO : validate foreign col label syntax when we'll have decided on how to implement it.
   }
 }

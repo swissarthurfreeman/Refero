@@ -44,7 +44,7 @@ public class Entry {
     @ManyToOne(targetEntity = Referential.class)
     private Referential ref;
 
-    /**
+    /** record_id, key, value table
      * Persisting this requires a table of record_id (parent_id), key (col_id), 
      * value  schema with primary key that is (entry_id, col_id).
      */

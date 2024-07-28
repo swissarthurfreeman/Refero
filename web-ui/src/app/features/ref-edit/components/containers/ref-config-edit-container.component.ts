@@ -149,7 +149,7 @@ export class RefConfigEditContainerComponent implements OnInit {
   }
 
   handleColfigUpdateError(error: any) {
-    throw error;
+    throw error;    // TODO : the colfig update error will need to be passed to the appropriate Colfig presentational component to display errors to user.
   }
 
   handleUpdateColfigOf(refId: string) {
