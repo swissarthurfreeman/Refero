@@ -40,7 +40,10 @@
         <!-- <mat-icon class="delete-btn" (click)="deleteColumn($index)">delete_forever</mat-icon> -->
         <!-- render column configuration fields -->
         <app-col-config-presentational [FormControl]="$any(colfigForm)"
-                                       [Ref]="Ref"></app-col-config-presentational>
+                                       [Ref]="Ref"
+                                       [ColfigErrorMap]="ColfigErrorMap[colfigForm.controls.id.getRawValue()]">
+
+        </app-col-config-presentational>
       </div>
     }
   </ng-container>

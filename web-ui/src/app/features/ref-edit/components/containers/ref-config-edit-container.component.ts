@@ -54,6 +54,8 @@ export class RefConfigEditContainerComponent implements OnInit {
   csvFile: File | undefined = undefined;
 
   RefErrorMap: Record = {};
+  ColfigErrorMap: any = {};
+
   records: Record[] = [];
 
   constructor(private rs: RefService, private router: Router, private route: ActivatedRoute,
@@ -143,12 +145,15 @@ export class RefConfigEditContainerComponent implements OnInit {
   }
 
   private handleUpdateColfigOfRef() {
+    this.ColfigErrorMap = {};   // empty colfig error map.
     this.UpdateColfigsOfRef().subscribe({
       next: (uColfig) => {
         console.log("Posted :", uColfig);
       },                                          // TODO : to be able to implement DATE issue completely, we need to be able to update columns.
       error: (err) => {                     // TODO : Add PUT endpoint for updating / posting columns. This will handle the cases of
-        this.handleColfigUpdateError(err.error);  // checking unicity of column we set as unique afterward, or column we set as date afterward (when lines are already present)
+        // checking unicity of column we set as unique afterward, or column we set as date afterward (when lines are already present)
+        this.ColfigErrorMap[ (err['url']! as string)!.split('/').pop()! ] = err.error;
+        console.log(this.ColfigErrorMap);
       },
       complete: () => {
         console.log("Done posting all columns.");
@@ -156,10 +161,6 @@ export class RefConfigEditContainerComponent implements OnInit {
         this.PostDefaultViewForRef();
       }
     })
-  }
-
-  private handleColfigUpdateError(error: any) {
-    throw error;    // TODO : the colfig update error will need to be passed to the appropriate Colfig presentational component to display errors to user.
   }
 
   /**
