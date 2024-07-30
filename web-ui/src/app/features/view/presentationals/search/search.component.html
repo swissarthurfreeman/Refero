@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col">
                 @for (colfig of Ref.columns; track $index) {
-                    @if (View.searchColIds.includes(colfig.id)) {
+                    @if (View.searchcolids.includes(colfig.id)) {
                     <div class="row">
                         <div class="input-group mb-3" [formGroup]="$any(searchFields.at($index))">
                             @if (!isInjectionMode) {

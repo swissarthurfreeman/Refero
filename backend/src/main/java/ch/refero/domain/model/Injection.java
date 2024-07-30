@@ -19,7 +19,7 @@ public class Injection {
     @Column
     public String id;
 
-    @Column(name = "refid")
+    @Column(name = "refid", nullable = false, updatable = false)
     @NotBlank(message = "refid cannot be blank")
     @ValidrefidConstraint
     public String refid;    // id of ref that owns the injection, e.g. destination ref.

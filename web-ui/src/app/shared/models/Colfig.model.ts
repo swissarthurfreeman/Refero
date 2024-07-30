@@ -2,11 +2,11 @@ export class Colfig {
     id!: string;
     refid!: string;
     name!: string;
-    fileColName!: string;
+    filecolname!: string;
     required!: boolean;
-    colType!: string;
-    dateFormat!: string;
+    coltype!: string;
+    dateformat!: string;
     pointedrefid!: string;
-    pointedRefColId!: string;
-    pointedRefColLabelId!: string;
+    pointedrefcolid!: string;
+    pointedrefcollabelid!: string;
 }

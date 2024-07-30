@@ -4,7 +4,7 @@
     <div [formGroup]="$any(FormControl)">
         <mat-form-field [id]="Colfig.id">
             <mat-label>{{ Colfig.name }}</mat-label>
-            @if (Colfig.colType !== 'FK') {
+            @if (Colfig.coltype !== 'FK') {
                 @if (readOnly) {
                     <input matInput formControlName="value" readonly> <!-- attribute binding wasn't working -->
                 }
@@ -13,11 +13,11 @@
                     <input matInput formControlName="value"> <!-- attribute binding wasn't working -->
                 }
             }
-            @if (Colfig.colType === 'FK') {
+            @if (Colfig.coltype === 'FK') {
                 <mat-select formControlName="value" [disabled]="readOnly"> <!-- test with REE DATA and STATUT -->
                     <ng-container *ngIf="foreignEntries$ | async as ForeignEntries">
                         @for (e of ForeignEntries; track $index) {
-                            <mat-option [value]="e.fields[Colfig.pointedRefColId]">{{ e.fields[Colfig.pointedRefColLabelId] }}</mat-option>
+                            <mat-option [value]="e.fields[Colfig.pointedrefcolid]">{{ e.fields[Colfig.pointedrefcollabelid] }}</mat-option>
                         }
                     </ng-container>
                 </mat-select>

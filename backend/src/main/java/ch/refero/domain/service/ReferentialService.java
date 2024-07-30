@@ -83,17 +83,17 @@ public class ReferentialService {
         return save(ref);
     }
 
-    /**
-     * Update will yield a not found error if referential does not exist. 
-     * Front end will have to deal with this. 
-     */
     public Referential update(String id, Referential ref) {       
-        var sRef = findById(id);                  
-        sRef.setCode(ref.getCode()); 
-        sRef.setName(ref.getName());                        
-        sRef.setDescription(ref.getDescription());  
-
-        return save(sRef); 
+        try {
+            var sRef = findById(id);
+            sRef.setName(ref.getName());        // to avoid cascading operations hell with associations.
+            sRef.setCode(ref.getCode());
+            sRef.setDescription(ref.getDescription());
+            return save(sRef);
+        } catch(ReferentialDoesNotExistException e) {
+            ref.setId(id);
+            return save(ref);
+        }
     }
 
     public void delete(String refId) {

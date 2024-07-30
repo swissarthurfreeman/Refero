@@ -23,10 +23,10 @@ export class RefImportContainerComponent {
       parsedCSV.data.pop(); // pop empty crap at end
 
       let rawRecords = parsedCSV.data as Record[];
-      this.importEntries(rawRecords);
+      //this.importEntries(rawRecords);
     });
   }
-  
+
   errorReport: Record = {};
 
   isEmpty(rec: Record) {
@@ -35,7 +35,7 @@ export class RefImportContainerComponent {
 
   decision!: Subject<String>;
 
-
+/*
   async importEntries(rawRecords: Record[]) {
     for (let rawEntry of rawRecords) {
       this.resetForms();
@@ -44,29 +44,29 @@ export class RefImportContainerComponent {
       incomingEntry.fields = {};
 
       for (let colfig of this.Ref.columns) // TODO : deal with case when fileColName is empty (for example, column that only exists in Refero)
-        incomingEntry.fields[colfig.id] = rawEntry[colfig.fileColName]; // re-use the import mapping 
-      
+        incomingEntry.fields[colfig.id] = rawEntry[colfig.filecolname]; // re-use the import mapping
+
       while(true) {
         console.log("incomingEntry :", incomingEntry);
-        const response: any = await firstValueFrom(this.es.putEntry(incomingEntry)).catch((err) => { return err; });
+        const response: any = await firstValueFrom(this.es.putEntry(incomingEntry.id, incomingEntry)).catch((err) => { return err; });
         console.log("response :", response);    // response could be the created entry or an error
 
         if('error' in response) {               // handle error
-          this.errorReport = JSON.parse(response.error.message); 
+          this.errorReport = JSON.parse(response.error.message);
           this.createIncomingEntryForm(incomingEntry);
 
           this.decision = new Subject<String>();
-          
+
           if('dupEntry' in this.errorReport) {  // if it's a BK conflict, retrieve conflicting entry, else it's a required / FK conflict
             var dupEntry: Entry = JSON.parse(this.errorReport['dupEntry']);
             this.createDestinationEntryForm(dupEntry);
-              
+
             const choice: String = await firstValueFrom(this.decision);
             if(choice === 'keepDest') {
               console.log("We keep do not import the entry.");
               break;
             }
-        
+
             if(choice === 'takeIncoming') {
               await this.updateIncomingForm(incomingEntry, dupEntry);    // modifies incomingEntry if user chooses keep incoming
               continue;
@@ -87,7 +87,7 @@ export class RefImportContainerComponent {
     this.resetForms();
     console.log("Import done.");
   }
-
+*/
   async updateIncomingFormForRequiredFields(incomingEntry: Entry) {
     for(let mapFormControl of this.IncomingKeypairs.controls) {
       const keypair = mapFormControl.getRawValue();
@@ -116,7 +116,7 @@ export class RefImportContainerComponent {
 
     this.DestinationEntryForm = this.fb.group({
       keypairs: this.fb.array([])
-    }); 
+    });
 
     this.errorReport = {};
   }

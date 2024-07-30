@@ -24,12 +24,13 @@ import lombok.Setter;
 public class Colfig {
 
   @Id
-  @Column
+  @Column(name = "id", nullable = false, updatable = false)
   public String id;
 
-  @Column
+  @Column(name = "refid", nullable = false, updatable = false)
   @ValidrefidConstraint
   @NotBlank(message = "refid cannot be blank")
+  @NotNull
   public String refid;
 
   @Column

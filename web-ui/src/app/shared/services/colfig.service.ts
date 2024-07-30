@@ -27,4 +27,13 @@ export class ColfigService {
   postColfig(colfig: Colfig): Observable<Colfig> {
     return this.http.post<Colfig>(`api/cols`, colfig);
   }
+
+  /**
+   * PUT a Colfig, if specified id does not exist, it is created.
+   * @param id
+   * @param colfig
+   */
+  putColfig(id: String, colfig: Colfig): Observable<Colfig> {
+    return this.http.put<Colfig>(`api/cols/${id}`, colfig);
+  }
 }

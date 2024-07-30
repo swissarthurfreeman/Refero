@@ -14,15 +14,15 @@
                         <td mat-cell *matCellDef="let line"> {{ line[colfig.id] }} </td> <!-- Define the data to display for each line -->
                     </ng-container>
                 }
-                <tr mat-header-row *matHeaderRowDef="currView.dispColIds"></tr>
+                <tr mat-header-row *matHeaderRowDef="currView.dispcolids"></tr>
 
                 @if (!this.isInjectionMode) {
-                    <tr mat-row *matRowDef="let myRowData; columns: currView.dispColIds" (click)="viewEntry(myRowData.id)"></tr>
+                    <tr mat-row *matRowDef="let myRowData; columns: currView.dispcolids" (click)="viewEntry(myRowData.id)"></tr>
                 }
 
                 @if (this.isInjectionMode) {
                     <ng-container *ngIf="Injection$ | async as Inj">
-                        <tr mat-row *matRowDef="let myRowData; columns: currView.dispColIds" (click)="applyInjection(myRowData, Inj)"></tr>   
+                        <tr mat-row *matRowDef="let myRowData; columns: currView.dispcolids" (click)="applyInjection(myRowData, Inj)"></tr>
                     </ng-container>
                 }
             </table>

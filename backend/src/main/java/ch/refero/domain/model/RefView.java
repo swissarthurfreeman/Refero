@@ -31,7 +31,7 @@ public class RefView {
   @NotBlank(message = "name cannot be blank.")
   public String name;
 
-  @Column(name = "refid")
+  @Column(name = "refid", nullable = false, updatable = false)
   @NotBlank(message = "refid cannot be blank.")
   @ValidrefidConstraint
   public String refid;

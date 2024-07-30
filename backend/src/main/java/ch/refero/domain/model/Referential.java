@@ -1,14 +1,9 @@
 package ch.refero.domain.model;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Referential {
     @Id
-    @Column
+    @Column(nullable = false, updatable = false)
     public String id;
     
     @Column(unique = true)
@@ -38,9 +33,9 @@ public class Referential {
 
     @OneToMany(targetEntity = Entry.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "refid")
-    private List<Entry> entries = new ArrayList<>();
+    private List<Entry> entries = new ArrayList<>();    // private, costly to load.
 
-    @OneToMany(targetEntity = Colfig.class, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = Colfig.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "refid")
     public List<Colfig> columns = new ArrayList<>();
 

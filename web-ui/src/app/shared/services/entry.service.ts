@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 /**
  * Referential management service. This class is for the time being purely
- * mocking API endpoints. 
+ * mocking API endpoints.
  */
 @Injectable({
   providedIn: 'root'
@@ -32,10 +32,10 @@ export class EntryService {
     })
   }
 
-  putEntry(entry: Entry): Observable<Entry> {
-    return this.http.put<Entry>(`api/entries/${entry.id}`, entry);
+  putEntry(entryId: String, entry: Entry): Observable<Entry> {
+    return this.http.put<Entry>(`api/entries/${entryId}`, entry);
   }
-  
+
   delEntry(id: String): Observable<Object> {
     console.log("Delete entry : " + id);
     return this.http.delete<Object>(`api/entries/${id}`);

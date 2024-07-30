@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +27,10 @@ public class Entry {
   @Column
   public String id;
 
-  @Column
+  @Column(name = "refid", nullable = false, updatable = false)
   @ValidrefidConstraint
   @NotBlank(message = "refid cannot be blank")
+  @NotNull
   public String refid;
 
   @JsonIgnore

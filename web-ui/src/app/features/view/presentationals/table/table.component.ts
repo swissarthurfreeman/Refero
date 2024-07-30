@@ -26,7 +26,7 @@ export class TableComponent implements OnInit {
 
   constructor(private router: Router, public rs: RefService, public es: EntryService,
     private route: ActivatedRoute, private store: Store, private cd: ChangeDetectorRef) {}
-  
+
   dataSource = new MatTableDataSource<Record>();
   entries$!: Observable<Record[]>;
 
@@ -73,32 +73,32 @@ export class TableComponent implements OnInit {
   }
 
   @Input() EntryForm!: FormArray; // will be null if in view mode, will be the Entry formarray if viewing an entry (for injection)
-  @Input() CurrentEntry!: Entry;  // optional for injection, used if simple mode is on. 
+  @Input() CurrentEntry!: Entry;  // optional for injection, used if simple mode is on.
   @Select(RefViewState.getInjection) Injection$!: Observable<Injection>;
-  
-  applyInjection(srcRec: Record, Injection: Injection) {        // TODO : this code can be made more readable no ? 
+
+  applyInjection(srcRec: Record, Injection: Injection) {        // TODO : this code can be made more readable no ?
     for(let control of this.EntryForm.controls) {
       let keypair = control.getRawValue();
       for(let i=0; i < Injection.destColIds.length; i++) {
         console.log(keypair['colId'], Injection.destColIds[i])
         if (keypair['colId'] === Injection.destColIds[i]) {         // TODO : update the corresponding FormArray here...
           console.log("Inject =", srcRec[Injection.srcColIds[i]]);
-          
+
           control.setValue({colId: Injection.destColIds[i], value: srcRec[Injection.srcColIds[i]]})
           //this.CurrentEntry.fields[Injection.destColIds[i]] = srcRec[Injection.srcColIds[i]];
         }
       }
     }
-  } 
+  }
 
   rmDispColId(colId: string) {
-    this.currView.dispColIds.splice(this.currView.dispColIds.indexOf(colId), 1);
+    this.currView.dispcolids.splice(this.currView.dispcolids.indexOf(colId), 1);
   }
 
   exportTable() {
     let csv = "";
     let header = "";
-    for(let colId of this.currView.dispColIds) {
+    for(let colId of this.currView.dispcolids) {
       for(let colfig of this.Ref.columns) {
         if (colfig.id === colId) {
           header += '"' + colfig.name + '",';
@@ -111,15 +111,15 @@ export class TableComponent implements OnInit {
     // since columnIds are not human readable, we have to manually replace them...
     for(let record of this.dataSource.data) {
       let line = "";
-      for(let colId of this.currView.dispColIds) {
+      for(let colId of this.currView.dispcolids) {
         line += '"' + record[colId] + '",'
       }
       line += '\n';
       csv += line;
     }
-    
+
     let blob = new Blob([csv], {type: 'text/plain'});
-    
+
     var link = document.createElement('a');
     link.download = this.Ref.name.replaceAll(' ', '_') + '.csv';
     link.href = window.URL.createObjectURL(blob);

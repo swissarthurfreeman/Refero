@@ -29,7 +29,7 @@ export class SearchComponent implements OnInit {
 
 
   constructor(public store: Store, public rs: RefService, public cs: ColfigService, private cd: ChangeDetectorRef, private fb: FormBuilder) {}
-  
+
   searchFormGroup = this.fb.group({
     searchFields: this.fb.array([])
   });
@@ -39,7 +39,7 @@ export class SearchComponent implements OnInit {
   }
 
   filter: any = {};
-  
+
   ngOnInit(): void {
     for(let colfig of this.Ref.columns) {
       const fc = this.fb.group({
@@ -51,13 +51,13 @@ export class SearchComponent implements OnInit {
         console.log("Dispatch =", this.filter);                           // this value needs to be emitted to the table component for it to update
         this.store.dispatch(new SetSearchFilterValue(JSON.stringify(this.filter))); // we stringify because DataSource.filter is a string...
       })
-      
+
       this.searchFields.push(fc);
     }
     this.cd.detectChanges();
   }
 
   rmSearchColId(colId: string) {
-    this.View.searchColIds.splice(this.View.searchColIds.indexOf(colId), 1);
+    this.View.searchcolids.splice(this.View.searchcolids.indexOf(colId), 1);
   }
 }

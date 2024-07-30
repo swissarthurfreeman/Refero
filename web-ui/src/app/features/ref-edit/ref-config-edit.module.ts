@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { RefConfigEditRoutingModule } from './ref-config-edit-routing.module';
-import { RefConfigEditComponent } from './components/routables/ref-config-edit.component';
+import { RefConfigEditRoutableComponent } from './components/routables/ref-config-edit-routable.component';
 import { ColConfigPresentationalComponent } from './components/presentationals/col-config/col-config-presentational.component';
 import { DescConfigPresentationalComponent } from './components/presentationals/desc-config/desc-config-presentational.component';
 import { MatTableModule } from '@angular/material/table';
@@ -20,7 +20,7 @@ import { RefConfigEditContainerComponent } from './components/containers/ref-con
 
 @NgModule({
     declarations: [
-        RefConfigEditComponent,
+        RefConfigEditRoutableComponent,
         RefConfigEditContainerComponent,
         ColConfigPresentationalComponent,
         DescConfigPresentationalComponent

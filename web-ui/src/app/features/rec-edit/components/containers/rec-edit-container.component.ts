@@ -23,7 +23,7 @@ import { Location } from '@angular/common';
 })
 export class RecEditContainerComponent implements OnInit {
   constructor(
-    public rs: RefService, public es: EntryService, public is: InjectionService, 
+    public rs: RefService, public es: EntryService, public is: InjectionService,
     public store: Store, private fb: FormBuilder, private location: Location) {}
 
   @Input() CurrentEntry!: Entry;
@@ -47,7 +47,7 @@ export class RecEditContainerComponent implements OnInit {
   get keypairs() {
     return this.EntryForm.controls["keypairs"] as FormArray;
   }
-  
+
   AddKeyPairs() {
     for(let colfig of this.CurrentRef.columns) {
       if(colfig.name === "STATUS")
@@ -69,11 +69,11 @@ export class RecEditContainerComponent implements OnInit {
     // read values from formArray, update CurrentEntry based on it, PUT changes to database.
     for(let keypair of this.EntryForm.getRawValue()['keypairs'])
       this.CurrentEntry.fields[keypair['colId']] = keypair['value']
-    
+
     console.log("PUT :", this.CurrentEntry);
-    this.es.putEntry(this.CurrentEntry).subscribe({
+    this.es.putEntry(this.CurrentEntry.id, this.CurrentEntry).subscribe({
       next: (value) => console.log("PUT :", value) ,
-      error: (error) => { 
+      error: (error) => {
         let jsonEntryError: Record = JSON.parse(error.error.message);
         this.ErrorMap = jsonEntryError;
         console.log("error message :", jsonEntryError)

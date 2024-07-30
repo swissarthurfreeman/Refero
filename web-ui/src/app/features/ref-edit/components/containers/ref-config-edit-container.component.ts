@@ -1,21 +1,45 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import Papa from 'papaparse';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Referential } from '../../../../shared/models/referential.model';
-import { Record, Entry } from '../../../../shared/models/record.model';
-import { RefService } from '../../../../shared/services/ref.service';
-import { Colfig } from '../../../../shared/models/Colfig.model';
-import { Observable, concat, concatAll, forkJoin, merge } from 'rxjs';
-import { ColfigService } from '../../../../shared/services/colfig.service';
-import { EntryService } from '../../../../shared/services/entry.service';
-import { ViewService } from '../../../../shared/services/view.service';
-import { View } from '../../../../shared/models/view.model';
-import moment from 'moment';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Referential} from '../../../../shared/models/referential.model';
+import {Entry, Record} from '../../../../shared/models/record.model';
+import {RefService} from '../../../../shared/services/ref.service';
+import {Colfig} from '../../../../shared/models/Colfig.model';
+import {concat, Observable} from 'rxjs';
+import {ColfigService} from '../../../../shared/services/colfig.service';
+import {EntryService} from '../../../../shared/services/entry.service';
+import {ViewService} from '../../../../shared/services/view.service';
+import { v4 as uuid } from 'uuid';
 
-/* TODO : there are multiple bugs here 
-    - remove the Ref input if you can
-    - 
+interface ColfigConfigForm {
+  dateformat: FormControl<string | null>
+  pointedrefcolid: FormControl<string | null>
+  coltype: FormControl<string>
+  name: FormControl<string>
+  filecolname: FormControl<string | null>
+  pointedrefcollabelid: FormControl<string | null>
+  id: FormControl<string>
+  refid: FormControl<string>
+  required: FormControl<boolean>
+  pointedrefid: FormControl<string | null>
+}
+
+interface ReferentialConfigForm {
+  code: FormControl<string>,
+  name: FormControl<string>,
+  description: FormControl<string>,
+  colfigs: FormArray<FormGroup<ColfigConfigForm>>
+}
+
+
+/* TODO : there are multiple bugs here
+    accordingly and loads the container for this referential.
+    - code review the shit out of this component, it's size is gargantuan.
+    - why are we distinguishing post from put ? Why not just assign a UUID to a non existent ref
+    and use put everywhere creating when it doesn't exist...?
+    - note colfig ids are either already present (existing ref) or get assigned either when
+    uploading a CSV and adding all colfigs, or when manually adding a column via + button.
 */
 
 @Component({
@@ -25,224 +49,214 @@ import moment from 'moment';
 })
 export class RefConfigEditContainerComponent implements OnInit {
   @Input() Ref!: Referential;   // Ref whose config we're reading, either an existent ref or an empty one (if creating new).
-  RefConfigForm!: FormGroup;    // Parent Form, contains the name, description and columns formArray. 
+  RefConfigForm!: FormGroup<ReferentialConfigForm>;    // Parent Form, contains the name, description and columns formArray.
 
-  constructor(private rs: RefService, private fb: FormBuilder,
-    private router: Router, private route: ActivatedRoute,
-    public cs: ColfigService, public es: EntryService,
-    public vs: ViewService) { }
+  csvFile: File | undefined = undefined;
 
-  ngOnInit(): void {
-    this.RefConfigForm = this.fb.group({
-      name: this.Ref.name,
-      code: this.Ref.code,
-      description: this.Ref.description,
-      columns: this.fb.array([])  // contains all the colfigs.
-    });
-    this.addColFormsFor(this.Ref);  // re-add col config fields
+  RefErrorMap: Record = {};
+  records: Record[] = [];
+
+  constructor(private rs: RefService, private router: Router, private route: ActivatedRoute,
+              public cs: ColfigService, public es: EntryService,
+              public vs: ViewService) {
   }
 
-  getColfigGroupOf(id: string, colType: string, required: boolean, dateFormat: string, name: string,
-    fileColName: string, pointedrefid: string, pointedRefColId: string, pointedRefColLabelId: string) {
-    return this.fb.group({
-      id: id,
-      colType: colType,
-      required: required,
-      dateFormat: dateFormat,
-      name: name.toUpperCase(),
-      fileColName: fileColName,
-      pointedrefid: pointedrefid,
-      pointedRefColId: pointedRefColId,
-      pointedRefColLabelId: pointedRefColLabelId,
+  ngOnInit(): void {
+    this.RefConfigForm = new FormGroup<ReferentialConfigForm>({
+      name: new FormControl(this.Ref.name, {nonNullable: true}),
+      code: new FormControl(this.Ref.code, {nonNullable: true}),
+      description: new FormControl(this.Ref.description, {nonNullable: true}),
+      colfigs: new FormArray<FormGroup<ColfigConfigForm>>([])  // contains all the Colfig FormControls.
+    })
+    this.addColumnFormGroupsToFormArrayFor(this.Ref);        // add colfig fields
+  }
+
+  private getFormControlGroupOf(col: Colfig) {
+    return new FormGroup<ColfigConfigForm>({
+      id: new FormControl(col.id, {nonNullable: true}),
+      name: new FormControl(col.name, {nonNullable: true}),
+      refid: new FormControl(col.refid, {nonNullable: true}),
+      coltype: new FormControl(col.coltype, {nonNullable: true}),
+      required: new FormControl(col.required, {nonNullable: true}),
+      dateformat: new FormControl(col.dateformat),
+      filecolname: new FormControl(col.filecolname),
+      pointedrefid: new FormControl(col.pointedrefid),
+      pointedrefcolid: new FormControl(col.pointedrefcolid),
+      pointedrefcollabelid: new FormControl(col.pointedrefcollabelid),
     })
   }
 
-  addColFormsFor(ref: Referential) {
-    for (let colfig of ref.columns) {
-      this.columns.push(
-        this.getColfigGroupOf(
-          colfig.id, colfig.colType, colfig.required, colfig.dateFormat,
-          colfig.name, colfig.fileColName, colfig.pointedrefid,
-          colfig.pointedRefColId, colfig.pointedRefColLabelId
-        )
-      );
+  private getColfigOf(colfigFormGroup: FormGroup<ColfigConfigForm>): Colfig {
+    const colfig = new Colfig();
+    colfig.id = colfigFormGroup.controls.id.getRawValue()!;
+    colfig.required = colfigFormGroup.controls.required.getRawValue() || false;
+    colfig.refid = colfigFormGroup.controls.refid.getRawValue()!;
+    colfig.dateformat = colfigFormGroup.controls.dateformat.getRawValue()!;
+    colfig.coltype = colfigFormGroup.controls.coltype.getRawValue()!;
+    colfig.filecolname = colfigFormGroup.controls.filecolname.getRawValue()!;
+    colfig.name = colfigFormGroup.controls.name.getRawValue()!;
+    colfig.pointedrefid = colfigFormGroup.controls.pointedrefid.getRawValue()!;
+    colfig.pointedrefcolid = colfigFormGroup.controls.pointedrefcolid.getRawValue()!;
+    colfig.pointedrefcollabelid = colfigFormGroup.controls.pointedrefcollabelid.getRawValue()!;
+    return colfig;
+  }
+
+  /**
+   * Add colfig form groups for every colfig of referential.
+   * @param ref either a newly created referential from a file, or an inputted referential
+   * retrieved from the backend by the routable.
+   */
+  private addColumnFormGroupsToFormArrayFor(ref: Referential) {
+    for (let colfig of ref.columns)
+      this.RefConfigForm.controls.colfigs.push(this.getFormControlGroupOf(colfig));
+  }
+
+  /**
+   * Add a new column un-required column of type NONE to the referential configuration with a new colfig id.
+   */
+  AddNewColfigToFormArray() {
+    let colfig: Colfig = new Colfig();
+    colfig.refid = this.Ref.id;
+    colfig.required = false;
+    colfig.coltype = "NONE";
+    colfig.id = uuid().toString();
+    this.RefConfigForm.controls.colfigs.push(this.getFormControlGroupOf(colfig));
+  }
+
+  /**
+   * Save (update or create) the referential by sending its current configuration to the backend.
+   * The method will trigger a large callstack, putReferential(Ref.id, Ref) ->
+   * handleUpdateColfigOfRef() -> UpdateColfigsOfRef() -> PutDefaultViewForRef()
+   * -> PutCSVEntriesOfRef().
+   */
+  SaveReferential() {
+    this.Ref.code = this.RefConfigForm.controls.code.getRawValue() || '';
+    this.Ref.name = this.RefConfigForm.controls.name.getRawValue() || '';
+    this.Ref.description = this.RefConfigForm.controls.description.getRawValue() || '';
+
+    this.rs.putReferential(this.Ref.id, this.Ref).subscribe({
+      next: (uRef) => this.handleUpdateColfigOfRef(),
+      error: (httpErr) => {
+        this.RefErrorMap = httpErr.error
+      }
+    })
+  }
+
+  private handleUpdateColfigOfRef() {
+    this.UpdateColfigsOfRef().subscribe({
+      next: (uColfig) => {
+        console.log("Posted :", uColfig);
+      },                                          // TODO : to be able to implement DATE issue completely, we need to be able to update columns.
+      error: (err) => {                     // TODO : Add PUT endpoint for updating / posting columns. This will handle the cases of
+        this.handleColfigUpdateError(err.error);  // checking unicity of column we set as unique afterward, or column we set as date afterward (when lines are already present)
+      },
+      complete: () => {
+        console.log("Done posting all columns.");
+        // create default view, which then posts all new entries, won't do anything if ref already exists.
+        this.PostDefaultViewForRef();
+      }
+    })
+  }
+
+  private handleColfigUpdateError(error: any) {
+    throw error;    // TODO : the colfig update error will need to be passed to the appropriate Colfig presentational component to display errors to user.
+  }
+
+  /**
+   * PUT all columns of Ref, concatenate all individual observables into a single
+   * one that emits every PUT response.
+   */
+  UpdateColfigsOfRef(): Observable<Colfig> {
+    let createdColfigObservables: Observable<Colfig>[] = [];
+
+    for (let colfigFormGroup of this.RefConfigForm.controls.colfigs.controls) {
+      const colfig: Colfig = this.getColfigOf(colfigFormGroup)
+      createdColfigObservables.push(this.cs.putColfig(colfig.id, colfig));    // colfig is either existing Id or new one (from file upload or manual add)
     }
+
+    return concat(...createdColfigObservables);  // creates a single observable, that emits every colfig as they're posted.
   }
 
-  AddColToFormArray() {
-    this.columns.push(this.getColfigGroupOf('', 'NONE', true, '', '', '', '', '', ''));
-  }
-
-  get columns() {
-    return this.RefConfigForm.controls["columns"] as FormArray;
-  }
-
-  PostDefaultViewOf(refid: string) {
-    this.rs.getReferentialBy(refid).subscribe((ref) => {      // POST default FULL_VIEW...
-      let dispColIds = []
-
-      for (let colfig of ref.columns)
-        dispColIds.push(colfig.id);
-
-      let defaultView = new View();
-      defaultView.refid = ref.id;
-      defaultView.name = "DEFAULT_VIEW";
-
-      defaultView.dispColIds = dispColIds;
-      defaultView.searchColIds = dispColIds;
-
-      this.vs.postView(defaultView).subscribe((view) => {
-        console.log("Posted default view :", view);
-      })
+  PostDefaultViewForRef() {
+    this.rs.getReferentialBy(this.Ref.id).subscribe((uRef) => {
+      this.vs.postView(this.vs.getDefaultViewFor(uRef)).subscribe({
+        next: value => {
+          console.log("Posted :", value);
+          this.PutCSVEntriesOf(uRef);      // does nothing if no file was read.
+        },
+        error: httpError => {
+          if(!httpError.error.name) {
+            throw httpError;
+          }
+        }
+      });
     })
   }
 
   /**
-   * Post all entries read from CSV. 
-   * @param ref the newly created referential.
+   * Post all entries read from CSV, if a file wasn't read, this method will do nothing.
+   * Before doing this basic validation needs to be done upon
+   * the CSV, see gitlab. https://momentjs.com/docs/#/parsing/string-format/
+   * @param uRef the newly created referential, with a valid array of columns.
    */
-  PostCSVEntriesOf(refid: string) {
-    this.rs.getReferentialBy(refid).subscribe((ref) => {
-      // if a date format is provided, check format is valid for all entries before posting. 
-      for(let record of this.records) {
-        for (let colfig of ref.columns) {   // https://momentjs.com/docs/#/parsing/string-format/   
-          if(colfig.dateFormat != null) {   // if it's a date, check provided format is valid.
-            let d = moment(record[colfig.fileColName], colfig.dateFormat);
-            if(!d.isValid()) {
-              throw new Error(`Format de date (${colfig.dateFormat}) spécifié non respecté par valeur ${record[colfig.fileColName]}.`);
-            }
-          }
-        }
+  PutCSVEntriesOf(uRef: Referential) {
+    // if a date format is provided, check format is valid for all entries before posting.
+    for (let record of this.records) {
+      const entry: Entry = new Entry();
+      entry.refid = this.Ref.id;
+      entry.fields = {};
+
+      for (let colfig of uRef.columns) {
+        entry.fields[colfig.id] = record[colfig.filecolname];
       }
 
-      /*
-      for (let record of this.records) {
-        const entry: Entry = new Entry();
-        entry.refid = refid;
-        entry.fields = {};
-
-        for (let colfig of ref.columns) {   
-          console.log(colfig);
-          entry.fields[colfig.id] = record[colfig.fileColName];
-        }
-
-        console.log("POST :", entry);
-        this.es.postEntry(entry).subscribe((newEntry) => {
-          console.log("Posted Entry :", newEntry);
-        });
-      }
-        */
-    })
-  }
-
-  UpdateColfigsOf(refid: string): Observable<Colfig> {
-    let refconfig: any = this.RefConfigForm.getRawValue();
-    let createdColfigObservables: Observable<Colfig>[] = [];
-
-    for (let colfig of refconfig['columns']) {
-      colfig.refid = refid;                                       // create or update every column config
-      createdColfigObservables.push(this.cs.postColfig(colfig));  // TODO : this should be a PUT to handle updating of columns...
-    }
-
-    let res = concat(...createdColfigObservables); // creates a single observable, that emits every colfig as they're posted.
-    return res;                  
-  }
-
-  handleColfigUpdateError(error: any) {
-    throw error;    // TODO : the colfig update error will need to be passed to the appropriate Colfig presentational component to display errors to user.
-  }
-
-  handleUpdateColfigOf(refId: string) {
-    this.UpdateColfigsOf(refId).subscribe({
-      next: (uColfig) => {
-        console.log("Posted ", uColfig);
-      },                                          // TODO : to be able to implement DATE issue completely, we need to be able to update columns.
-      error: (err) => {                           // TODO : Add PUT endpoint for updating / posting columns. This will handle the cases of
-        this.handleColfigUpdateError(err.error);  // checking unicity of column we set as unique afterwards, or column we set as date afterwards (when lines are already present)
-      },
-      complete: () => {
-        console.log("Done posting all columns."); 
-        if(this.Ref.id === undefined) {         // if this is a new referential, post the entries and create a default view.
-          this.PostCSVEntriesOf(refId);
-          this.PostDefaultViewOf(refId);
-        }
-      }
-    })
-  }
-
-  handleRefUpdateError(error: Error) {
-    this.ErrorMap = JSON.parse(error.message);
-  }
-
-  ErrorMap: Record = {};
-
-  UpdateReferential() {
-    let refconfig: any = this.RefConfigForm.getRawValue();
-    console.log(refconfig);
-    
-    this.Ref.name = refconfig['name'];
-    this.Ref.description = refconfig['description'] || "";
-    this.Ref.code = refconfig['code'];
-
-    this.rs.putReferential(this.Ref).subscribe({
-      next: (uRef) => this.handleUpdateColfigOf(uRef.id),   // uRef is either an new referential or an existing, updated one
-      error: (err) => this.handleRefUpdateError(err.error)
-    })
-  }
-
-  EditInjection() {
-    this.router.navigate(['injections'], { relativeTo: this.route });
-  }
-
-  deleteColumn(idx: number) {
-    this.columns.removeAt(idx);
+      this.es.postEntry(entry).subscribe({
+        next: value => {
+          console.log("Posted :", value)
+        },
+        error: err => {
+          throw err
+        },
+        complete: () => {}
+      });
+    } // this.router.navigate([this.Ref.id], {relativeTo: this.route}).then(() => window.location.reload())
+    // TODO : concat all entry observables into a single observable and navigate away once it's completed (use concat)
   }
 
   Debug() {
     console.log(JSON.stringify(this.RefConfigForm.getRawValue()));
   }
 
-  file: File | undefined = undefined;
-
   upload(event: any) {
-
     let file: File = event.target.files[0];
-    this.file = file;
+    this.csvFile = file;
+
     file.text().then(value => {
-
-      let parsedCSV = Papa.parse(value, { header: true });
-      // TODO : Deal with case where no header is provided
-
-      let originalHeader: string[] = parsedCSV.meta.fields!;                  // these are the original column names
+      let parsedCSV = Papa.parse(value, {header: true});  // TODO : Deal with case where no header is provided
+      let originalHeader: string[] = parsedCSV.meta.fields!;                          // original column names
 
       for (let colName of originalHeader) {
         let colfig = new Colfig();
-        colfig.fileColName = colName;
+        colfig.id = uuid().toString();
+        colfig.refid = this.Ref.id;
+        colfig.filecolname = colName;
         colfig.name = colName.toUpperCase().trim().replace(" ", "_");
-        colfig.colType = "NONE";
+        colfig.coltype = "NONE";
         colfig.required = false;
-        this.Ref.columns.push(colfig);      // TODO : don't forget to add refid to every column (first post Ref, then get id from response)
+        this.Ref.columns.push(colfig);
       }
 
-      this.RefConfigForm.controls['name'].setValue(this.file!.name);
+      this.RefConfigForm.controls.name.setValue(this.csvFile!.name);
 
-      parsedCSV.data.pop()  // pop crap at end
-      let records = parsedCSV.data as Record[];
+      parsedCSV.data.pop()  // pop crap at end.
+      this.records = parsedCSV.data as Record[];
 
-      this.records = records;
-
-      this.addColFormsFor(this.Ref);  // TODO : revamp to just adding for a single colfig, cycle before. 
+      this.addColumnFormGroupsToFormArrayFor(this.Ref);
     });
   }
 
-  records: Record[] = [];
-
-  getDispFileColNames() {
-    let fileColNames = []
-    for (let colfig of this.Ref.columns) {
-      fileColNames.push(colfig.fileColName);
-    }
-    return fileColNames;
+  EditInjections() {
+    this.router.navigate(['injections'], {relativeTo: this.route});
   }
 }
 

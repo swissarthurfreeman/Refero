@@ -7,10 +7,7 @@ import { ViewService } from './view.service';
 import { HttpClient } from "@angular/common/http";
 import { Observable } from 'rxjs';
 
-/**
- * Referential management service. This class is for the time being purely
- * mocking API endpoints. 
- */
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,11 +25,19 @@ export class RefService {
     return this.http.get<Referential[]>(`api/refs`);
   }
 
-  putReferential(referential: Referential): Observable<Referential> {
-    return this.http.put<Referential>(`api/refs/${referential.id}`, {
-      "name": referential.name,
-      "description": referential.description,
-      "code": referential.code
+  putReferential(id: string, ref: Referential): Observable<Referential> {
+    return this.http.put<Referential>(`api/refs/${id}`, {
+      "name": ref.name,
+      "description": ref.description,
+      "code": ref.code
+    })
+  }
+
+  postReferential(ref: Referential): Observable<Referential> {
+    return this.http.post<Referential>(`api/refs`, {
+      "name": ref.name,
+      "description": ref.description,
+      "code": ref.code
     })
   }
 

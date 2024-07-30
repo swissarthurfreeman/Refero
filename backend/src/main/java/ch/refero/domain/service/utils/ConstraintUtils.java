@@ -96,16 +96,15 @@ public class ConstraintUtils {
     List<Colfig> colfigs = colfigRepo.findByRefidAndDateformatNotNull(entry.refid);
 
     for (var col : colfigs) {
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(col.dateformat);
-      if (!col.required && entry.fields.get(col.id)
-          == null) // if value isn't provided and col is not required, continue.
-      {
+      // if this isn't a date column or value isn't provided and col is not required, continue.
+      if (col.dateformat == null || col.dateformat.isBlank() && !col.required && entry.fields.get(col.id) == null) {
         continue;
       }
 
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(col.dateformat);
       try {
-        LocalDate.parse(entry.fields.get(col.id),
-            formatter); // TODO : if colfig is not required and value is null, this will throw !
+        // TODO : if colfig is not required and value is null, this will throw !
+        LocalDate.parse(entry.fields.get(col.id), formatter);
       } catch (DateTimeParseException e) {
         errorMap.put(col.id, "Invalid date format");
       }
@@ -216,26 +215,26 @@ public class ConstraintUtils {
       return;
     }
 
-    if(colfig.pointedrefcollabelid == null) {
+    if (colfig.pointedrefcollabelid == null) {
       errorMap.put("pointedrefcollabelid", "value is required");
       return;
     }
 
     var pointedRefColLabel = colfigRepo.findById(colfig.pointedrefcollabelid);
-    if(pointedRefColLabel.isEmpty()) {
+    if (pointedRefColLabel.isEmpty()) {
       errorMap.put("pointedrefcollabelid", "invalid colfig id");
       return;
     }
 
     // if we're not pointing towards the PK, make sure pointed column exists
-    if(!colfig.pointedrefcolid.equals("0")) {
+    if (!colfig.pointedrefcolid.equals("0")) {
       var pointedColfig = colfigRepo.findById(colfig.pointedrefcolid);
       if (pointedColfig.isEmpty()) {
         errorMap.put("pointedrefcolid", "invalid colfig id");
         return;
       }
 
-      if(!pointedColfig.get().getRefid().equals(colfig.pointedrefid)) {
+      if (!pointedColfig.get().getRefid().equals(colfig.pointedrefid)) {
         errorMap.put("pointedrefcolid", "pointed colfig does not belong to pointedref");
       }
 
@@ -254,7 +253,8 @@ public class ConstraintUtils {
   }
 
   // TODO : merge function with CheckEntriesHaveValidFkValuesWhenPointedColIsBk, do if else.
-  public void CheckEntriesHaveValidFkValuesWhenPointedColIsPk(Colfig colfig, Map<String, String> errorMap) {
+  public void CheckEntriesHaveValidFkValuesWhenPointedColIsPk(Colfig colfig,
+      Map<String, String> errorMap) {
     var entries = entryRepo.findByRefid(colfig.refid);
     var foreignEntries = entryRepo.findByRefid(colfig.pointedrefid);
 
@@ -263,17 +263,21 @@ public class ConstraintUtils {
       foreignPkValues.add(fe.id);   // build list of foreign BKs
     }
 
-    for(var e: entries) {
+    for (var e : entries) {
       String fkValue = e.fields.get(colfig.id);
-      if(fkValue == null) continue;
+      if (fkValue == null) {
+        continue;
+      }
 
-      if(!foreignPkValues.contains(fkValue)) {
-        errorMap.put("pointedrefcolid", "Referential contains entries with invalid FK (foreign PK) values.");
+      if (!foreignPkValues.contains(fkValue)) {
+        errorMap.put("pointedrefcolid",
+            "Referential contains entries with invalid FK (foreign PK) values.");
       }
     }
   }
 
-  public void CheckEntriesHaveValidFkValuesWhenPointedColIsBk(Colfig colfig, Map<String, String> errorMap) {
+  public void CheckEntriesHaveValidFkValuesWhenPointedColIsBk(Colfig colfig,
+      Map<String, String> errorMap) {
     // check FK values of entries are either valid or null.
     var entries = entryRepo.findByRefid(colfig.refid);
     var foreignEntries = entryRepo.findByRefid(colfig.pointedrefid);

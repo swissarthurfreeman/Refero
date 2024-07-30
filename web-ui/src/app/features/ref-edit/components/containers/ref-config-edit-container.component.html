@@ -1,88 +1,81 @@
 <div class="add-columns-form" [formGroup]="RefConfigForm">
-    <div class="d-flex">
-        <div class="p-2 me-auto">
-            <div class="input-group mb-3">
-                <!-- File upload form -->
-                @if (this.Ref.id === undefined) {
-                    <input #uploadFile (change)="upload($event)" type='file' class="form-control" title="">
-                }
-            </div> 
-        </div>
-        <div class="p-2">
-            <button mat-raised-button color="primary" (click)="EditInjection()" >Configurer Injection</button>
-        </div>
-        <div class="p-2" (click)="UpdateReferential()">
-            <button mat-raised-button color="primary">Enregistrer</button>
-        </div>
-    </div>
-    <div class="d-flex">
-        <div class="p-2" style="width: 30%;">
-            <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
-                <mat-label>Code</mat-label>
-                <input matInput formControlName="code">
-                <ng-container *ngIf="ErrorMap['code']">
-                    <mat-error>{{ErrorMap['code']}}</mat-error>
-                </ng-container>
-            </mat-form-field>
-        </div>
-        <div class="p-2" style="width: 30%;">
-            <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
-                <mat-label>Nom</mat-label>
-                <input matInput formControlName="name">
-                <ng-container *ngIf="ErrorMap['name']">
-                    <mat-error>{{ErrorMap['name']}}</mat-error>
-                </ng-container>
-            </mat-form-field>
-        </div>
-        <div class="p-2 flex-grow-1">
-            <mat-form-field subscriptSizing="dynamic" style="width: 100%;">
-                <mat-label>Description.</mat-label>
-                <input matInput formControlName="description">
-            </mat-form-field>
-        </div>
-    </div>
-    <hr>
-    <ng-container formArrayName="columns">
-        @for (colfigForm of columns.controls; track $index) {
-            <div class="d-flex border rounded m-2">
-                <div class="p-2">
-                    <mat-icon class="delete-btn" (click)="deleteColumn($index)">delete_forever</mat-icon>
-                </div>
-                <div class="p-2">
-                    <!-- render column configuration fields -->
-                    <app-col-config-presentational [FormControl]="$any(colfigForm)" [Ref]="Ref"></app-col-config-presentational>
-                </div>
-            </div>
-        }
-    </ng-container>
-    <button mat-mini-fab (click)="AddColToFormArray()">
-        <mat-icon class="add-course-btn">add</mat-icon>
+  <!-- Choose File | Configurer Injection | Enregistrer line -->
+  <div class="d-flex" style="gap: 20px;">
+    <input #uploadFile (change)="upload($event)" type='file' class="form-control"
+           style="width: 40%; margin-right: auto">
+    <button mat-raised-button color="primary" (click)="EditInjections()" style="width: 20%">
+      Configurer Injection
     </button>
-    <button (click)="Debug()">Debug</button>
+    <button mat-raised-button color="primary" (click)="SaveReferential()" style="width: 15%">
+      Enregistrer
+    </button>
+  </div>
+  <br>
+  <!-- Code | Nom | Description search boxes line -->
+  <div class="d-flex" style="gap: 20px;">
+    <mat-form-field subscriptSizing="dynamic" style="width: 25%;">
+      <mat-label>Code</mat-label>
+      <input matInput formControlName="code">
+      <ng-container *ngIf="RefErrorMap['code']">
+        <mat-error>{{ RefErrorMap['code'] }}</mat-error>
+      </ng-container>
+    </mat-form-field>
+    <mat-form-field subscriptSizing="dynamic" style="width: 25%;">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="name">
+      <ng-container *ngIf="RefErrorMap['name']">
+        <mat-error>{{ RefErrorMap['name'] }}</mat-error>
+      </ng-container>
+    </mat-form-field>
+    <mat-form-field subscriptSizing="dynamic" style="width: 50%;">
+      <mat-label>Description.</mat-label>
+      <input matInput formControlName="description">
+    </mat-form-field>
+  </div>
+  <hr>
+  <!-- List of column configurations -->
+  <ng-container formArrayName="colfigs">
+    @for (colfigForm of this.RefConfigForm.controls.colfigs.controls; track $index) {
+      <div class="d-flex border rounded m-2">
+        <!-- <mat-icon class="delete-btn" (click)="deleteColumn($index)">delete_forever</mat-icon> -->
+        <!-- render column configuration fields -->
+        <app-col-config-presentational [FormControl]="$any(colfigForm)"
+                                       [Ref]="Ref"></app-col-config-presentational>
+      </div>
+    }
+  </ng-container>
+  <button mat-mini-fab (click)="AddNewColfigToFormArray()">
+    <mat-icon class="add-course-btn">add</mat-icon>
+  </button>
+  <button (click)="Debug()">Debug</button>
 </div>
 
+<!-- Render table of values if creating a new referential -->
 <!-- TODO : make sure condition checks that this is indeed a new referential -->
 <!-- TODO : provide a scrollbar again -->
-@if (Ref.id == null) {
-    @if(Ref.columns.length > 0) {
-        <div class="col">
-            <!-- TODO : move to simple table view (re-using this component is way too much complexity) -->
-            <div style="max-width:100%">
-                @if (records.length > 0) {
-                <table mat-table [dataSource]="records"> <!-- [dataSource]="" Define a material table's column headers (not visible) -->
-                    @for (colfig of Ref.columns; track $index) {
+@if (Ref.columns.length > 0) {
+  <div class="col">
+    <!-- TODO : move to simple table view (re-using this component is way too much complexity) -->
+    <div style="max-width:100%">
+      @if (records.length > 0) {
+        <table mat-table [dataSource]="records">
+          <!-- [dataSource]="" Define a material table's column headers (not visible) -->
+          @for (colfig of Ref.columns; track $index) {
 
-                        <ng-container [matColumnDef]="colfig.fileColName">
-                            <th mat-header-cell *matHeaderCellDef> {{colfig.name}} </th> <!-- Render column name -->
-                            <!-- Define the header string -->
-                            <td mat-cell *matCellDef="let line"> {{ line[colfig.fileColName] }} </td> <!-- Define the data to display for each line -->
-                        </ng-container>
-                    }
-                    <tr mat-header-row *matHeaderRowDef="getDispFileColNames()"></tr>
-                    <tr mat-row *matRowDef="let myRowData; columns: getDispFileColNames()"></tr>
-                </table>
-                }
-            </div>
-        </div>
-    }
+            <ng-container [matColumnDef]="colfig.filecolname">
+              <!-- Read from csv parsed records -->
+              <th mat-header-cell *matHeaderCellDef> {{ colfig.name }}</th>
+              <!-- Render column name -->
+              <td mat-cell *matCellDef="let line"> {{ line[colfig.filecolname] }}</td>
+              <!-- Define the header string -->
+              <!-- Define the data to display for each line -->
+            </ng-container>
+          }
+          <tr mat-header-row *matHeaderRowDef="this.vs.getFileColNamesFor(this.Ref)"></tr>
+          <tr mat-row
+              *matRowDef="let myRowData; columns: this.vs.getFileColNamesFor(this.Ref)"></tr>
+        </table>
+      }
+    </div>
+  </div>
 }

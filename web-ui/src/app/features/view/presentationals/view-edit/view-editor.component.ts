@@ -32,11 +32,11 @@ export class ViewEditorComponent implements OnInit {
     this.newViewId = new FormControl('AWESOME_VIEW');
     this.cd.detectChanges();
   }
-  
+
   savedView!: View;
 
   @Input() isInjectionMode: boolean = false;
-  @Input() Ref!: Referential; // TODO : get rid of non url inputs, use @Select instead. 
+  @Input() Ref!: Referential; // TODO : get rid of non url inputs, use @Select instead.
   @Input() View!: View;
 
   newViewId = new FormControl('AWESOME_VIEW');
@@ -45,7 +45,7 @@ export class ViewEditorComponent implements OnInit {
     let newView: View = JSON.parse(JSON.stringify(view));
     newView.id = '';
     newView.name = this.newViewId.getRawValue()!;
-    
+
     this.vs.postView(newView).subscribe(() => {
       this.store.dispatch(new SetCurrentView(this.savedView));
       this.reloadCurrentRoute();
@@ -62,26 +62,26 @@ export class ViewEditorComponent implements OnInit {
   searchColIdToAdd!: string;
 
   addSearchCol() {
-    if(!this.View.searchColIds.includes(this.searchColIdToAdd))
-      this.View.searchColIds.push(this.searchColIdToAdd); 
+    if(!this.View.searchcolids.includes(this.searchColIdToAdd))
+      this.View.searchcolids.push(this.searchColIdToAdd);
   }
 
   dispColIdToAdd!: string;
 
   addDispCol() {
-    if(!this.View.dispColIds.includes(this.dispColIdToAdd))
-      this.View.dispColIds.push(this.dispColIdToAdd);
+    if(!this.View.dispcolids.includes(this.dispColIdToAdd))
+      this.View.dispcolids.push(this.dispColIdToAdd);
   }
 
 
-  SelectView(viewId: string) {                          // TODO : avoid http request, select from ref instead 
+  SelectView(viewId: string) {                          // TODO : avoid http request, select from ref instead
     this.vs.getView(viewId).subscribe((view) => {        // retrieve previous value of view (unmodified)
       this.savedView = JSON.parse(JSON.stringify(view));
-      
+
       if(this.isInjectionMode)
         this.store.dispatch(new SetInjectionSourceRefView(view));
       else
-        this.store.dispatch(new SetCurrentView(view)); 
+        this.store.dispatch(new SetCurrentView(view));
     });
   }
 }

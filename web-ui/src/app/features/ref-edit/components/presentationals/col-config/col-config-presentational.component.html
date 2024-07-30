@@ -4,7 +4,7 @@
         <div class="p-1">
             <mat-form-field subscriptSizing="dynamic">
                 <mat-label>Col. Source.</mat-label>
-                <input matInput formControlName="fileColName">
+                <input matInput formControlName="filecolname">
             </mat-form-field>
         </div>
         <div class="p-1">
@@ -16,8 +16,8 @@
         <div class="p-1">
             <mat-form-field subscriptSizing="dynamic">
                 <mat-label>Format Date</mat-label>
-                <input matInput formControlName="dateFormat">
-            </mat-form-field> 
+                <input matInput formControlName="dateformat">
+            </mat-form-field>
         </div>
         <div class="p-1">
             <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
@@ -31,7 +31,7 @@
         <div class="p-1">
             <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
                 <mat-label>Type Clef</mat-label>
-                <mat-select formControlName="colType">
+                <mat-select formControlName="coltype">
                     <mat-option value="NONE">NONE</mat-option>
                     <mat-option value="FK">FK</mat-option>
                     <mat-option value="BK">BK</mat-option>
@@ -39,8 +39,8 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="d-flex flex-row">    
-        @if (FormControl.get("colType")!.value=='FK') {
+    <div class="d-flex flex-row">
+        @if (FormControl.get("coltype")!.value=='FK') {
             <div class="p-1">
                 <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
                     <mat-label>Ref. Cible</mat-label> <!-- retrieve all needed refs via async subscription -->
@@ -56,7 +56,7 @@
             <div class="p-1">
                 <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
                     <mat-label>Clef. Cible</mat-label>
-                    <mat-select formControlName="pointedRefColId">
+                    <mat-select formControlName="pointedrefcolid">
                         <ng-container *ngIf="pointedRef$ | async as PointedRef">
                             @for (colfig of PointedRef.columns; track $index) {
                                 <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
@@ -68,7 +68,7 @@
             <div class="p-1">
                 <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
                     <mat-label>Col. Libelé</mat-label>
-                    <mat-select formControlName="pointedRefColLabelId">
+                    <mat-select formControlName="pointedrefcollabelid">
                         <ng-container *ngIf="pointedRef$ | async as PointedRef">
                             @for (colfig of PointedRef.columns; track $index) {
                                 <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>

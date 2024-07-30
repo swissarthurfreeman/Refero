@@ -13,23 +13,23 @@ import { EntryService } from '../../../../../shared/services/entry.service';
 })
 export class KeyValuePresentationalComponent {
   constructor(private cs: ColfigService, private es: EntryService) {}
-  
-  colfig$!: Observable<Colfig>; 
+
+  colfig$!: Observable<Colfig>;
   foreignEntries$!: Observable<Entry[]>;
-  
+
   ngOnInit(): void {
     this.colfig$ = this.cs.getColfigBy(this.colId);
     this.colfig$.subscribe((colfig) => {
-      if(colfig.colType === 'FK') {
+      if(colfig.coltype === 'FK') {
         console.log("Getting Entries of Foreign Ref with ID", colfig.pointedrefid);
         this.foreignEntries$ = this.es.getEntriesOf(colfig.pointedrefid);
         this.foreignEntries$.subscribe((entries) => { console.log(entries) });
       }
     })
   }
-  
-  @Input() colId!: string;   
-  @Input() FormControl!: FormControl; // contains colId and value 
+
+  @Input() colId!: string;
+  @Input() FormControl!: FormControl; // contains colId and value
 
   @Input() ErrorMap!: Record;
   @Input() readOnly: boolean = false;

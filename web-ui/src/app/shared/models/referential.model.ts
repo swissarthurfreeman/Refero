@@ -7,7 +7,7 @@ export class Referential {
     name!: string;
     code!: string;
     description!: string;
-    columns!: Colfig[];
-    injections!: Injection[];
-    views!: View[];
+    columns: Colfig[] = [];
+    injections: Injection[] = [];
+    views: View[] = [];
 }
