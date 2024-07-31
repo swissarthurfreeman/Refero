@@ -12,7 +12,7 @@ import {EntryService} from '../../../../shared/services/entry.service';
 import {ViewService} from '../../../../shared/services/view.service';
 import { v4 as uuid } from 'uuid';
 
-interface ColfigConfigForm {
+export interface ColfigConfigForm {
   dateformat: FormControl<string | null>
   pointedrefcolid: FormControl<string | null>
   coltype: FormControl<string>

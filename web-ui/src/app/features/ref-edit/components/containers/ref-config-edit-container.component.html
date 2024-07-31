@@ -39,7 +39,7 @@
       <div class="d-flex border rounded m-2">
         <!-- <mat-icon class="delete-btn" (click)="deleteColumn($index)">delete_forever</mat-icon> -->
         <!-- render column configuration fields -->
-        <app-col-config-presentational [FormControl]="$any(colfigForm)"
+        <app-col-config-presentational [colfigConfigForm]="colfigForm"
                                        [Ref]="Ref"
                                        [ColfigErrorMap]="ColfigErrorMap[colfigForm.controls.id.getRawValue()]">
 

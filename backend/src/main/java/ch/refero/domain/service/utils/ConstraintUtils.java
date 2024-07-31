@@ -227,7 +227,7 @@ public class ConstraintUtils {
     }
 
     // if we're not pointing towards the PK, make sure pointed column exists
-    if (!colfig.pointedrefcolid.equals("0")) {
+    if (!colfig.pointedrefcolid.equals("PK")) {
       var pointedColfig = colfigRepo.findById(colfig.pointedrefcolid);
       if (pointedColfig.isEmpty()) {
         errorMap.put("pointedrefcolid", "invalid colfig id");
@@ -304,7 +304,7 @@ public class ConstraintUtils {
   public void CheckFkValidityOf(Colfig colfig, Map<String, String> errorMap) {
     CheckFkConfigValidityOf(colfig, errorMap);
 
-    if (colfig.pointedrefcolid.equals("0")) {
+    if (colfig.pointedrefcolid.equals("PK")) {
       CheckEntriesHaveValidFkValuesWhenPointedColIsPk(colfig, errorMap);
     } else {
       CheckEntriesHaveValidFkValuesWhenPointedColIsBk(colfig, errorMap);

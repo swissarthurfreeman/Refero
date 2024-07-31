@@ -11,7 +11,7 @@ import { v4 as uuid } from 'uuid';
   selector: 'app-ref-config-edit',
   templateUrl: './ref-config-edit-routable.component.html',
   styleUrl: './ref-config-edit-routable.component.scss'
-}) // TODO : rename to routable
+}) // TODO : route back to / if the requested ref doesn't exist.
 export class RefConfigEditRoutableComponent implements OnInit {
   constructor(public store: Store, public rs: RefService) {}
 

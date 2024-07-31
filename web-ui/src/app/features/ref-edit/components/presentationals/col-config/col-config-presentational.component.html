@@ -1,97 +1,91 @@
-<div [formGroup]="$any(FormControl)">
-  <button (click)="DebugCol()"></button>
-  <div class="d-flex flex-row">
-    <div class="p-1">
-      <mat-form-field subscriptSizing="dynamic">
-        <mat-label>Col. Source.</mat-label>
-        <input matInput formControlName="filecolname">
-        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['filecolname']">
-          <mat-error>{{ ColfigErrorMap['filecolname'] }}</mat-error>
-        </ng-container>
-      </mat-form-field>
-    </div>
-    <div class="p-1">
-      <mat-form-field subscriptSizing="dynamic">
-        <mat-label>Col. Ref.</mat-label>
-        <input matInput formControlName="name">
-        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['name']">
-          <mat-error>{{ ColfigErrorMap['name'] }}</mat-error>
-        </ng-container>
-      </mat-form-field>
-    </div>
-    <div class="p-1">
-      <mat-form-field subscriptSizing="dynamic">
-        <mat-label>Format Date</mat-label>
-        <input matInput formControlName="dateformat">
-        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['dateformat']">
-          <mat-error>{{ ColfigErrorMap['dateformat'] }}</mat-error>
-        </ng-container>
-      </mat-form-field>
-    </div>
-    <div class="p-1">
-      <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
-        <mat-label>Non Nulle</mat-label>
-        <mat-select formControlName="required">
-          <mat-option [value]="false">No</mat-option>
-          <mat-option [value]="true">Yes</mat-option>
-        </mat-select>
-        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['required']">
-          <mat-error>{{ ColfigErrorMap['required'] }}</mat-error>
-        </ng-container>
-      </mat-form-field>
-    </div>
-    <div class="p-1">
-      <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
-        <mat-label>Type Clef</mat-label>
-        <mat-select formControlName="coltype">
-          <mat-option value="NONE">NONE</mat-option>
-          <mat-option value="FK">FK</mat-option>
-          <mat-option value="BK">BK</mat-option>
-        </mat-select>
-        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['coltype']">
-          <mat-error>{{ ColfigErrorMap['coltype'] }}</mat-error>
-        </ng-container>
-      </mat-form-field>
-    </div>
+<div [formGroup]="colfigConfigForm">
+  <div class="d-flex" style="gap: 10px;">
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Col. Source.</mat-label>
+      <input matInput formControlName="filecolname">
+      <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['filecolname']">
+        <mat-error>{{ ColfigErrorMap['filecolname'] }}</mat-error>
+      </ng-container>
+    </mat-form-field>
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Col. Ref.</mat-label>
+      <input matInput formControlName="name">
+      <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['name']">
+        <mat-error>{{ ColfigErrorMap['name'] }}</mat-error>
+      </ng-container>
+    </mat-form-field>
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Format Date</mat-label>
+      <input matInput formControlName="dateformat">
+      <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['dateformat']">
+        <mat-error>{{ ColfigErrorMap['dateformat'] }}</mat-error>
+      </ng-container>
+    </mat-form-field>
+    <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
+      <mat-label>Non Nulle</mat-label>
+      <mat-select formControlName="required">
+        <mat-option [value]="false">No</mat-option>
+        <mat-option [value]="true">Yes</mat-option>
+      </mat-select>
+      <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['required']">
+        <mat-error>{{ ColfigErrorMap['required'] }}</mat-error>
+      </ng-container>
+    </mat-form-field>
+    <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
+      <mat-label>Type Clef</mat-label>
+      <mat-select formControlName="coltype" (selectionChange)="ClearFkConfig()">
+        <mat-option value="NONE">NONE</mat-option>
+        <mat-option value="FK">FK</mat-option>
+        <mat-option value="BK">BK</mat-option>
+      </mat-select>
+      <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['coltype']">
+        <mat-error>{{ ColfigErrorMap['coltype'] }}</mat-error>
+      </ng-container>
+    </mat-form-field>
   </div>
-  <div class="d-flex flex-row">
-    @if (FormControl.get("coltype")!.value == 'FK') {
-      <div class="p-1">
-        <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
-          <mat-label>Ref. Cible</mat-label> <!-- retrieve all needed refs via async subscription -->
-          <mat-select formControlName="pointedrefid" (valueChange)="SelectPointedRef($event)">
-            <ng-container *ngIf="refs$ | async as Refs">
-              @for (ref of Refs; track $index) {
+  <div class="d-flex" style="gap: 10px;">
+    @if (colfigConfigForm.controls.coltype.getRawValue() == 'FK') {
+      <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
+        <mat-label>Ref. Cible</mat-label> <!-- retrieve all needed refs -->
+        <mat-select formControlName="pointedrefid" (valueChange)="SelectPointedRef($event)">
+          <ng-container *ngIf="refs$ | async as Refs">
+            @for (ref of Refs; track $index) {
+              @if (ref.id != Ref.id) {
+                <!--Foreign key only towards foreign refs.-->
                 <mat-option [value]="ref.id">{{ ref.name }}</mat-option>
               }
-            </ng-container>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="p-1">
-        <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
-          <mat-label>Clef. Cible</mat-label>
-          <mat-select formControlName="pointedrefcolid">
-            <ng-container *ngIf="pointedRef$ | async as PointedRef">
+            }
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
+        <mat-label>Clef. Cible</mat-label>
+        <mat-select formControlName="pointedrefcolid">
+          <ng-container *ngIf="pointedRef$ | async as PointedRef">
+            @if (!hasComposedBk(PointedRef)) {
               @for (colfig of PointedRef.columns; track $index) {
-                <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+                @if (colfig.coltype === "BK") {
+                  <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+                }
               }
-            </ng-container>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="p-1">
-        <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
-          <mat-label>Col. Libelé</mat-label>
-          <mat-select formControlName="pointedrefcollabelid">
-            <ng-container *ngIf="pointedRef$ | async as PointedRef">
-              @for (colfig of PointedRef.columns; track $index) {
-                <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
-              }
-            </ng-container>
-          </mat-select>
-        </mat-form-field>
-      </div>
+            }
+            <mat-option [value]="'PK'">PK</mat-option>
+          </ng-container>
+        </mat-select>
+        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['pointedrefcolid']">
+          <mat-error>{{ ColfigErrorMap['pointedrefcolid'] }}</mat-error>
+        </ng-container>
+      </mat-form-field>
+      <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
+        <mat-label>Col. Libelé</mat-label>
+        <mat-select formControlName="pointedrefcollabelid">
+          <ng-container *ngIf="pointedRef$ | async as PointedRef">
+            @for (colfig of PointedRef.columns; track $index) {
+              <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+            }
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
     }
   </div>
 </div>
