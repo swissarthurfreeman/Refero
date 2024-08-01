@@ -79,6 +79,7 @@ export class TableComponent implements OnInit {
   applyInjection(srcRec: Record, Injection: Injection) {        // TODO : this code can be made more readable no ?
     for(let control of this.EntryForm.controls) {
       let keypair = control.getRawValue();
+      /*
       for(let i=0; i < Injection.destColIds.length; i++) {
         console.log(keypair['colId'], Injection.destColIds[i])
         if (keypair['colId'] === Injection.destColIds[i]) {         // TODO : update the corresponding FormArray here...
@@ -88,6 +89,7 @@ export class TableComponent implements OnInit {
           //this.CurrentEntry.fields[Injection.destColIds[i]] = srcRec[Injection.srcColIds[i]];
         }
       }
+      */
     }
   }
 

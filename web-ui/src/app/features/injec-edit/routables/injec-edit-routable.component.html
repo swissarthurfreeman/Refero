@@ -1,0 +1,7 @@
+<ng-container *ngIf="ref$ | async as loadedRef">
+  <ng-container *ngIf="refs$ | async as loadedRefs">
+    <h1>{{ loadedRef.name }}</h1>
+    <app-injection-edit-container [Ref]="loadedRef"
+                                  [Refs]="loadedRefs"></app-injection-edit-container>
+  </ng-container>
+</ng-container>

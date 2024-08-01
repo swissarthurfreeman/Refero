@@ -1,5 +1,6 @@
 package ch.refero.domain.service;
 
+import ch.refero.domain.repository.*;
 import ch.refero.domain.service.business.ReferentialUpdateConstraintViolation;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ch.refero.domain.model.Referential;
-import ch.refero.domain.repository.ColfigRepository;
-import ch.refero.domain.repository.EntryRepository;
-import ch.refero.domain.repository.ReferentialRepository;
 import ch.refero.domain.service.business.ReferentialDoesNotExistException;
 
 @Service
@@ -28,7 +26,13 @@ public class ReferentialService {
     
     @Autowired
     private ColfigRepository colRepository;
-    
+
+    @Autowired
+    private InjectionRepository injectionRepository;
+
+    @Autowired
+    private ViewRepository viewRepository;
+
     Logger logger = LoggerFactory.getLogger(ReferentialService.class);
 
     public List<Referential> findAll() {
@@ -98,10 +102,17 @@ public class ReferentialService {
 
     public void delete(String refId) {
         findById(refId);   
-        
+
+
         var entries = this.entryRepository.findByRefid(refId);
         for(var entry: entries) this.entryRepository.deleteById(entry.id);
-        
+
+        var views = this.viewRepository.findByRefid(refId);
+        for(var view: views) this.viewRepository.deleteById(view.id);
+
+        var injections = this.injectionRepository.findByRefid(refId);
+        for(var injection: injections) this.injectionRepository.deleteById(injection.id);
+
         var columns = this.colRepository.findByRefid(refId);
         for(var col: columns) colRepository.deleteById(col.id);
 

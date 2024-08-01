@@ -1,26 +1,20 @@
-<div [formGroup]="$any(FormControl)">
-    <div class="d-flex flex-row">
-        <div class="p-2">
-            <mat-form-field subscriptSizing="dynamic">
-                <mat-label>Dest Col.</mat-label>
-                <mat-select formControlName="destColId">
-                    @for(colfig of Ref.columns; track $index) {
-                        <mat-option [value]="colfig.id">{{colfig.name}}</mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="p-2">
-            <ng-container *ngIf="sourceRef$ | async as SourceRef">
-                <mat-form-field subscriptSizing="dynamic">
-                    <mat-label>Source Col.</mat-label>
-                    <mat-select formControlName="sourceColId">
-                        @for(colfig of SourceRef.columns; track $index) {
-                            <mat-option [value]="colfig.id">{{colfig.name}}</mat-option>
-                        }
-                    </mat-select>
-                </mat-form-field>
-            </ng-container>
-        </div>
-    </div>
+<div [formGroup]="MappingConfigFormGroup">
+  <div class="d-flex" style="gap: 20px">
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Dest Col.</mat-label>
+      <mat-select formControlName="destColId">
+        @for (colfig of destRef.columns; track $index) {
+          <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Source Col.</mat-label>
+      <mat-select formControlName="srcColId">
+        @for (colfig of srcRef.columns; track $index) {
+          <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
 </div>

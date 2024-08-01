@@ -1,31 +1,33 @@
-
-
 <ng-container *ngIf="colfig$ | async as Colfig">
-    <div [formGroup]="$any(FormControl)">
-        <mat-form-field [id]="Colfig.id">
-            <mat-label>{{ Colfig.name }}</mat-label>
-            @if (Colfig.coltype !== 'FK') {
-                @if (readOnly) {
-                    <input matInput formControlName="value" readonly> <!-- attribute binding wasn't working -->
-                }
+  <div [formGroup]="KeyPairFormGroup">
+    <mat-form-field [id]="Colfig.id">
+      <mat-label>{{ Colfig.name }}</mat-label>
+      @if (Colfig.coltype !== 'FK') {
+        @if (readOnly) {
+          <!-- attribute binding wasn't working -->
+          <input matInput formControlName="value" readonly>
+        }
 
-                @if (!readOnly) {
-                    <input matInput formControlName="value"> <!-- attribute binding wasn't working -->
-                }
+        @if (!readOnly) {
+          <input matInput formControlName="value"> <!-- attribute binding wasn't working -->
+        }
+      }
+      @if (Colfig.coltype === 'FK') {
+        <mat-select formControlName="value" [disabled]="readOnly">
+          <!-- test with REE DATA and STATUT -->
+          <ng-container *ngIf="foreignEntries$ | async as ForeignEntries">
+            @for (e of ForeignEntries; track $index) {
+              <mat-option
+                [value]="e.fields[Colfig.pointedrefcolid]">{{ e.fields[Colfig.pointedrefcollabelid] }}
+              </mat-option>
             }
-            @if (Colfig.coltype === 'FK') {
-                <mat-select formControlName="value" [disabled]="readOnly"> <!-- test with REE DATA and STATUT -->
-                    <ng-container *ngIf="foreignEntries$ | async as ForeignEntries">
-                        @for (e of ForeignEntries; track $index) {
-                            <mat-option [value]="e.fields[Colfig.pointedrefcolid]">{{ e.fields[Colfig.pointedrefcollabelid] }}</mat-option>
-                        }
-                    </ng-container>
-                </mat-select>
-            }
-            <ng-container *ngIf="ErrorMap[colId]">
-                <mat-error>{{ErrorMap[colId]}}</mat-error>
-            </ng-container>
-        </mat-form-field>
-    </div>
+          </ng-container>
+        </mat-select>
+      }
+      <ng-container *ngIf="KeyPairError">
+        <mat-error>{{ KeyPairError }}</mat-error>
+      </ng-container>
+    </mat-form-field>
+  </div>
 </ng-container>
 

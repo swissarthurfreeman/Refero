@@ -1,91 +1,112 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { RefService } from '../../../shared/services/ref.service';
-import { InjectionService } from '../../../shared/services/injection.service';
-import { Referential } from '../../../shared/models/referential.model';
-import { Injection } from '../../../shared/models/injection.model';
-import { Observable } from 'rxjs';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {RefService} from '../../../shared/services/ref.service';
+import {InjectionService} from '../../../shared/services/injection.service';
+import {Referential} from '../../../shared/models/referential.model';
+import {Injection} from '../../../shared/models/injection.model';
+import {Observable} from 'rxjs';
+import {v4 as uuid} from 'uuid';
+
+export interface MappingConfig {
+  srcColId: FormControl<string>
+  destColId: FormControl<string>
+}
+
+export interface InjectionConfig {
+  srcid: FormControl<string>,
+  mappings: FormArray<FormGroup<MappingConfig>>
+}
 
 @Component({
   selector: 'app-injection-edit-container',
   templateUrl: './injection-edit-container.component.html'
 })
 export class InjectionEditContainerComponent implements OnInit {
-  constructor(private fb: FormBuilder, public rs: RefService, public is: InjectionService) {}
-  @Input() Ref!: Referential;
-  refs$!: Observable<Referential[]>;
+  constructor(private fb: FormBuilder, public rs: RefService, public is: InjectionService) {
+  }
 
-  InjectionConfigForm: FormGroup = this.fb.group({
-    SourceRef: this.fb.control(''),
-    mappings: this.fb.array([])
-  });
+  @Input() Ref!: Referential;
+  @Input() Refs!: Referential[];
+
+  InjectionConfigFormGroup!: FormGroup<InjectionConfig>;
 
   ngOnInit() {
-    this.refs$ = this.rs.getReferentials();
-    this.mappings.clear();
+    this.ResetInjectionConfigForm();
   }
+  sourceRef!: Referential;
 
-  sourceId: string = '';
-  
-  // we clearly need a current injection state in the ref-config-edit store
-  SelectSource(srcRef: Referential) {
-    this.mappings.clear();
-    this.sourceId = srcRef.id;
-    for(let injection of this.Ref.injections) {
-      if(injection.srcId == srcRef.id) {
-        for(let i=0; i < injection.destColIds.length; i++) {
-          this.AddMappingToFormArray(injection.destColIds[i], injection.srcColIds[i]);
-        }
-        break;
-      }
-    }
-  }
-
-  AddMappingToFormArray(destColId?: string, sourceColId?: string) {
-    const MapForm = this.fb.group({
-      destColId: [destColId || ''],
-      sourceColId: [sourceColId || '']
-    });
-    this.mappings.push(MapForm);
-  }
-
-  get mappings() {
-    return this.InjectionConfigForm.controls['mappings'] as FormArray;
-  }
-
-  CreateInjection() { // TODO : move to injection service
-    let raw: any = this.InjectionConfigForm.getRawValue();
-
-    let srcColIds = [];
-    let destColIds = [];
-    for(let i=0; i < raw['mappings'].length; i++) {
-      srcColIds.push(
-        raw['mappings'][i]['sourceColId']
-      );
-      destColIds.push(
-        raw['mappings'][i]['destColId']
-      );
-    }
-    
-    let injection = new Injection();
-    injection.srcId = (raw['SourceRef']! as Referential).id;
-    injection.refid = this.Ref.id;
-    injection.srcName = this.Ref.name;
-    injection.srcColIds = srcColIds;
-    injection.destColIds = destColIds;
-
-    console.log("POST :", injection);
-    this.is.postInjection(injection).subscribe((value) => {
-      window.location.reload();
+  ResetInjectionConfigForm() {
+    this.InjectionConfigFormGroup = new FormGroup<InjectionConfig>({
+      srcid: new FormControl('', {nonNullable: true}),
+      mappings: new FormArray<FormGroup<MappingConfig>>([])
     })
   }
 
-  UpdateInjection() { // TODO : move to injection service
+  /**
+   * Select source referential to create or update the injection for. If no injection
+   * is yet defined, the mapping form array is not populated.
+   * @param srcid the id of the source referential from the which to inject records.
+   */
+  SelectSource(srcid: string) {
+    this.ResetInjectionConfigForm();    // clear previous injection if needed
+    this.InjectionConfigFormGroup.controls.srcid.setValue(srcid); // reset srcid
 
+    this.sourceRef = this.getRefById(srcid);
+    console.log("Select", this.sourceRef);
+
+    for (let injection of this.Ref.injections) {
+      if (injection.srcid == this.sourceRef.id) {
+        this.currInjection = injection;
+        for (let destColId of Object.keys(injection.mappings)) {
+          this.AddMappingFormGroupToFormArray(destColId, injection.mappings[destColId]!);
+        }
+        return;
+      }
+    }
+    this.currInjection = new Injection();
+  }
+
+  getRefById(refId: string): Referential {
+    console.log(this.Refs);
+    for(let ref of this.Refs) {
+      if(ref.id === refId)
+        return ref;
+    }
+    return new Referential();
+  }
+
+  AddMappingFormGroupToFormArray(destColId: string, srcColId: string) {
+    const MapFormGroup = new FormGroup<MappingConfig>({
+      srcColId: new FormControl(srcColId, {nonNullable: true}),
+      destColId: new FormControl(destColId, {nonNullable: true})
+    })
+    this.InjectionConfigFormGroup.controls.mappings.push(MapFormGroup);
+  }
+
+  currInjection: Injection = new Injection();
+
+  CreateInjection() {
+    if(this.currInjection.id == undefined) {
+      this.currInjection.id = uuid().toString();
+    }
+
+    this.currInjection.srcid = this.InjectionConfigFormGroup.controls.srcid.getRawValue();
+    this.currInjection.srcname = this.Ref.name;
+    this.currInjection.refid = this.Ref.id;
+
+    for (let mappingForm of this.InjectionConfigFormGroup.controls.mappings.controls) {
+      console.log(mappingForm.controls);
+      this.currInjection.mappings[mappingForm.controls.destColId.getRawValue()] = mappingForm.controls.srcColId.getRawValue();
+    }
+
+    console.log("PUT :", this.currInjection);
+    this.is.putInjection(this.currInjection.id, this.currInjection).subscribe((value) => {
+      console.log("PUTTED :", value);
+      window.location.reload();
+    });
   }
 
   RemoveMapping(index: number) {
-    console.log("HELLOOO !");
-    this.mappings.removeAt(index);
+    this.InjectionConfigFormGroup.controls.mappings.removeAt(index);
   }
 }

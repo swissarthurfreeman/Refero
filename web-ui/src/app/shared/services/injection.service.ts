@@ -15,4 +15,8 @@ export class InjectionService {
   postInjection(injection: Injection): Observable<Injection> {
     return this.http.post<Injection>(`api/injections`, injection);
   }
+
+  putInjection(injectionId: string, injection: Injection): Observable<Injection> {
+    return this.http.put<Injection>(`api/injections/${injectionId}`, injection);
+  }
 }

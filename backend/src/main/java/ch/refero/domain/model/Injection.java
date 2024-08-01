@@ -51,5 +51,5 @@ public class Injection {
     @MapKeyColumn(name = "srccolid")
     @Column(name = "destcolid")
     @NotEmpty(message = "Injection must contain a mappings map") // destination is the ref this injection belongs to.
-    public Map<String, String> mappings;        // mapping of { srcColId: destColId... }
+    public Map<String, String> mappings;        // mapping of { destColId: srcColId... } guarantees destColId unicity !
 }

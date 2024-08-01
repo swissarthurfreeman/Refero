@@ -50,7 +50,7 @@ public class InjectionService {
    */
   private void ValidateItemSpecificRules(Injection inj) {
     var errorMap = new HashMap<String, String>();
-    CheckTargetColumnsUnicity(inj, errorMap);
+    //CheckTargetColumnsUnicity(inj, errorMap);
     CheckTargetColumnsValidity(inj, errorMap);
     CheckSourceColumnsValidity(inj, errorMap);
     if (!errorMap.isEmpty()) {
@@ -59,7 +59,7 @@ public class InjectionService {
   }
 
   private void CheckSourceColumnsValidity(Injection inj, HashMap<String, String> errorMap) {
-    var srcColIds = inj.mappings.keySet();
+    var srcColIds = inj.mappings.values();
     for (String srcColId : srcColIds) {
       Optional<Colfig> optCol = colRepo.findById(srcColId);
       if (optCol.isEmpty()) {
@@ -73,7 +73,7 @@ public class InjectionService {
   }
 
   private void CheckTargetColumnsValidity(Injection inj, HashMap<String, String> errorMap) {
-    var targetColIds = inj.mappings.values();
+    var targetColIds = inj.mappings.keySet();
     for (String targetColId : targetColIds) {
       Optional<Colfig> optCol = colRepo.findById(targetColId);
       if (optCol.isEmpty()) {
@@ -87,15 +87,16 @@ public class InjectionService {
     }
   }
 
+  /*
   private void CheckTargetColumnsUnicity(Injection inj, HashMap<String, String> errorMap) {
-    Set<String> destColIds = new HashSet<>(inj.getMappings().values());
-    if (inj.getMappings().values().size() != destColIds.size()) {
+    Set<String> destColIds = new HashSet<>(inj.getMappings().keySet());
+    if (inj.getMappings().key().size() != destColIds.size()) {
       errorMap.put("mappings", "duplicate destination column ids provided in map");
     }
   }
+  */
 
   public Injection update(String id, Injection injection) {
-    findById(id);
     injection.setId(id);
     return save(injection);
   }

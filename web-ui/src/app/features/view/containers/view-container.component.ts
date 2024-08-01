@@ -17,19 +17,19 @@ import { RefService } from '../../../shared/services/ref.service';
 })
 export class ViewContainerComponent implements OnInit {
   constructor(public rs: RefService, public store: Store, public location: Location, public router: Router, private cd: ChangeDetectorRef) {}
-  
+
   @Select(RefViewState.getCurrentRef) currRef$!: Observable<Referential>;  // TODO : check if dispatching action to change RefViewStateModel's ref re-emits a value
   @Select(RefViewState.isInjectionMode) injectionMode$!: Observable<boolean>;
   @Select(RefViewState.getCurrentView) currView$!: Observable<View>;
-  
+
   ngOnInit(): void {
     let context = this.location.path().split('/')[1];
     if(context == 'view') {
       this.store.dispatch(new SetInjectionMode(false));
     }
     // Angular change detection only checks object identity, not object content, the observable may emit new values
-    // but the actual reference won't change. 
-    this.cd.detectChanges();  
+    // but the actual reference won't change.
+    this.cd.detectChanges();
   }
 
   consultationToEditView(refid: string) {
@@ -37,7 +37,7 @@ export class ViewContainerComponent implements OnInit {
   }
 
   consultationToNewRecord(refid: string) {
-    this.router.navigate(['entry', refid, '']);
+    this.router.navigate(['entry', refid, 'new']);
   }
 
   importFile(refid: string) {
@@ -52,7 +52,7 @@ export class ViewContainerComponent implements OnInit {
 
   DeleteRef(ref: Referential) {
     if(confirm(
-      `Êtes vous sur de vouloir supprimer le référentiel suivant ? \n ${ref.name} 
+      `Êtes vous sur de vouloir supprimer le référentiel suivant ? \n ${ref.name}
       \nCette action supprimera toutes les lignes et colonnes du référentiel et est irréversible !  Veuillez faire les sauvegardes appropriées.`)) {
       console.log("Implement delete functionality here");
       this.rs.delReferential(ref.id).subscribe(() => {

@@ -1,53 +1,56 @@
-<h1>{{CurrentRef.name}}</h1>
+<h1>{{ CurrentRef.name }}</h1>
 
-<div class="d-flex">
-    <div class="p-2 me-auto">
-        <mat-form-field>
-            <mat-label>Inject Record from :</mat-label> 
-            <mat-select (valueChange)="SelectInjection($event)">
-                @for (injection of CurrentRef.injections; track $index) {
-                    <mat-option [value]="injection">{{injection.srcName}}</mat-option>
-                }
-            </mat-select>
-        </mat-form-field>
-    </div>
-    <div class="p-2">
-        <button mat-raised-button color="primary" style="height:4em;width:8em" color="success" (click)="SaveEntry()">Sauvegarder</button>
-    </div>
-    @if (this.CurrentEntry.id != null) {
-        <div class="p-2">
-            <button mat-raised-button color="primary" style="height:4em; width: 7em;" color="danger" (click)="DeleteEntry()">Supprimer</button>
-        </div>
-    }
+<div class="d-flex" style="gap:30px">
+  @if (CurrentRef.injections.length > 0) {
+    <!-- If no injections, don't show the injection selection panel. -->
+    <mat-form-field style="width: 35%">
+      <mat-label>Inject Record from :</mat-label>
+      <mat-select (valueChange)="SelectInjection($event)">
+        @for (injection of CurrentRef.injections; track $index) {
+          <mat-option [value]="injection">{{ injection.srcname }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+  <button mat-raised-button color="pimary" style="height:4em;width:15%;margin-left: auto"
+          (click)="SaveEntry()">Sauvegarder
+  </button>
+  <button mat-raised-button style="height:4em; width: 7em;" color="danger"
+          (click)="DeleteEntry()">Supprimer
+  </button>
 </div>
 <hr>
 <mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
-    <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length*1.25">
-        <div [formGroup]="EntryForm">
-            <ng-container formArrayName="keypairs">
-                @for (keyPairFormControl of keypairs.controls; track $index) {
-                    <app-key-value-presentational 
-                        [colId]="keyPairFormControl.getRawValue()['colId']" 
-                        [FormControl]="$any(keyPairFormControl)"
-                        [ErrorMap]="ErrorMap">
-                    </app-key-value-presentational>
-                }
-            </ng-container>
-        </div>
-    </mat-grid-tile>
-    <!-- Injection panel -->
-    <mat-grid-tile colspan="4" [rowspan]="CurrentRef.columns.length">
-        <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
-            <ng-container *ngIf="SourceRef$ | async as SourceRef">
-                <ng-container *ngIf="SourceRefView$ | async as SourceRefView">
-                    @if (SourceRef.name != '') {
-                        <app-view-editor [isInjectionMode]="true" [Ref]="SourceRef" [View]="SourceRefView"></app-view-editor>
-                        <hr>
-                        <app-search [Ref]="SourceRef" [View]="SourceRefView"></app-search>
-                        <app-table [Ref]="SourceRef" [currView]="SourceRefView" [isInjectionMode]="true" [CurrentEntry]="CurrentEntry" [EntryForm]="keypairs"></app-table>
-                    }
-                </ng-container>
-            </ng-container>
-        </div>
-    </mat-grid-tile>
+  <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length*1.25">
+    <div [formGroup]="EntryForm">
+      <ng-container formArrayName="keypairs">
+        @for (keyPairFormGroup of EntryForm.controls.keypairs.controls; track $index) {
+          <!-- We provide the error string (undefined if there's none) to the keypair component to
+          display error to the frontend.-->
+          <app-key-value-presentational
+            [KeyPairFormGroup]="keyPairFormGroup"
+            [KeyPairError]="EntryErrorMap[keyPairFormGroup.controls.colId.getRawValue()]">
+          </app-key-value-presentational>
+        }
+      </ng-container>
+    </div>
+  </mat-grid-tile>
+  <!-- Injection panel -->
+  <mat-grid-tile colspan="4" [rowspan]="CurrentRef.columns.length">
+    <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
+      <ng-container *ngIf="SourceRef$ | async as SourceRef">
+        <ng-container *ngIf="SourceRefView$ | async as SourceRefView">
+          @if (SourceRef.name != '') {
+            <app-view-editor [isInjectionMode]="true" [Ref]="SourceRef"
+                             [View]="SourceRefView"></app-view-editor>
+            <hr>
+            <app-search [Ref]="SourceRef" [View]="SourceRefView"></app-search>
+            <app-table [Ref]="SourceRef" [currView]="SourceRefView" [isInjectionMode]="true"
+                       [CurrentEntry]="CurrentEntry"
+                       [EntryForm]="this.EntryForm.controls.keypairs"></app-table>
+          }
+        </ng-container>
+      </ng-container>
+    </div>
+  </mat-grid-tile>
 </mat-grid-list>

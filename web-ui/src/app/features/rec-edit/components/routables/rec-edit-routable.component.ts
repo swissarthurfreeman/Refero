@@ -6,6 +6,7 @@ import { Referential } from '../../../../shared/models/referential.model';
 import { EntryService } from '../../../../shared/services/entry.service';
 import { Entry, Record } from '../../../../shared/models/record.model';
 import { Colfig } from '../../../../shared/models/Colfig.model';
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'app-rec-edit-routable',
@@ -21,10 +22,12 @@ export class RecEditRoutableComponent implements OnInit {
 
   ngOnInit(): void {
     this.CurrentRef$ = this.rs.getReferentialBy(this.refid);
-    if(this.RecId === '') {
+    if(this.RecId === 'new') {
       console.log("RecId is empty, new Rec time");
-      this.CurrentEntry$ = new Observable<Entry>((sub) => { // create a new Entry wrapped in an observable
+      // create a new Entry wrapped in an observable
+      this.CurrentEntry$ = new Observable<Entry>((sub) => {
         let e = new Entry();
+        e.id = uuid().toString();
         e.refid = this.refid;
         this.CurrentRef$.subscribe((ref) => {
           e.fields = this.getEmptyRecordFromColfigs(ref.columns);

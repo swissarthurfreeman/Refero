@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { InjecEditRoutingModule } from './injec-edit-routing.module';
 import { Store } from '@ngxs/store';
-import { InjecEditComponent } from './routables/injec-edit.component';
+import { InjecEditRoutableComponent } from './routables/injec-edit-routable.component';
 import { MappingConfigPresentationalComponent } from './presentationals/mapping-config-presentational.component';
 import { InjectionEditContainerComponent } from './containers/injection-edit-container.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
-    InjecEditComponent,
+    InjecEditRoutableComponent,
     MappingConfigPresentationalComponent,
     InjectionEditContainerComponent
   ],
@@ -23,8 +23,8 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     InjecEditRoutingModule,
     ReactiveFormsModule,
-    MatFormFieldModule, 
-    MatSelectModule, 
+    MatFormFieldModule,
+    MatSelectModule,
     MatButtonModule,
     MatIconModule
   ]
