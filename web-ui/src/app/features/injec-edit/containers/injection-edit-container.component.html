@@ -17,7 +17,9 @@
     <div class="d-flex border rounded m-2" style="gap: 20px">
       <mat-icon (click)="RemoveMapping($index)" class="delete-btn">delete_forever</mat-icon>
       <app-mapping-config-presentational [destRef]="Ref" [srcRef]="sourceRef"
-                                         [MappingConfigFormGroup]="MapFormGroup"></app-mapping-config-presentational>
+                                         [MappingConfigFormGroup]="MapFormGroup"
+                                         [InjectionConfigFormGroup]="InjectionConfigFormGroup"
+                                         [currInjection]="currInjection"></app-mapping-config-presentational>
     </div>
   }
 

@@ -2,9 +2,13 @@
   <div class="d-flex" style="gap: 20px">
     <mat-form-field subscriptSizing="dynamic">
       <mat-label>Dest Col.</mat-label>
+      <!-- We can only have unique destColId values in an injection, so once an id is selected,
+      it must be removed from the list of available destColIds.  -->
       <mat-select formControlName="destColId">
         @for (colfig of destRef.columns; track $index) {
-          <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+          @if (!destColInInjectionFormGroupConfig(colfig.id) || destColIdBelongsToThisKeyPair(colfig.id)) {
+            <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+          }
         }
       </mat-select>
     </mat-form-field>

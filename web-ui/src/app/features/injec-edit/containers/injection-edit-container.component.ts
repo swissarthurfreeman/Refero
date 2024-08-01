@@ -4,7 +4,6 @@ import {RefService} from '../../../shared/services/ref.service';
 import {InjectionService} from '../../../shared/services/injection.service';
 import {Referential} from '../../../shared/models/referential.model';
 import {Injection} from '../../../shared/models/injection.model';
-import {Observable} from 'rxjs';
 import {v4 as uuid} from 'uuid';
 
 export interface MappingConfig {
@@ -54,6 +53,8 @@ export class InjectionEditContainerComponent implements OnInit {
     this.sourceRef = this.getRefById(srcid);
     console.log("Select", this.sourceRef);
 
+    this.currInjection = new Injection();
+
     for (let injection of this.Ref.injections) {
       if (injection.srcid == this.sourceRef.id) {
         this.currInjection = injection;
@@ -63,7 +64,6 @@ export class InjectionEditContainerComponent implements OnInit {
         return;
       }
     }
-    this.currInjection = new Injection();
   }
 
   getRefById(refId: string): Referential {
