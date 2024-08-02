@@ -1,24 +1,27 @@
 <!-- Render Search Field -->
+<!-- FORM GROUP ERROR IS HERE -->
+
 <div [formGroup]="searchFormGroup">
-    <ng-container formArrayName="searchFields">
-        <div class="row">
-            <div class="col">
-                @for (colfig of Ref.columns; track $index) {
-                    @if (View.searchcolids.includes(colfig.id)) {
-                    <div class="row">
-                        <div class="input-group mb-3" [formGroup]="$any(searchFields.at($index))">
-                            @if (!isInjectionMode) {
-                                <button mat-mini-fab color="warn" style="height: 95%; margin-top: 0.075%;" (click)="rmSearchColId(colfig.id)">
-                                    <mat-icon>remove</mat-icon>
-                                </button>
-                            }
-                            <span class="input-group-text" style="color:white">{{colfig.name}}</span>
-                            <input type="text" class="form-control" formControlName="filterValue">
-                        </div>
-                    </div>
-                    }
+  <ng-container formArrayName="searchFieldFilters">
+    <div class="row">
+      <div class="col">
+        @for (colfig of Ref.columns; track $index) {
+          @if (View.searchcolids.includes(colfig.id)) {
+            <div class="row">
+              <div class="input-group mb-3" [formGroup]="searchFormGroup.controls.searchFieldFilters.at($index)">
+                @if (!isInjectionMode) {
+                  <button mat-mini-fab color="warn" style="height: 95%; margin-top: 0.075%;"
+                          (click)="rmSearchColId(colfig.id)">
+                    <mat-icon>remove</mat-icon>
+                  </button>
                 }
+                <span class="input-group-text" style="color:white">{{ colfig.name }}</span>
+                <input type="text" class="form-control" formControlName="searchFieldValue">
+              </div>
             </div>
-        </div>
-    </ng-container>
+          }
+        }
+      </div>
+    </div>
+  </ng-container>
 </div>

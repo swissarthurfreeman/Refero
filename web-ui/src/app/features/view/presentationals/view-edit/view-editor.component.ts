@@ -1,4 +1,11 @@
-import { ApplicationRef, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ApplicationRef,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  SimpleChanges
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -26,6 +33,11 @@ export class ViewEditorComponent implements OnInit {
     private router: Router,
     private cd: ChangeDetectorRef
   ) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log("View Editor Changes :", changes);
+    this.ngOnInit();
+  }
 
   ngOnInit(): void {
     this.savedView = JSON.parse(JSON.stringify(this.View));

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import {InjectionService} from '../../../../shared/services/injection.service';
@@ -7,11 +7,12 @@ import {Injection} from '../../../../shared/models/injection.model';
 import {Referential} from '../../../../shared/models/referential.model';
 import {View} from '../../../../shared/models/view.model';
 import {Entry, Record} from '../../../../shared/models/record.model';
-import {SetInjection} from '../../../../shared/stores/ref-view/ref-view.action';
 import {RecEditState} from '../../../../shared/stores/rec-edit/rec-edit.state';
 import {
+  SetInjection,
+  SetInjectionMode,
   SetInjectionSourceRef,
-  SetInjectionSourceRefView
+  SetInjectionSourceRefView,
 } from '../../../../shared/stores/rec-edit/rec-edit.action';
 import {EntryService} from '../../../../shared/services/entry.service';
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
@@ -35,7 +36,8 @@ export interface EntryFormGroup {
 export class RecEditContainerComponent implements OnInit {
   constructor(
     public rs: RefService, public es: EntryService, public is: InjectionService,
-    public store: Store, private fb: FormBuilder, private location: Location) {
+    public store: Store, private fb: FormBuilder, private location: Location,
+    private cd: ChangeDetectorRef) {
   }
 
   @Input() CurrentEntry!: Entry;
@@ -44,17 +46,24 @@ export class RecEditContainerComponent implements OnInit {
   @Select(RecEditState.getInjectionSourceRef) SourceRef$!: Observable<Referential>;
   @Select(RecEditState.getInjectionSourceRefView) SourceRefView$!: Observable<View>;
 
-  EntryForm!: FormGroup<EntryFormGroup>;
+  EntryFormGroup!: FormGroup<EntryFormGroup>;
+
+  SelectInjection(injection: Injection) {
+    this.rs.getReferentialBy(injection.srcid).subscribe((SourceRef) => {
+      this.store.dispatch([
+        new SetInjectionMode(true),
+        new SetInjection(injection),
+        new SetInjectionSourceRef(SourceRef),
+        new SetInjectionSourceRefView(SourceRef.views[0]),
+      ]);
+    });
+  }
 
   ngOnInit(): void {
-    this.EntryForm = new FormGroup<EntryFormGroup>({
+    this.EntryFormGroup = new FormGroup<EntryFormGroup>({
       keypairs: new FormArray<FormGroup<KeyPairFormGroup>>([])
     });
-
     this.AddKeyPairs();
-    this.EntryForm.markAllAsTouched();
-    this.EntryForm.markAsDirty();
-    this.EntryForm.markAsTouched();
   }
 
   AddKeyPairs() {
@@ -63,9 +72,7 @@ export class RecEditContainerComponent implements OnInit {
         colId: new FormControl(colfig.id, {nonNullable: true}),
         value: new FormControl(this.CurrentEntry.fields[colfig.id]),
       });
-      keypairFormGroup.controls.colId.markAsTouched();
-      keypairFormGroup.markAsTouched();
-      this.EntryForm.controls.keypairs.push(keypairFormGroup);
+      this.EntryFormGroup.controls.keypairs.push(keypairFormGroup);
     }
   }
 
@@ -73,14 +80,14 @@ export class RecEditContainerComponent implements OnInit {
 
   SaveEntry() {
     this.EntryErrorMap = {};      // reset error map.
-    for (let keypair of this.EntryForm.controls.keypairs.controls)
+    for (let keypair of this.EntryFormGroup.controls.keypairs.controls)
       this.CurrentEntry.fields[keypair.controls.colId.getRawValue()] = keypair.controls.value.getRawValue() || '';
 
     this.es.putEntry(this.CurrentEntry.id, this.CurrentEntry).subscribe({
       next: (value) => console.log("PUTTED :", value),
       error: (httpError) => {
         console.log("error :", httpError)
-        for(let colId of Object.keys(httpError.error.fields)) {
+        for (let colId of Object.keys(httpError.error.fields)) {
           this.EntryErrorMap[colId] = httpError.error.fields[colId];
         }
       }
@@ -91,15 +98,5 @@ export class RecEditContainerComponent implements OnInit {
     this.es.delEntry(this.CurrentEntry.id).subscribe(() => {
       this.location.back();
     });
-  }
-
-  SelectInjection(injection: Injection) {
-    this.rs.getReferentialBy(injection.srcid).subscribe((SrcRef) => {
-      this.store.dispatch([
-        new SetInjectionSourceRef(SrcRef),
-        new SetInjectionSourceRefView(SrcRef.views[0]),
-        new SetInjection(injection)
-      ])
-    })
   }
 }

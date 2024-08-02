@@ -3,7 +3,7 @@
 <div class="d-flex flex-column">
     <div class="p-2 me-auto">
         <mat-form-field subscriptSizing="dynamic">
-                <mat-select [value]="Ref.views[0].id" (valueChange)="SelectView($event)">
+                <mat-select [(ngModel)]="Ref.views[0].id" (valueChange)="SelectView($event)">
                     @for (view of Ref.views; track $index) {
                         <mat-option [value]="view.id">{{view.name}}</mat-option>
                     }

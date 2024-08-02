@@ -5,10 +5,10 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { RefViewState } from '../../../shared/stores/ref-view/ref-view.state';
 import { Referential } from '../../../shared/models/referential.model';
-import { SetInjectionMode } from '../../../shared/stores/ref-view/ref-view.action';
 import { View } from '../../../shared/models/view.model';
 import { TableComponent } from '../presentationals/table/table.component';
 import { RefService } from '../../../shared/services/ref.service';
+import {SetInjectionMode} from "../../../shared/stores/rec-edit/rec-edit.action";
 
 @Component({
   selector: 'app-view-container',

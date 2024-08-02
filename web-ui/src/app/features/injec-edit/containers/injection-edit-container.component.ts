@@ -76,6 +76,10 @@ export class InjectionEditContainerComponent implements OnInit {
   }
 
   AddMappingFormGroupToFormArray(destColId: string, srcColId: string) {
+    if(this.currInjection.id == undefined) {
+      this.currInjection.id = uuid().toString();
+    }
+
     const MapFormGroup = new FormGroup<MappingConfig>({
       srcColId: new FormControl(srcColId, {nonNullable: true}),
       destColId: new FormControl(destColId, {nonNullable: true})
@@ -86,13 +90,11 @@ export class InjectionEditContainerComponent implements OnInit {
   currInjection: Injection = new Injection();
 
   CreateInjection() {
-    if(this.currInjection.id == undefined) {
-      this.currInjection.id = uuid().toString();
-    }
 
     this.currInjection.srcid = this.InjectionConfigFormGroup.controls.srcid.getRawValue();
-    this.currInjection.srcname = this.Ref.name;
+    this.currInjection.srcname = this.sourceRef.name;
     this.currInjection.refid = this.Ref.id;
+    this.currInjection.mappings = {};
 
     for (let mappingForm of this.InjectionConfigFormGroup.controls.mappings.controls) {
       console.log(mappingForm.controls);
@@ -108,5 +110,20 @@ export class InjectionEditContainerComponent implements OnInit {
 
   RemoveMapping(index: number) {
     this.InjectionConfigFormGroup.controls.mappings.removeAt(index);
+  }
+
+  HasInjectionTowardsDest(srcRef: Referential) {
+    for(let inj of this.Ref.injections) {
+      if(inj.srcid === srcRef.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  DeleteInjection() {
+    this.is.deleteInjection(this.currInjection.id).subscribe(() => {
+      window.location.reload();
+    });
   }
 }

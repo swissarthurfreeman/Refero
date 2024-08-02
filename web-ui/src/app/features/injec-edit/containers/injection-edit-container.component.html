@@ -1,16 +1,26 @@
 <div [formGroup]="InjectionConfigFormGroup">
   <div class="d-flex" style="gap: 20px">
-    <mat-form-field subscriptSizing="dynamic">
+    <mat-form-field subscriptSizing="dynamic" style="width:40%">
       <mat-label>From Source Ref.</mat-label>
       <mat-select formControlName="srcid" (valueChange)="SelectSource($event)">
         @for (srcRef of Refs; track $index) {
-          <mat-option [value]="srcRef.id">{{ srcRef.name }}</mat-option>
+          @if (HasInjectionTowardsDest(srcRef)) {
+            <mat-option [value]="srcRef.id">{{ srcRef.name + '*' }}</mat-option>
+          }
+          @if (!HasInjectionTowardsDest(srcRef)) {
+            <mat-option [value]="srcRef.id">{{ srcRef.name }}</mat-option>
+          }
         }
       </mat-select>
     </mat-form-field>
-    <button mat-raised-button color="primary" style="width: 8em; height:4em; margin-left:auto"
-            (click)="CreateInjection()">Create
-    </button>
+    @if (this.currInjection.id != undefined) {
+      <button mat-raised-button color="warn" style="width: 8em; height:4em; margin-left:auto"
+              (click)="DeleteInjection()">Supprimer
+      </button>
+      <button mat-raised-button color="primary" style="width: 8em; height:4em"
+              (click)="CreateInjection()">Créer
+      </button>
+    }
   </div>
   <hr>
   @for (MapFormGroup of InjectionConfigFormGroup.controls.mappings.controls; track $index) {

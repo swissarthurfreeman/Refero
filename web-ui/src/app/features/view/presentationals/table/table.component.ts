@@ -1,17 +1,20 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Select, Store } from '@ngxs/store';
-import { Observable, map } from 'rxjs';
-import { Referential } from '../../../../shared/models/referential.model';
-import { RefService } from '../../../../shared/services/ref.service';
-import { Injection } from '../../../../shared/models/injection.model';
-import { View } from '../../../../shared/models/view.model';
-import { EntryService } from '../../../../shared/services/entry.service';
-import { Entry, Record } from '../../../../shared/models/record.model';
-import { RefViewState } from '../../../../shared/stores/ref-view/ref-view.state';
-import { FormArray } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
-import { SetSearchFilterValue } from '../../../../shared/stores/ref-view/ref-view.action';
+import {ChangeDetectorRef, Component, Input, OnInit, SimpleChanges} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Select, Store} from '@ngxs/store';
+import {map, Observable} from 'rxjs';
+import {Referential} from '../../../../shared/models/referential.model';
+import {RefService} from '../../../../shared/services/ref.service';
+import {Injection} from '../../../../shared/models/injection.model';
+import {View} from '../../../../shared/models/view.model';
+import {EntryService} from '../../../../shared/services/entry.service';
+import {Entry, Record} from '../../../../shared/models/record.model';
+import {RefViewState} from '../../../../shared/stores/ref-view/ref-view.state';
+import {FormArray, FormGroup} from '@angular/forms';
+import {MatTableDataSource} from '@angular/material/table';
+import {RecEditState} from "../../../../shared/stores/rec-edit/rec-edit.state";
+import {
+  KeyPairFormGroup
+} from "../../../rec-edit/components/containers/rec-edit-container.component";
 
 
 @Component({
@@ -25,71 +28,73 @@ export class TableComponent implements OnInit {
   @Input() currView!: View;
 
   constructor(private router: Router, public rs: RefService, public es: EntryService,
-    private route: ActivatedRoute, private store: Store, private cd: ChangeDetectorRef) {}
+              private route: ActivatedRoute, private store: Store, private cd: ChangeDetectorRef) {
+  }
 
-  dataSource = new MatTableDataSource<Record>();
+  dataSource!: MatTableDataSource<Record>;
   entries$!: Observable<Record[]>;
 
   @Select(RefViewState.getSearchFilterValue) SearchFilterValue$!: Observable<string>;
 
+  ngOnChanges(changes: SimpleChanges) {
+    console.log("Table changes :", changes);
+    this.ngOnInit();
+  }
+
   ngOnInit(): void {
-    this.store.dispatch(new SetSearchFilterValue(""));
+
     this.entries$ = this.es.getEntriesOf(this.Ref.id).pipe(map((entries) => {
-      var newEntries: Record[] = [];
-      for(let entry of entries) {
+      const newEntries: Record[] = [];
+      for (let entry of entries) {
         entry.fields['id'] = entry.id;
         newEntries.push(entry.fields);
       }
-      this.cd.detectChanges();
       return newEntries;
-    }))
+    }));
 
+    // TODO : we need to trigger ngOnInit whenever we swap referential. We may have to select
+    // state inside the table.
     this.entries$.subscribe((records) => {
+      this.dataSource = new MatTableDataSource<Record>(records);
       this.dataSource.data = records;
-    });
 
-    this.SearchFilterValue$.subscribe((filterValue) => {
-      this.dataSource.filter = filterValue;
-    })
-    this.dataSource.filterPredicate = this.tableFilter();
+      this.SearchFilterValue$.subscribe((filterValue) => {
+        console.log("Here :", filterValue, this.dataSource);
+        this.dataSource.filter = filterValue || '';
+        this.dataSource.filterPredicate = this.tableFilter();
+      })
+    });
   }
 
   tableFilter(): (data: any, filter: string) => boolean { // very simple filter implementation, this can be bettered with a whole syntax if needs be
-    let filterFunction = function(data: any, filter: any): boolean {
+    return function (data: any, filter: any): boolean {
       let searchTerms = JSON.parse(filter);               // will be {colId: value...}
       let result = true;
       //console.log("data =", data, "\nfilter =", filter);  // data is an Entry {colId: value...}
-      for(let colId of Object.keys(searchTerms)) {
-        if(data[colId] === undefined) continue; // TODO : figure out why this is happening, why is there an empty line ??
-        result = result && ( (data[colId] as string).toLowerCase().indexOf(searchTerms[colId]) !== -1 )
+      for (let colId of Object.keys(searchTerms)) {
+        if (data[colId] === undefined) continue; // TODO : figure out why this is happening, why is there an empty line ??
+        result = result && ((data[colId] as string).toLowerCase().indexOf(searchTerms[colId]) !== -1)
       }
       return result;
-    }
-    return filterFunction;
+    };
   }
 
   viewEntry(recId: string) {
     this.router.navigate([`entry/${this.Ref.id}/${recId}`]);
   }
 
-  @Input() EntryForm!: FormArray; // will be null if in view mode, will be the Entry formarray if viewing an entry (for injection)
-  @Input() CurrentEntry!: Entry;  // optional for injection, used if simple mode is on.
-  @Select(RefViewState.getInjection) Injection$!: Observable<Injection>;
+  @Input() EntryFormGroupToInjectTo!: FormArray<FormGroup<KeyPairFormGroup>>; // will be null if in view mode, will be the Entry formarray if viewing an entry (for injection)
+  @Input() CurrentEntry!: Entry;  // optional for injection, used if injection mode is on.
+  @Select(RecEditState.getInjection) Injection$!: Observable<Injection>;
 
-  applyInjection(srcRec: Record, Injection: Injection) {        // TODO : this code can be made more readable no ?
-    for(let control of this.EntryForm.controls) {
-      let keypair = control.getRawValue();
-      /*
-      for(let i=0; i < Injection.destColIds.length; i++) {
-        console.log(keypair['colId'], Injection.destColIds[i])
-        if (keypair['colId'] === Injection.destColIds[i]) {         // TODO : update the corresponding FormArray here...
-          console.log("Inject =", srcRec[Injection.srcColIds[i]]);
+  applyInjection(srcRec: Record, inj: Injection) {        // TODO : this code can be made more readable no ?
+    console.log(this.EntryFormGroupToInjectTo, srcRec);
+    for (const entryToInjectToKeyPairFormGroup of this.EntryFormGroupToInjectTo.controls) {
+      const destColId: string = entryToInjectToKeyPairFormGroup.controls.colId.getRawValue();
 
-          control.setValue({colId: Injection.destColIds[i], value: srcRec[Injection.srcColIds[i]]})
-          //this.CurrentEntry.fields[Injection.destColIds[i]] = srcRec[Injection.srcColIds[i]];
-        }
+      if (Object.keys(inj.mappings).indexOf(destColId) != -1) {  // if keypair colid is a destination column of the injection
+        entryToInjectToKeyPairFormGroup.controls.value.setValue(srcRec[inj.mappings[destColId]]);
       }
-      */
     }
   }
 
@@ -100,8 +105,8 @@ export class TableComponent implements OnInit {
   exportTable() {
     let csv = "";
     let header = "";
-    for(let colId of this.currView.dispcolids) {
-      for(let colfig of this.Ref.columns) {
+    for (let colId of this.currView.dispcolids) {
+      for (let colfig of this.Ref.columns) {
         if (colfig.id === colId) {
           header += '"' + colfig.name + '",';
         }
@@ -111,9 +116,9 @@ export class TableComponent implements OnInit {
     csv += header;
 
     // since columnIds are not human readable, we have to manually replace them...
-    for(let record of this.dataSource.data) {
+    for (let record of this.dataSource.data) {
       let line = "";
-      for(let colId of this.currView.dispcolids) {
+      for (let colId of this.currView.dispcolids) {
         line += '"' + record[colId] + '",'
       }
       line += '\n';

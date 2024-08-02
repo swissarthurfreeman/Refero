@@ -21,10 +21,11 @@
 </div>
 <hr>
 <mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
+  <!-- Display the list of (key, value) pairs. -->
   <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length*1.25">
-    <div [formGroup]="EntryForm">
+    <div [formGroup]="EntryFormGroup">
       <ng-container formArrayName="keypairs">
-        @for (keyPairFormGroup of EntryForm.controls.keypairs.controls; track $index) {
+        @for (keyPairFormGroup of EntryFormGroup.controls.keypairs.controls; track $index) {
           <!-- We provide the error string (undefined if there's none) to the keypair component to
           display error to the frontend.-->
           <app-key-value-presentational
@@ -35,20 +36,18 @@
       </ng-container>
     </div>
   </mat-grid-tile>
-  <!-- Injection panel -->
-  <mat-grid-tile colspan="4" [rowspan]="CurrentRef.columns.length">
+  <!-- Display the injection panel -->
+  <mat-grid-tile colspan="4" [rowspan]="CurrentRef.columns.length*1.25">
     <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
       <ng-container *ngIf="SourceRef$ | async as SourceRef">
         <ng-container *ngIf="SourceRefView$ | async as SourceRefView">
-          @if (SourceRef.name != '') {
-            <app-view-editor [isInjectionMode]="true" [Ref]="SourceRef"
-                             [View]="SourceRefView"></app-view-editor>
-            <hr>
-            <app-search [Ref]="SourceRef" [View]="SourceRefView"></app-search>
-            <app-table [Ref]="SourceRef" [currView]="SourceRefView" [isInjectionMode]="true"
-                       [CurrentEntry]="CurrentEntry"
-                       [EntryForm]="this.EntryForm.controls.keypairs"></app-table>
-          }
+          <app-view-editor [isInjectionMode]="true" [Ref]="SourceRef"
+                           [View]="SourceRefView"></app-view-editor>
+          <hr>
+          <app-search [Ref]="SourceRef" [View]="SourceRefView"></app-search>
+          <app-table [Ref]="SourceRef" [currView]="SourceRefView" [isInjectionMode]="true"
+                     [CurrentEntry]="CurrentEntry"
+                     [EntryFormGroupToInjectTo]="this.EntryFormGroup.controls.keypairs"></app-table>
         </ng-container>
       </ng-container>
     </div>
