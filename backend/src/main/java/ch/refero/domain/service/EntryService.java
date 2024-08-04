@@ -46,7 +46,7 @@ public class EntryService {
      * @param entry the entry to create or update. 
      */
     public void ValidateItemSpecificRules(Entry entry) {
-        var errorMap = new HashMap<String, String>();
+        var errorMap = new HashMap<String, Object>();
         cUtils.CheckBkUnicityWhenUpdatingOrAddingAn(entry, errorMap);
         cUtils.CheckDateFormatConstraintOn(entry, errorMap);
         cUtils.CheckRequiredConstraintOn(entry, errorMap);

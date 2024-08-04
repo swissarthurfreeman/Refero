@@ -4,7 +4,7 @@ import ch.refero.domain.error.ReferoRuntimeException;
 import java.util.Map;
 
 public class ColfigUpdateConstraintViolationException extends ReferoRuntimeException {
-  public ColfigUpdateConstraintViolationException(Map<String, String> errorMap) {
+  public ColfigUpdateConstraintViolationException(Map<String, Object> errorMap) {
     super(errorMap);
   }
 }

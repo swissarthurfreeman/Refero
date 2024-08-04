@@ -54,14 +54,14 @@ public class ReferentialService {
         throw new ReferentialDoesNotExistException();
     }
 
-    private void CheckRefNameUnicity(Referential ref, Map<String, String> errorMap) {
+    private void CheckRefNameUnicity(Referential ref, Map<String, Object> errorMap) {
         var sRef = refRepository.findByName(ref.name);
         if(!sRef.isEmpty())
             if(!sRef.get(0).id.equals(ref.id))
                 errorMap.put("name", "A referential with that name already exists.");
     }
 
-    private void CheckRefCodeUnicity(Referential ref, Map<String, String> errorMap) {
+    private void CheckRefCodeUnicity(Referential ref, Map<String, Object> errorMap) {
         var sRef = refRepository.findByCode(ref.code);
         if(!sRef.isEmpty())
             if(!sRef.get(0).id.equals(ref.id))
@@ -69,7 +69,7 @@ public class ReferentialService {
     }
 
     public void ValidateItemSpecificRules(Referential ref) {
-        var errorMap = new HashMap<String, String>();
+        var errorMap = new HashMap<String, Object>();
         CheckRefNameUnicity(ref, errorMap);
         CheckRefCodeUnicity(ref, errorMap);
 

@@ -49,8 +49,7 @@ public class InjectionService {
    * @param inj injection to create or update.
    */
   private void ValidateItemSpecificRules(Injection inj) {
-    var errorMap = new HashMap<String, String>();
-    //CheckTargetColumnsUnicity(inj, errorMap);
+    var errorMap = new HashMap<String, Object>();
     CheckTargetColumnsValidity(inj, errorMap);
     CheckSourceColumnsValidity(inj, errorMap);
     if (!errorMap.isEmpty()) {
@@ -58,7 +57,7 @@ public class InjectionService {
     }
   }
 
-  private void CheckSourceColumnsValidity(Injection inj, HashMap<String, String> errorMap) {
+  private void CheckSourceColumnsValidity(Injection inj, HashMap<String, Object> errorMap) {
     var srcColIds = inj.mappings.values();
     for (String srcColId : srcColIds) {
       Optional<Colfig> optCol = colRepo.findById(srcColId);
@@ -72,7 +71,7 @@ public class InjectionService {
     }
   }
 
-  private void CheckTargetColumnsValidity(Injection inj, HashMap<String, String> errorMap) {
+  private void CheckTargetColumnsValidity(Injection inj, HashMap<String, Object> errorMap) {
     var targetColIds = inj.mappings.keySet();
     for (String targetColId : targetColIds) {
       Optional<Colfig> optCol = colRepo.findById(targetColId);

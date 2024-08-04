@@ -4,7 +4,7 @@ import ch.refero.domain.error.ReferoRuntimeException;
 import java.util.Map;
 
 public class EntryUpdateConstraintViolationException extends ReferoRuntimeException {
-  public EntryUpdateConstraintViolationException(Map<String, String> fieldsErrorMap) {
+  public EntryUpdateConstraintViolationException(Map<String, Object> fieldsErrorMap) {
     super(fieldsErrorMap);
   }
 }

@@ -8,9 +8,11 @@
         }
       </mat-select>
     </mat-form-field>
-    <button mat-raised-button color="warn" style="height:4em; width: 6em;"
-            (click)="whatTheFuck()">Supprimer
-    </button>
+    @if (!isInjectionMode && Ref.views.length > 1) {
+      <button mat-raised-button color="warn" style="height:4em; width: 6em;"
+              (click)="deleteView(View.id)">Supprimer
+      </button>
+    }
   </div>
   <!-- Only display view swapping in injection mode. -->
   @if (!isInjectionMode) {

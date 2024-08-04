@@ -41,9 +41,9 @@ export class HomeComponent implements OnInit {
     let filterFunction = function (data: any, filter: any): boolean {
       let result = true;
       let searchTerms = JSON.parse(filter);
-      result = (data.code as string).toLowerCase().indexOf(searchTerms['codeFilterVal'] as string) != -1 &&
-        (data.name as string).toLowerCase().indexOf(searchTerms['nameFilterVal'] as string) != -1 &&
-        (data.description as string).toLowerCase().indexOf(searchTerms['descFilterVal'] as string) != -1
+      result = (data.code as string).toLowerCase().indexOf(searchTerms['codeFilterVal'].toLowerCase() as string) != -1 &&
+        (data.name as string).toLowerCase().indexOf(searchTerms['nameFilterVal'].toLowerCase() as string) != -1 &&
+        (data.description as string).toLowerCase().indexOf(searchTerms['descFilterVal'].toLowerCase() as string) != -1
       return result;
     }
     return filterFunction;

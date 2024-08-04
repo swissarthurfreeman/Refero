@@ -37,14 +37,14 @@ public class ViewService {
     throw new ViewDoesNotExistException();
   }
 
-  private void CheckRefViewNameUnicityOf(RefView refView, Map<String, String> errorMap) {
+  private void CheckRefViewNameUnicityOf(RefView refView, Map<String, Object> errorMap) {
     var views = viewRepo.findByRefidAndName(refView.getRefid(), refView.getName());
     if (!views.isEmpty() && !views.get(0).getId().equals(refView.getId())) {
       errorMap.put("name", "Referential already has a view with that name.");
     }
   }
 
-  private void CheckSearchDispColIdsValidityOf(RefView refView, Map<String, String> errorMap) {
+  private void CheckSearchDispColIdsValidityOf(RefView refView, Map<String, Object> errorMap) {
     for (String searchColId : refView.searchcolids) {
       // if null, or doesn't refer to existing column, or refers to column that doesn't belong to the referential...
       if (searchColId == null || colRepo.findById(searchColId).isEmpty() || !colRepo.findById(
@@ -68,7 +68,7 @@ public class ViewService {
    * @param refView TODO : move validation here for the sake of uniformity and maintenance.
    */
   public void ValidateItemSpecificRules(RefView refView) {
-    var errorMap = new HashMap<String, String>();
+    var errorMap = new HashMap<String, Object>();
     CheckRefViewNameUnicityOf(refView, errorMap);
     CheckSearchDispColIdsValidityOf(refView, errorMap);
 

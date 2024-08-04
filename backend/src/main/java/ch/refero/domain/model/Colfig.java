@@ -34,6 +34,8 @@ public class Colfig {
   public String refid;
 
   @Column
+  // TODO : make this blankable, column is then just an import restriction.
+  // makes files require a certain header.
   @NotBlank(message = "name cannot be blank")
   public String name;
 

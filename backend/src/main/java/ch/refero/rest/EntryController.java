@@ -76,7 +76,7 @@ public class EntryController {
     })
     @ResponseBody
     public HttpEntity<Object> handleBusinessRuntimeException(ReferoRuntimeException exception) {
-        Map<String, Map<String, String>> errorMap = new HashMap<>();
+        Map<String, Object> errorMap = new HashMap<>();
         errorMap.put("fields", exception.fieldsErrorMap);
         return new ResponseEntity<>(
             errorMap,

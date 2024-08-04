@@ -39,7 +39,7 @@ public class ColfigService {
     throw new ColfigDoesNotExistException();
   }
 
-  private void CheckColfigNameIsUnique(Colfig colfig, Map<String, String> errorMap) {
+  private void CheckColfigNameIsUnique(Colfig colfig, Map<String, Object> errorMap) {
     var cols = colRepo.findByRefid(colfig.refid);
 
     for (var col : cols) // 1. if another column with a different name exists, error.
@@ -62,7 +62,7 @@ public class ColfigService {
    * @param colfig the colfig to create or update, will have an already assigned id.
    */
   public void ValidateItemSpecificRules(Colfig colfig) {
-    var errorMap = new HashMap<String, String>();
+    var errorMap = new HashMap<String, Object>();
     CheckColfigNameIsUnique(colfig,
         errorMap);                                                                // 1. check column name unicity
     if (colfig.required) {

@@ -9,10 +9,7 @@ import ch.refero.domain.repository.ReferentialRepository;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +35,14 @@ public class ConstraintUtils {
    *
    * @param entry the entry to be added to the referential.
    */
-  public void CheckBkUnicityWhenUpdatingOrAddingAn(Entry entry, Map<String, String> errorMap) {
+  public void CheckBkUnicityWhenUpdatingOrAddingAn(Entry entry, Map<String, Object> errorMap) {
 
     var entries = entryRepo.findByRefid(entry.refid);
     var colfigs = colfigRepo.findByRefidAndColtype(entry.refid, ColType.BK);
     logger.info("Found # of BK colfigs for ref :" + String.valueOf(colfigs.size()));
 
     String entryBkSlice = getBkSliceOf(entry, colfigs);
-    Set<String> bkSlices = new HashSet<>();
+    List<String> bkSlices = new ArrayList<>();
 
     for (var e : entries) {
       if (!e.id.equals(entry.id)) {
@@ -59,6 +56,8 @@ public class ConstraintUtils {
       for (var c : colfigs) {
         errorMap.put(c.id, "BK already present");
       }
+      errorMap.put("dupEntry", entries.get(bkSlices.indexOf(entryBkSlice)));
+      errorMap.put("incomingEntry", entry);
     }
   }
 
@@ -68,7 +67,7 @@ public class ConstraintUtils {
    *
    * @param colfig the column to update or add to the referential.
    */
-  public void CheckBkUnicityWhenUpdatingOrAddingA(Colfig colfig, Map<String, String> errorMap) {
+  public void CheckBkUnicityWhenUpdatingOrAddingA(Colfig colfig, Map<String, Object> errorMap) {
     var entries = entryRepo.findByRefid(colfig.refid);
     // get all colfigs which are BKs, belong to the ref but are not the parameter colfig.
     var colfigs = colfigRepo.findByRefidAndColtypeAndIdNot(colfig.refid, ColType.BK, colfig.id);
@@ -92,7 +91,7 @@ public class ConstraintUtils {
    * @param entry the entry to test.
    * @throws DateTimeParseException if entry's date field syntax is invalid.
    */
-  public void CheckDateFormatConstraintOn(Entry entry, Map<String, String> errorMap) {
+  public void CheckDateFormatConstraintOn(Entry entry, Map<String, Object> errorMap) {
     List<Colfig> colfigs = colfigRepo.findByRefidAndDateformatNotNull(entry.refid);
 
     for (var col : colfigs) {
@@ -118,7 +117,7 @@ public class ConstraintUtils {
    * @throws IllegalArgumentException if colfig dateFormat syntax is invalid
    * @throws DateTimeParseException   if an entry's date field syntax is invalid.
    */
-  public void CheckDateFormatConstraintOf(Colfig colfig, Map<String, String> errorMap) {
+  public void CheckDateFormatConstraintOf(Colfig colfig, Map<String, Object> errorMap) {
     var entries = entryRepo.findByRefid(colfig.refid);
 
     for (var e : entries) {
@@ -150,7 +149,7 @@ public class ConstraintUtils {
    *
    * @param entry the entry with said colfig in its fields map.
    */
-  public void CheckRequiredConstraintOn(Entry entry, Map<String, String> errorMap) {
+  public void CheckRequiredConstraintOn(Entry entry, Map<String, Object> errorMap) {
     var colfigs = colfigRepo.findByRefidAndRequired(entry.refid, true);
     logger.info("Found # of required columns : " + String.valueOf(colfigs.size()));
     for (var col : colfigs) {
@@ -165,7 +164,7 @@ public class ConstraintUtils {
    *
    * @param colfig marked as required.
    */
-  public void CheckRequiredConstraintOf(Colfig colfig, Map<String, String> errorMap) {
+  public void CheckRequiredConstraintOf(Colfig colfig, Map<String, Object> errorMap) {
     var entries = entryRepo.findByRefid(colfig.refid);
 
     for (var e : entries) // java lazy checks, first check prevents error
@@ -198,7 +197,7 @@ public class ConstraintUtils {
    * @param colfig the column configured as a foreign key
    * @param errorMap the error map containing all the things
    */
-  private void CheckFkConfigValidityOf(Colfig colfig, Map<String, String> errorMap) {
+  private void CheckFkConfigValidityOf(Colfig colfig, Map<String, Object> errorMap) {
     if (colfig.pointedrefid == null) {
       errorMap.put("pointedrefid", "value is required");
       return;
@@ -254,7 +253,7 @@ public class ConstraintUtils {
 
   // TODO : merge function with CheckEntriesHaveValidFkValuesWhenPointedColIsBk, do if else.
   public void CheckEntriesHaveValidFkValuesWhenPointedColIsPk(Colfig colfig,
-      Map<String, String> errorMap) {
+      Map<String, Object> errorMap) {
     var entries = entryRepo.findByRefid(colfig.refid);
     var foreignEntries = entryRepo.findByRefid(colfig.pointedrefid);
 
@@ -277,7 +276,7 @@ public class ConstraintUtils {
   }
 
   public void CheckEntriesHaveValidFkValuesWhenPointedColIsBk(Colfig colfig,
-      Map<String, String> errorMap) {
+      Map<String, Object> errorMap) {
     // check FK values of entries are either valid or null.
     var entries = entryRepo.findByRefid(colfig.refid);
     var foreignEntries = entryRepo.findByRefid(colfig.pointedrefid);
@@ -301,7 +300,7 @@ public class ConstraintUtils {
     }
   }
 
-  public void CheckFkValidityOf(Colfig colfig, Map<String, String> errorMap) {
+  public void CheckFkValidityOf(Colfig colfig, Map<String, Object> errorMap) {
     CheckFkConfigValidityOf(colfig, errorMap);
 
     if (colfig.pointedrefcolid.equals("PK")) {

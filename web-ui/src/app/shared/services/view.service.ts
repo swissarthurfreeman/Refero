@@ -20,6 +20,11 @@ export class ViewService {
   getView(viewId: string): Observable<View> {
     return this.http.get<View>(`api/views/${viewId}`);
   }
+
+  deleteView(viewId: string): Observable<Object> {
+    return this.http.delete<Object>(`api/views/${viewId}`);
+  }
+
   postView(view: View): Observable<View> {
     return this.http.post<View>(`api/views`, view);
   }

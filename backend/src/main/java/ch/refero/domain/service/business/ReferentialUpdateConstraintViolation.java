@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ReferentialUpdateConstraintViolation extends ReferoRuntimeException {
 
-  public ReferentialUpdateConstraintViolation(Map<String, String> fieldsErrorMap) {
+  public ReferentialUpdateConstraintViolation(Map<String, Object> fieldsErrorMap) {
     super(fieldsErrorMap);
   }
 }

@@ -99,8 +99,10 @@ export class RecEditContainerComponent implements OnInit {
   }
 
   DeleteEntry() {
-    this.es.delEntry(this.CurrentEntry.id).subscribe(() => {
-      this.location.back();
-    });
+    if(confirm(`Êtes-vous sûr de vouloir supprimer l'enregistrement suivant ?`)) {
+      this.es.delEntry(this.CurrentEntry.id).subscribe(() => {
+        this.location.back();
+      });
+    }
   }
 }
