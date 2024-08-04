@@ -13,5 +13,6 @@ import org.springframework.lang.NonNull;
 public interface InjectionRepository extends JpaRepository<Injection, String>, JpaSpecificationExecutor<Injection>  {
     @NonNull List<Injection> findAll();
     @NonNull List<Injection> findByRefid(@NonNull String refid);
+    @NonNull List<Injection> findBySrcid(@NonNull String srcid);
     @NonNull Optional<Injection> findById(@NonNull String id);
 }

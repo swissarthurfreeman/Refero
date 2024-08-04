@@ -101,17 +101,20 @@ public class ReferentialService {
     }
 
     public void delete(String refId) {
-        findById(refId);   
+        findById(refId);
 
+        var injections_to = this.injectionRepository.findByRefid(refId);
+        for(var injection: injections_to) this.injectionRepository.deleteById(injection.id);
 
-        var entries = this.entryRepository.findByRefid(refId);
-        for(var entry: entries) this.entryRepository.deleteById(entry.id);
+        var injections_from = this.injectionRepository.findBySrcid(refId);
+        for(var injection: injections_from) this.injectionRepository.deleteById(injection.id);
+
 
         var views = this.viewRepository.findByRefid(refId);
         for(var view: views) this.viewRepository.deleteById(view.id);
 
-        var injections = this.injectionRepository.findByRefid(refId);
-        for(var injection: injections) this.injectionRepository.deleteById(injection.id);
+        var entries = this.entryRepository.findByRefid(refId);
+        for(var entry: entries) this.entryRepository.deleteById(entry.id);
 
         var columns = this.colRepository.findByRefid(refId);
         for(var col: columns) colRepository.deleteById(col.id);

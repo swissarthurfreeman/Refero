@@ -88,7 +88,6 @@ public class ViewService {
   }
 
   public RefView update(String id, RefView refView) {
-    findById(id);
     refView.setId(id);
     return save(refView);
   }

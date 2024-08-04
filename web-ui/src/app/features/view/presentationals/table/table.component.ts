@@ -37,7 +37,7 @@ export class TableComponent implements OnInit {
   @Select(RefViewState.getSearchFilterValue) SearchFilterValue$!: Observable<string>;
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("Table changes :", changes);
+    //console.log("Table changes :", changes);
     this.ngOnInit();
   }
 
@@ -59,7 +59,7 @@ export class TableComponent implements OnInit {
       this.dataSource.data = records;
 
       this.SearchFilterValue$.subscribe((filterValue) => {
-        console.log("Here :", filterValue, this.dataSource);
+        //console.log("Here :", filterValue, this.dataSource);
         this.dataSource.filter = filterValue || '';
         this.dataSource.filterPredicate = this.tableFilter();
       })

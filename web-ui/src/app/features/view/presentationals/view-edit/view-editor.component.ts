@@ -17,7 +17,7 @@ import { ColfigService } from '../../../../shared/services/colfig.service';
 import { SetCurrentView } from '../../../../shared/stores/ref-view/ref-view.action';
 import { Router } from '@angular/router';
 import { SetInjectionSourceRefView } from '../../../../shared/stores/rec-edit/rec-edit.action';
-
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'app-view-editor',
@@ -35,39 +35,47 @@ export class ViewEditorComponent implements OnInit {
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("View Editor Changes :", changes);
+    //console.log("View Editor Changes :", changes);
     this.ngOnInit();
   }
 
   ngOnInit(): void {
-    this.savedView = JSON.parse(JSON.stringify(this.View));
-    this.newViewId = new FormControl('AWESOME_VIEW');
+    this.newViewName = new FormControl('AWESOME_VIEW');
     this.cd.detectChanges();
   }
-
-  savedView!: View;
 
   @Input() isInjectionMode: boolean = false;
   @Input() Ref!: Referential; // TODO : get rid of non url inputs, use @Select instead.
   @Input() View!: View;
 
-  newViewId = new FormControl('AWESOME_VIEW');
+  newViewName = new FormControl('AWESOME_VIEW');
 
   saveCurrentView(view: View) {
-    let newView: View = JSON.parse(JSON.stringify(view));
-    newView.id = '';
-    newView.name = this.newViewId.getRawValue()!;
+    console.log("HELELLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+    // get a copy of the current (soon to be persisted new view)
+    const newView: View = JSON.parse(JSON.stringify(view));
+    newView.name = this.newViewName.getRawValue()!;
+    // if it's a new view, assign a new id to it.
+    console.log("NewView", newView.name, " current view :", view.name);
+    if(newView.name != view.name) {
+      newView.id = uuid().toString();
+    }
 
-    this.vs.postView(newView).subscribe(() => {
-      this.store.dispatch(new SetCurrentView(this.savedView));
-      this.reloadCurrentRoute();
+    this.vs.putView(newView.id, newView).subscribe(() => {
+      this.reloadCurrentRoute(newView);
     });
   }
 
-  reloadCurrentRoute() {
+  whatTheFuck() {
+    console.log("What the fuck");
+  }
+
+  reloadCurrentRoute(newView: View) {
     let currUrl = this.router.url;
     this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-      this.router.navigate([currUrl]);
+      this.router.navigate([currUrl]).then(() => {
+        this.store.dispatch(new SetCurrentView(newView));
+      });
     })
   }
 
@@ -87,13 +95,13 @@ export class ViewEditorComponent implements OnInit {
 
 
   SelectView(viewId: string) {                          // TODO : avoid http request, select from ref instead
-    this.vs.getView(viewId).subscribe((view) => {        // retrieve previous value of view (unmodified)
-      this.savedView = JSON.parse(JSON.stringify(view));
+    console.log("Select ", viewId);
+    this.vs.getView(viewId).subscribe((sView) => {        // retrieve previous value of view (unmodified)
 
       if(this.isInjectionMode)
-        this.store.dispatch(new SetInjectionSourceRefView(view));
+        this.store.dispatch(new SetInjectionSourceRefView(sView));
       else
-        this.store.dispatch(new SetCurrentView(view));
+        this.store.dispatch(new SetCurrentView(sView));
     });
   }
 }

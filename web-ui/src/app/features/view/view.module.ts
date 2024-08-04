@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { ViewRoutingModule } from './view-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ViewComponent } from './routables/view.component';
+import { ViewRoutableComponent } from './routables/view-routable.component';
 import { ViewContainerComponent } from './containers/view-container.component';
 import { SearchComponent } from './presentationals/search/search.component';
 
@@ -21,7 +21,7 @@ import { TableComponent } from './presentationals/table/table.component';
 
 @NgModule({
     declarations: [
-        ViewComponent,
+        ViewRoutableComponent,
         ViewContainerComponent,
         ViewEditorComponent,
         SearchComponent,
@@ -31,7 +31,7 @@ import { TableComponent } from './presentationals/table/table.component';
         ViewContainerComponent,
         TableComponent,
         SearchComponent,
-        MatInputModule, 
+        MatInputModule,
         ViewEditorComponent
     ],
     imports: [
@@ -41,7 +41,7 @@ import { TableComponent } from './presentationals/table/table.component';
         ViewRoutingModule,
         MatGridListModule,
         MatButtonModule,
-        FormsModule, 
+        FormsModule,
         MatSelectModule,
         MatIconModule,
         MatTableModule,

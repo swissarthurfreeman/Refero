@@ -25,7 +25,7 @@ export class ViewService {
   }
 
   putView(viewId: String, view: View): Observable<View> {
-    return this.http.put<View>(`api/views`, view);
+    return this.http.put<View>(`api/views/${viewId}`, view);
   }
 
   getDefaultViewFor(ref: Referential): View {

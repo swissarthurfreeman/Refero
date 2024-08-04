@@ -24,7 +24,7 @@ export class SearchComponent implements OnInit {
   }
 
   @Input() Ref!: Referential;
-  @Input() isInjectionMode: boolean = false;
+  @Input() isInjectionMode!: boolean;
   @Input() View!: View;
 
   searchFormGroup!: FormGroup<SearchForm>;
@@ -32,7 +32,7 @@ export class SearchComponent implements OnInit {
   filter: any = {};
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("Search Changes :", changes);
+    //console.log("Search Changes :", changes);
     this.ngOnInit();
   }
 

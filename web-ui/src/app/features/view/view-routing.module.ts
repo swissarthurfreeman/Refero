@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ViewComponent } from './routables/view.component';
+import { ViewRoutableComponent } from './routables/view-routable.component';
 
 const routes: Routes = [
-  { path: ':refid', component: ViewComponent }
+  { path: ':refid', component: ViewRoutableComponent }
 ];
 
 @NgModule({

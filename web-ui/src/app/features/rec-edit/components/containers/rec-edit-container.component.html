@@ -5,11 +5,11 @@
     <!-- If no injections, don't show the injection selection panel. -->
     <mat-form-field style="width: 35%">
       <mat-label>Inject Record from :</mat-label>
-      <mat-select (valueChange)="SelectInjection($event)">
-        @for (injection of CurrentRef.injections; track $index) {
-          <mat-option [value]="injection">{{ injection.srcname }}</mat-option>
-        }
-      </mat-select>
+        <mat-select (valueChange)="SelectInjection($event)">
+          @for (injection of CurrentRef.injections; track $index) {
+            <mat-option [value]="injection">{{ injection.srcname }}</mat-option>
+          }
+        </mat-select>
     </mat-form-field>
   }
   <button mat-raised-button color="pimary" style="height:4em;width:15%;margin-left: auto"
@@ -36,7 +36,7 @@
       </ng-container>
     </div>
   </mat-grid-tile>
-  <!-- Display the injection panel -->
+  <!-- Display the injection panel, SourceRef$ and SourceRefView$ are defined upon SelectInjection() -->
   <mat-grid-tile colspan="4" [rowspan]="CurrentRef.columns.length*1.25">
     <div style="max-height:100%;overflow-y: auto; display: block; width: 100%;">
       <ng-container *ngIf="SourceRef$ | async as SourceRef">
@@ -44,7 +44,7 @@
           <app-view-editor [isInjectionMode]="true" [Ref]="SourceRef"
                            [View]="SourceRefView"></app-view-editor>
           <hr>
-          <app-search [Ref]="SourceRef" [View]="SourceRefView"></app-search>
+          <app-search [Ref]="SourceRef" [View]="SourceRefView" [isInjectionMode]="true"></app-search>
           <app-table [Ref]="SourceRef" [currView]="SourceRefView" [isInjectionMode]="true"
                      [CurrentEntry]="CurrentEntry"
                      [EntryFormGroupToInjectTo]="this.EntryFormGroup.controls.keypairs"></app-table>

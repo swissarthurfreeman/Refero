@@ -43,6 +43,7 @@ export class RecEditContainerComponent implements OnInit {
   @Input() CurrentEntry!: Entry;
   @Input() CurrentRef!: Referential;
 
+  @Select(RecEditState.getInjection) CurrentInjection$!: Observable<Injection>;
   @Select(RecEditState.getInjectionSourceRef) SourceRef$!: Observable<Referential>;
   @Select(RecEditState.getInjectionSourceRefView) SourceRefView$!: Observable<View>;
 
@@ -84,7 +85,10 @@ export class RecEditContainerComponent implements OnInit {
       this.CurrentEntry.fields[keypair.controls.colId.getRawValue()] = keypair.controls.value.getRawValue() || '';
 
     this.es.putEntry(this.CurrentEntry.id, this.CurrentEntry).subscribe({
-      next: (value) => console.log("PUTTED :", value),
+      next: (value) => {
+        console.log("PUTTED :", value);
+        window.location.reload();
+      },
       error: (httpError) => {
         console.log("error :", httpError)
         for (let colId of Object.keys(httpError.error.fields)) {

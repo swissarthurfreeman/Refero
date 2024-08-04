@@ -14,7 +14,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { RefConfigState } from './shared/stores/ref-config-edit/ref-config.state';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { RecEditState } from './shared/stores/rec-edit/rec-edit.state';
-import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core'; 
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 
 @NgModule({
     declarations: [
@@ -24,12 +24,12 @@ import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/materi
         provideClientHydration(),
         provideHttpClient(withFetch()),
         provideRouter([
-        //    {component: ViewComponent, path: 'view'}    // makes @Input() work on ViewComponent...
+        //    {component: ViewRoutableComponent, path: 'view'}    // makes @Input() work on ViewRoutableComponent...
         ],
         withComponentInputBinding()),
         provideAnimationsAsync(),
         { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }
-        
+
     ],
     bootstrap: [AppComponent],
     imports: [

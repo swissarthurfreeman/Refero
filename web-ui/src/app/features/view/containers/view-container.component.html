@@ -1,40 +1,23 @@
-<ng-container *ngIf="currRef$ | async as CurrRef">    <!-- TODO : clean this up -->
-    <h1>{{CurrRef.name}}</h1>
-</ng-container>
-<mat-grid-list cols="3" rowHeight="19em">
-    <mat-grid-tile colspan="2">
-        <ng-container *ngIf="currRef$ | async as CurrRef">
-            <ng-container *ngIf="currView$ | async as CurrView">
-                <app-view-editor [Ref]="CurrRef" [View]="CurrView" [isInjectionMode]="false"></app-view-editor>
-            </ng-container>
-        </ng-container>
-    </mat-grid-tile>
-    <mat-grid-tile colspan="1">
-        <ng-container *ngIf="currRef$ | async as CurrRef"> 
-            <div class="d-flex align-items-end flex-column">
-                <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(CurrRef.id)">Configurer</button>
-                </div>
-                <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToNewRecord(CurrRef.id)">Nouvel Enregistrement</button>
-                </div>
-                <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em;"(click)="exportReferential()">Exporter</button>
-                </div>
-                <div class="p-2">
-                    <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;" (click)="importFile(CurrRef.id)">Importer</button>
-                </div>
-                <div class="p-2">
-                    <button mat-raised-button color="warn" style="width: 14em; margin-left: auto;" (click)="DeleteRef(CurrRef)">Supprimer</button>
-                </div>
-            </div>
-        </ng-container>
-    </mat-grid-tile>  
-</mat-grid-list>
-<hr>
 <ng-container *ngIf="currRef$ | async as CurrRef">
-    <ng-container *ngIf="currView$ | async as CurrView">
-        <app-search [Ref]="CurrRef" [View]="CurrView"></app-search>
-        <app-table [Ref]="CurrRef" [currView]="CurrView" [isInjectionMode]="false"></app-table>
-    </ng-container>
+  <ng-container *ngIf="currView$ | async as CurrView">
+    <h1>{{ CurrRef.name }}</h1>
+    <mat-grid-list cols="3" rowHeight="19em">
+      <mat-grid-tile colspan="2">
+        <app-view-editor [Ref]="CurrRef" [View]="CurrView"
+                         [isInjectionMode]="false"></app-view-editor>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="1">
+        <div class="d-flex align-items-end flex-column" style="gap: 20px">
+          <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToEditView(CurrRef.id)">Configurer</button>
+          <button mat-raised-button color="primary" style="width: 14em;" (click)="consultationToNewRecord(CurrRef.id)">Nouvel Enregistrement</button>
+          <button mat-raised-button color="primary" style="width: 14em;" (click)="exportReferential()">Exporter</button>
+          <button mat-raised-button color="primary" style="width: 14em; margin-left: auto;" (click)="importFile(CurrRef.id)">Importer</button>
+          <button mat-raised-button color="warn" style="width: 14em; margin-left: auto;"    (click)="DeleteRef(CurrRef)">Supprimer</button>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <hr>
+    <app-search [Ref]="CurrRef" [View]="CurrView"></app-search>
+    <app-table [Ref]="CurrRef" [currView]="CurrView" [isInjectionMode]="false"></app-table>
+  </ng-container>
 </ng-container>
