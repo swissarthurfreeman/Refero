@@ -75,9 +75,15 @@ public class EntryController {
         EntryUpdateConstraintViolationException.class
     })
     @ResponseBody
-    public HttpEntity<Object> handleBusinessRuntimeException(ReferoRuntimeException exception) {
+    public HttpEntity<Object> handleBusinessRuntimeException(EntryUpdateConstraintViolationException exception) {
         Map<String, Object> errorMap = new HashMap<>();
         errorMap.put("fields", exception.fieldsErrorMap);
+        errorMap.put("incomingEntry", exception.incomingEntry);
+
+        if(exception.dupEntry.isPresent()) {
+            errorMap.put("dupEntry", exception.dupEntry.get());
+        }
+
         return new ResponseEntity<>(
             errorMap,
             HttpStatus.BAD_REQUEST);

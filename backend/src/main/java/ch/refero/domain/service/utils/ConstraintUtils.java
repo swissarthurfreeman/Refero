@@ -35,30 +35,31 @@ public class ConstraintUtils {
    *
    * @param entry the entry to be added to the referential.
    */
-  public void CheckBkUnicityWhenUpdatingOrAddingAn(Entry entry, Map<String, Object> errorMap) {
+  public Optional<Entry> CheckBkUnicityWhenUpdatingOrAddingAn(Entry entry, Map<String, Object> errorMap) {
 
     var entries = entryRepo.findByRefid(entry.refid);
     var colfigs = colfigRepo.findByRefidAndColtype(entry.refid, ColType.BK);
-    logger.info("Found # of BK colfigs for ref :" + String.valueOf(colfigs.size()));
+    if(colfigs.size() > 0) {
+      logger.info("Found # of BK colfigs for ref :" + String.valueOf(colfigs.size()));
 
-    String entryBkSlice = getBkSliceOf(entry, colfigs);
-    List<String> bkSlices = new ArrayList<>();
+      String entryBkSlice = getBkSliceOf(entry, colfigs);
+      List<String> bkSlices = new ArrayList<>();
 
-    for (var e : entries) {
-      if (!e.id.equals(entry.id)) {
-        bkSlices.add(getBkSliceOf(e, colfigs));
+      for (var e : entries) {
+        if (!e.id.equals(entry.id)) {
+          bkSlices.add(getBkSliceOf(e, colfigs));
+        }
+      }
+
+      logger.info(bkSlices.toString());
+      if (bkSlices.contains(entryBkSlice)) {
+        for (var c : colfigs) {
+          errorMap.put(c.id, "BK already present");
+        }
+        return Optional.of(entries.get(bkSlices.indexOf(entryBkSlice)));
       }
     }
-
-    logger.info(bkSlices.toString());
-
-    if (bkSlices.contains(entryBkSlice)) {
-      for (var c : colfigs) {
-        errorMap.put(c.id, "BK already present");
-      }
-      errorMap.put("dupEntry", entries.get(bkSlices.indexOf(entryBkSlice)));
-      errorMap.put("incomingEntry", entry);
-    }
+    return Optional.empty();
   }
 
   /**
@@ -311,4 +312,6 @@ public class ConstraintUtils {
 
     // TODO : validate foreign col label syntax when we'll have decided on how to implement it.
   }
+
+  // TODO : check validity of foreign key field when adding an entry.
 }

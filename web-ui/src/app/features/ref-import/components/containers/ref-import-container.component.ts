@@ -74,11 +74,13 @@ export class RefImportContainerComponent implements OnInit {
         console.log("Error :", httpError);
         this.EntryErrorMap = httpError.error.fields;
 
-        const dupEntry: Entry = httpError.error.dupEntry;
-        const incomingEntry: Entry = httpError.error.incomingEntry;
+        if(httpError.error.dupEntry) {
+          const dupEntry: Entry = httpError.error.dupEntry;
+          this.createDestinationEntryForm(dupEntry);
+        }
 
+        const incomingEntry: Entry = httpError.error.incomingEntry;
         this.createIncomingEntryForm(incomingEntry);
-        this.createDestinationEntryForm(dupEntry);
 
         const response: any = await firstValueFrom(this.decision);
         if("update") {
