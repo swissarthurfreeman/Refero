@@ -9,8 +9,8 @@ import {
   EntryFormGroup,
   KeyPairFormGroup
 } from "../../../rec-edit/components/containers/rec-edit-container.component";
-import {concat, firstValueFrom, Observable, Subject} from "rxjs";
-import {Colfig} from "../../../../shared/models/Colfig.model";
+import {firstValueFrom, Observable, Subject} from "rxjs";
+import {v4 as uuid} from 'uuid';
 
 @Component({
   selector: 'app-ref-import-container',
@@ -27,6 +27,8 @@ export class RefImportContainerComponent implements OnInit {
 
   @Input() Ref!: Referential;
 
+  done: boolean = false;
+
   upload(event: any) {
     const file: File = event.target.files[0];
 
@@ -39,8 +41,12 @@ export class RefImportContainerComponent implements OnInit {
 
       if (this.validImportHeader(fileHeader)) {
         console.log("Valid header.");
+        this.done = false;
         this.importEntries(rawRecords).then(() => {
           console.log("Successfully imported all entries.");
+          this.resetEntryForms();
+          this.EntryErrorMap = {};
+          this.done = true;
         });
       } else {
         console.log(
@@ -56,6 +62,7 @@ export class RefImportContainerComponent implements OnInit {
   EntryErrorMap: Record = {};
   DestinationEntryForm!: FormGroup<EntryFormGroup>;
   IncomingEntryForm!: FormGroup<EntryFormGroup>;
+  isDupEntryError: boolean = false;
 
   async importEntries(rawRecords: Record[]) {
     const entries: Entry[] = [];
@@ -64,31 +71,67 @@ export class RefImportContainerComponent implements OnInit {
       entries.push(this.getIncomingEntryFrom(record)); // {colId: value...}
     }
 
-    this.getImportObservableOf(entries).subscribe({
-      next: (value) => {
-        console.log("Created entry :", value);
+    for (let putObservable of this.getImportObservableOf(entries)) {
+      let response: any = await this.noThrowPut(putObservable);
+      if (response.error) {
+        while (response.error) {
+          this.resetEntryForms();
+          this.EntryErrorMap = response.error.fields;
+
+          let isDupEntryError: boolean = false;
+          this.isDupEntryError = false;
+          let DupEntry!: Entry;
+
+          if (response.error.dupEntry) {
+            isDupEntryError = true;
+            this.isDupEntryError = true;
+            DupEntry = response.error.dupEntry;
+            this.createDestinationEntryForm(DupEntry);
+          }
+
+          const incomingEntry: Entry = response.error.incomingEntry;
+          this.createIncomingEntryForm(incomingEntry);
+
+          this.decision = new Subject<String>();
+          const choice: String = await firstValueFrom(this.decision);
+
+          // read values from incoming entry form (might have been manually updated)
+          // put updated record (with dupEntry id if it's a BK conflict) until there's no error.
+          if (choice == "takeIncoming") {
+            if (isDupEntryError) {
+              this.patchIncomingEntryFormTo(DupEntry);
+              response = await firstValueFrom(this.es.putEntry(DupEntry.id, DupEntry));
+            } else {    // dateFormat, required value, foreign key invalidity...
+              this.patchIncomingEntryFormTo(incomingEntry);
+              response = await firstValueFrom(this.es.putEntry(incomingEntry.id, incomingEntry));
+            }
+          }
+        }
+        this.resetEntryForms();
+      } else {
+        console.log("Created entry :", response);
         this.resetEntryForms();
         this.EntryErrorMap = {};
-      },
-      error: async (httpError) => {
-        console.log("Error :", httpError);
-        this.EntryErrorMap = httpError.error.fields;
+      }
+    }
+  }
 
-        if(httpError.error.dupEntry) {
-          const dupEntry: Entry = httpError.error.dupEntry;
-          this.createDestinationEntryForm(dupEntry);
-        }
+  async noThrowPut(eObs: Observable<Entry>) {
+    try {
+      let response: any = await firstValueFrom(eObs);
+      return response;
+    } catch(err) {
+      return err;
+    }
+  }
 
-        const incomingEntry: Entry = httpError.error.incomingEntry;
-        this.createIncomingEntryForm(incomingEntry);
-
-        const response: any = await firstValueFrom(this.decision);
-        if("update") {
-          console.log("Update");
-        }
-      },
-      complete: () => {}
-    });
+  /** Take all non blank (colId, value) keypairs from the IncomingEntryForm and patch them to */
+  patchIncomingEntryFormTo(to: Entry): void {
+    for (let keypair of this.IncomingEntryForm.controls.keypairs.controls) {
+      if (keypair.controls.value.getRawValue()) {
+        to.fields[keypair.controls.colId.getRawValue()] = keypair.controls.value.getRawValue()!;
+      }
+    }
   }
 
   decision!: Subject<String>;
@@ -99,12 +142,12 @@ export class RefImportContainerComponent implements OnInit {
   }
 
 
-  getImportObservableOf(entries: Entry[]): Observable<Entry> {
+  getImportObservableOf(entries: Entry[]): Observable<Entry>[] {
     let udpatedEntryObservables: Observable<Entry>[] = [];
-    for(let entry of entries) {
-      udpatedEntryObservables.push(this.es.postEntry(entry));
+    for (let entry of entries) {
+      udpatedEntryObservables.push(this.es.putEntry(uuid().toString(), entry));
     }
-    return concat(...udpatedEntryObservables);
+    return udpatedEntryObservables;
   }
 
   resetEntryForms() {
@@ -119,11 +162,11 @@ export class RefImportContainerComponent implements OnInit {
 
   /** Convert a raw record {fileColName|RefColName: value...} to {colId: value...} */
   getIncomingEntryFrom(rawRecord: Record): Entry {
-    const entry =  new Entry();
+    const entry = new Entry();
     entry.refid = this.Ref.id;
     entry.fields = {};
 
-    for(let colfig of this.Ref.columns) {
+    for (let colfig of this.Ref.columns) {
       if (this.ImportWithFullFileColNameHeader) {
         entry.fields[colfig.id] = rawRecord[colfig.filecolname];
       } else {
@@ -229,7 +272,6 @@ export class RefImportContainerComponent implements OnInit {
     for (const value of a) if (!b.has(value)) return false;
     return true;
   }
-
 
 
   isEmpty(rec: Record) {

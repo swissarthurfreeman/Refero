@@ -6,36 +6,44 @@
 </div>
 <hr>
 @if (!isEmpty(EntryErrorMap)) {
-  <mat-grid-tile colspan="1" [rowspan]="Ref!.columns.length*1.5">
-    <div [formGroup]="DestinationEntryForm">
-      <h1>Destination Entry</h1>
-      <ng-container formArrayName="keypairs">
-        @for (keyPairFormGroup of DestinationEntryForm.controls.keypairs.controls; track $index) {
-          <app-key-value-presentational
-            [KeyPairError]="EntryErrorMap[keyPairFormGroup.controls.colId.getRawValue()]"
-            [KeyPairFormGroup]="keyPairFormGroup"
-            [readOnly]="true">
-          </app-key-value-presentational>
-        }
-      </ng-container>
-      <button mat-raised-button color="primary" (click)="emitChoice('whatever')">Keep Destination
-      </button>
-    </div>
-  </mat-grid-tile>
-  <mat-grid-tile colspan="1" [rowspan]="Ref!.columns.length*1.5">
-    <div [formGroup]="IncomingEntryForm">
-      <h1>Incoming Entry</h1>
-      <ng-container formArrayName="keypairs">
-        @for (keyPairFormGroup of IncomingEntryForm.controls.keypairs.controls; track $index) {
-          <app-key-value-presentational
-            [KeyPairError]="EntryErrorMap[keyPairFormGroup.controls.colId.getRawValue()]"
-            [KeyPairFormGroup]="keyPairFormGroup"
-            [readOnly]="false">
-          </app-key-value-presentational>
-        }
-      </ng-container>
-      <button mat-raised-button color="primary" (click)="emitChoice('update')">Take Incoming
-      </button>
-    </div>
-  </mat-grid-tile>
+  <mat-grid-list cols="2" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
+    @if (this.isDupEntryError) {
+      <mat-grid-tile colspan="1" [rowspan]="Ref.columns.length * 1.05">
+        <div [formGroup]="DestinationEntryForm">
+          <h1>Destination Entry</h1>
+          <ng-container formArrayName="keypairs">
+            @for (keyPairFormGroup of DestinationEntryForm.controls.keypairs.controls; track $index) {
+              <app-key-value-presentational
+                [KeyPairError]="EntryErrorMap[keyPairFormGroup.controls.colId.getRawValue()]"
+                [KeyPairFormGroup]="keyPairFormGroup"
+                [readOnly]="true">
+              </app-key-value-presentational>
+            }
+          </ng-container>
+          <button mat-raised-button color="primary" (click)="emitChoice('whatever')">Keep
+            Destination
+          </button>
+        </div>
+      </mat-grid-tile>
+    }
+    <mat-grid-tile colspan="1" [rowspan]="Ref!.columns.length*1.05">
+      <div [formGroup]="IncomingEntryForm">
+        <h1>Incoming Entry</h1>
+        <ng-container formArrayName="keypairs">
+          @for (keyPairFormGroup of IncomingEntryForm.controls.keypairs.controls; track $index) {
+            <app-key-value-presentational
+              [KeyPairError]="EntryErrorMap[keyPairFormGroup.controls.colId.getRawValue()]"
+              [KeyPairFormGroup]="keyPairFormGroup"
+              [readOnly]="false">
+            </app-key-value-presentational>
+          }
+        </ng-container>
+        <button mat-raised-button color="primary" (click)="emitChoice('takeIncoming')">Take Incoming
+        </button>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+}
+@if (done) {
+  <h2>Done importing all entries.</h2>
 }

@@ -36,7 +36,6 @@ public class ConstraintUtils {
    * @param entry the entry to be added to the referential.
    */
   public Optional<Entry> CheckBkUnicityWhenUpdatingOrAddingAn(Entry entry, Map<String, Object> errorMap) {
-
     var entries = entryRepo.findByRefid(entry.refid);
     var colfigs = colfigRepo.findByRefidAndColtype(entry.refid, ColType.BK);
     if(colfigs.size() > 0) {
