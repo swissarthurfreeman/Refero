@@ -3,17 +3,17 @@
     <table mat-table [dataSource]="dataSource">
       <!-- [dataSource]="" Define a material table's column headers (not visible) -->
       @for (colfig of Ref.columns; track $index) {
-        <ng-container [matColumnDef]="colfig.id">
-          <th mat-header-cell *matHeaderCellDef> {{ colfig.name }}    <!-- Render column name -->
-            @if (!this.isInjectionMode) {
-              <button mat-mini-fab color="primary" (click)="rmDispColId(colfig.id)">
-                <mat-icon>remove</mat-icon>
-              </button>
-            }
-          </th> <!-- Define the header string -->
-          <td mat-cell *matCellDef="let line"> {{ line[colfig.id] }}</td>
-          <!-- Define the data to display for each line -->
-        </ng-container>
+          <ng-container [matColumnDef]="colfig.id">
+            <th mat-header-cell *matHeaderCellDef> {{ colfig.name }}    <!-- Render column name -->
+              @if (!this.isInjectionMode) {
+                <button mat-mini-fab color="primary" (click)="rmDispColId(colfig.id)">
+                  <mat-icon>remove</mat-icon>
+                </button>
+              }
+            </th> <!-- Define the header string -->
+            <td mat-cell *matCellDef="let line"> {{ line[colfig.id] }}</td>
+            <!-- Define the data to display for each line -->
+          </ng-container>
       }
       <tr mat-header-row *matHeaderRowDef="currView.dispcolids"></tr>
 

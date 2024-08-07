@@ -36,10 +36,11 @@ public class ConstraintUtils {
    *
    * @param entry the entry to be added to the referential.
    */
-  public Optional<Entry> CheckBkUnicityWhenUpdatingOrAddingAn(Entry entry, Map<String, Object> errorMap) {
+  public Optional<Entry> CheckBkUnicityWhenUpdatingOrAddingAn(Entry entry,
+      Map<String, Object> errorMap) {
     var entries = entryRepo.findByRefid(entry.refid);
     var colfigs = colfigRepo.findByRefidAndColtype(entry.refid, ColType.BK);
-    if(colfigs.size() > 0) {
+    if (colfigs.size() > 0) {
       logger.info("Found # of BK colfigs for ref :" + String.valueOf(colfigs.size()));
 
       String entryBkSlice = getBkSliceOf(entry, colfigs);
@@ -98,7 +99,8 @@ public class ConstraintUtils {
 
     for (var col : colfigs) {
       // if this isn't a date column or value isn't provided and col is not required, continue.
-      if (col.dateformat == null || col.dateformat.isBlank() && !col.required && entry.fields.get(col.id) == null) {
+      if (col.dateformat == null || col.dateformat.isBlank() || !col.required && (
+          entry.fields.get(col.id) == null || entry.fields.get(col.id).isBlank())) {
         continue;
       }
 
@@ -121,17 +123,18 @@ public class ConstraintUtils {
    * @throws DateTimeParseException   if an entry's date field syntax is invalid.
    */
   public void CheckDateFormatConstraintOf(Colfig colfig, Map<String, Object> errorMap) {
+    DateTimeFormatter formatter;
+
+    try {
+      formatter = DateTimeFormatter.ofPattern(colfig.dateformat);
+    } catch (IllegalArgumentException ex) {
+      errorMap.put("dateformat", "Invalid date format");
+      return;
+    }
+
     var entries = entryRepo.findByRefid(colfig.refid);
 
     for (var e : entries) {
-      DateTimeFormatter formatter;
-
-      try {
-        formatter = DateTimeFormatter.ofPattern(colfig.dateformat);
-      } catch (IllegalArgumentException ex) {
-        errorMap.put("dateformat", "Invalid date format");
-        return;
-      }
       // column will already be marked as error if it was required, if a value was provided check it
       // not required means it can be null, but if a value is given then it has to be a correct format.
       if (e.fields.get(colfig.id) != null && !e.fields.get(colfig.id)

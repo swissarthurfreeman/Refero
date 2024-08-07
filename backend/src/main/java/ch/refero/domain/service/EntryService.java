@@ -47,9 +47,12 @@ public class EntryService {
      */
     public void ValidateItemSpecificRules(Entry entry) {
         var errorMap = new HashMap<String, Object>();
-        var dupEntry = cUtils.CheckBkUnicityWhenUpdatingOrAddingAn(entry, errorMap);
         cUtils.CheckDateFormatConstraintOn(entry, errorMap);
         cUtils.CheckRequiredConstraintOn(entry, errorMap);
+
+        // error type priority for Duplicate conflicts
+        var dupEntry = cUtils.CheckBkUnicityWhenUpdatingOrAddingAn(entry, errorMap);
+
         // TODO : check foreign key constraint
         if(!errorMap.isEmpty()) throw new EntryUpdateConstraintViolationException(errorMap, entry, dupEntry);
     }

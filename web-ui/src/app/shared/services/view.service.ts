@@ -35,7 +35,7 @@ export class ViewService {
     let dispcolids = []
 
     for (let colfig of ref.columns) {
-      if (colfig.name != "") {
+      if (colfig.name) {
         dispcolids.push(colfig.id);
       }
     }

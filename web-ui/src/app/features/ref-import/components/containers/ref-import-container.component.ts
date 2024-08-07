@@ -80,32 +80,39 @@ export class RefImportContainerComponent implements OnInit {
           this.EntryErrorMap = response.error.fields;
 
           let DupEntry!: Entry;
-
           this.errType = response.error['errType'] as EntryPutErrorTypeEnum;
-          console.log(this.errType);
+
+          if ((this.errType === EntryPutErrorTypeEnum.RequiredColumnMissing && this.DropEntriesWithMissingRequiredColumns)
+            || (this.errType === EntryPutErrorTypeEnum.InvalidFk && this.DropEntriesWithInvalidFks)
+            || (this.errType === EntryPutErrorTypeEnum.InvalidDateFormat && this.DropEntriesWithInvalidDateFormats)
+            || (this.errType === EntryPutErrorTypeEnum.DuplicateBk && this.DropEntriesWithDuplicateBKs)
+          )
+            break;
 
           if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
             DupEntry = response.error.dupEntry;
             this.createDestinationEntryForm(DupEntry);
           }
 
+
           const incomingEntry: Entry = response.error.incomingEntry;
           this.createIncomingEntryForm(incomingEntry);
 
-          this.decision = new Subject<String>();
-          const choice: String = await firstValueFrom(this.decision);
 
-          console.log("choice :", choice);
-          console.log(this.errType == EntryPutErrorTypeEnum.DuplicateBk);
-          console.log(typeof this.errType);
-          console.log(typeof EntryPutErrorTypeEnum.DuplicateBk);
+          let choice: String;
+          console.log("errType :", this.errType);
+          if(this.errType == EntryPutErrorTypeEnum.DuplicateBk && this.UpdateExisingEntriesBasedOnBk) {
+            choice = "takeIncoming";
+          } else {
+            this.decision = new Subject<String>();
+            choice = await firstValueFrom(this.decision);
+          }
+
           // read values from incoming entry form (might have been manually updated)
           // put updated record (with dupEntry id if it's a BK conflict) until there's no error.
           if (choice == "takeIncoming") {
-            console.log("Take incoming !");
+            console.log("Here", this.errType == EntryPutErrorTypeEnum.DuplicateBk);
             if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
-
-              console.log("patch :", this.decision);
               this.patchIncomingEntryFormTo(DupEntry);
               response = await firstValueFrom(this.es.putEntry(DupEntry.id, DupEntry));
             } else {    // dateFormat, required value, foreign key invalidity...
@@ -125,8 +132,34 @@ export class RefImportContainerComponent implements OnInit {
     }
   }
 
-  ApplyUpdateByBkTAllDuplicates(completed: boolean) {
+  UpdateExisingEntriesBasedOnBk: boolean = false;
 
+  CheckUpdateExisingEntriesBasedOnBk(choice: boolean) {
+    this.UpdateExisingEntriesBasedOnBk = choice;
+  }
+
+  DropEntriesWithInvalidDateFormats: boolean = false;
+
+  CheckDropEntriesWithInvalidDateFormats(choice: boolean) {
+    this.DropEntriesWithInvalidDateFormats = choice;
+  }
+
+  DropEntriesWithInvalidFks: boolean = false;
+
+  CheckDropEntriesWithInvalidFks(choice: boolean) {
+    this.DropEntriesWithInvalidFks = choice;
+  }
+
+  DropEntriesWithMissingRequiredColumns: boolean = false;
+
+  CheckDropEntriesWithMissingRequiredColumns(choice: boolean) {
+    this.DropEntriesWithDuplicateBKs = choice;
+  }
+
+  DropEntriesWithDuplicateBKs: boolean = false;
+
+  CheckDropEntriesWithDuplicateBKs(choice: boolean) {
+    this.DropEntriesWithDuplicateBKs = choice;
   }
 
   async noThrowPut(eObs: Observable<Entry>) {

@@ -4,6 +4,38 @@
   <input (change)="upload($event)" type='file' class="form-control">
 </div>
 <hr>
+
+<div class="jumbotron bg-dark text-white" style="background-color:#ffffff !important;">
+  <ul>
+    <li>
+      <mat-checkbox (change)="CheckUpdateExisingEntriesBasedOnBk($event.checked)">
+        Mettre à jour les enregistrements sur la base des BK
+      </mat-checkbox>
+    </li>
+    <li>
+      <mat-checkbox (change)="CheckDropEntriesWithDuplicateBKs($event.checked)">
+        Abandonner les données entrante lors de BK à double
+      </mat-checkbox>
+    </li>
+    <li>
+      <mat-checkbox (change)="CheckDropEntriesWithInvalidDateFormats($event.checked)">
+        Abandonner les données entrante lors de format de date invalide
+      </mat-checkbox>
+    </li>
+    <li>
+      <mat-checkbox (change)="CheckDropEntriesWithMissingRequiredColumns($event.checked)">
+        Abandonner les donées entrante de colonnes requises manquantes
+      </mat-checkbox>
+    </li>
+    <li>
+      <mat-checkbox (change)="CheckDropEntriesWithInvalidFks($event.checked)">
+        Abandonner les données entrante lors de FK non valides
+      </mat-checkbox>
+    </li>
+  </ul>
+</div>
+
+<hr>
 @if (!isEmpty(EntryErrorMap)) {
   <mat-grid-list cols="2" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
     <mat-grid-tile colspan="1" [rowspan]="Ref!.columns.length*1.05">
@@ -19,7 +51,7 @@
           }
         </ng-container>
         <button mat-raised-button color="primary" (click)="emitChoice('takeIncoming')">
-          Mettre à jour
+          Insérer la mise à jour
         </button>
       </div>
     </mat-grid-tile>
@@ -40,8 +72,6 @@
             l'Enregistrement
           </button>
         </div>
-        <mat-checkbox (change)="ApplyUpdateByBkTAllDuplicates($event.checked)">Appliquer à Tous
-        </mat-checkbox>
       </mat-grid-tile>
     }
   </mat-grid-list>

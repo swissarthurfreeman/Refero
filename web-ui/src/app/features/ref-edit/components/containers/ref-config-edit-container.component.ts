@@ -157,9 +157,12 @@ export class RefConfigEditContainerComponent implements OnInit {
         console.log(this.ColfigErrorMap);
       },
       complete: () => {
+
         console.log("Done posting all columns.");
         // create default view, which then posts all new entries, won't do anything if ref already exists.
-        this.PostDefaultViewForRef();
+        if(Object.keys(this.ColfigErrorMap).length == 0) {
+          this.PostDefaultViewForRef();
+        }
       }
     })
   }
