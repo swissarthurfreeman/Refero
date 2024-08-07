@@ -15,6 +15,8 @@ import {RecEditState} from "../../../../shared/stores/rec-edit/rec-edit.state";
 import {
   KeyPairFormGroup
 } from "../../../rec-edit/components/containers/rec-edit-container.component";
+import Papa from "papaparse";
+import {Colfig} from "../../../../shared/models/Colfig.model";
 
 
 @Component({
@@ -103,7 +105,10 @@ export class TableComponent implements OnInit {
   }
 
   exportTable() {
+    /*
     let csv = "";
+
+    // compute header of table
     let header = "";
     for (let colId of this.currView.dispcolids) {
       for (let colfig of this.Ref.columns) {
@@ -114,22 +119,35 @@ export class TableComponent implements OnInit {
     }
     header = header + '\n'
     csv += header;
+    */
 
-    // since columnIds are not human readable, we have to manually replace them...
-    for (let record of this.dataSource.data) {
-      let line = "";
-      for (let colId of this.currView.dispcolids) {
-        line += '"' + record[colId] + '",'
-      }
-      line += '\n';
-      csv += line;
+    // TODO : unparse back to CSV with papa, replace first line with referential column names.
+    let csv: string = Papa.unparse(this.dataSource.filteredData, {columns: this.currView.dispcolids});
+    const lines: string[] = csv.split("\n")
+    const colIdHeaders: string[] = lines[0].trim().split(",");
+
+    let header: string = "";
+    console.log(colIdHeaders);
+    for(let colId of colIdHeaders) {
+      header += this.getColfigById(this.Ref, colId)!.name + ",";
     }
 
-    let blob = new Blob([csv], {type: 'text/plain'});
+    lines[0] = header;
+    csv = lines.join("\n");
+    const blob = new Blob([csv], {type: 'text/plain'});
 
-    var link = document.createElement('a');
-    link.download = this.Ref.name.replaceAll(' ', '_') + '.csv';
+    const link = document.createElement('a');
+    link.download = this.Ref.name.replaceAll(' ', '_') + '.CSV';
     link.href = window.URL.createObjectURL(blob);
     link.click();
+  }
+
+  getColfigById(ref: Referential, colfigId: string): Colfig | undefined {
+    for(let colfig of ref.columns) {
+      if(colfig.id == colfigId) {
+        return colfig;
+      }
+    }
+    return undefined;
   }
 }

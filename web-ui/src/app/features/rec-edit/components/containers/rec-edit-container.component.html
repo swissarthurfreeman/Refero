@@ -4,7 +4,7 @@
   @if (CurrentRef.injections.length > 0) {
     <!-- If no injections, don't show the injection selection panel. -->
     <mat-form-field style="width: 35%">
-      <mat-label>Inject Record from :</mat-label>
+      <mat-label>Injecter depuis Référentiel Source.</mat-label>
         <mat-select (valueChange)="SelectInjection($event)">
           @for (injection of CurrentRef.injections; track $index) {
             <mat-option [value]="injection">{{ injection.srcname }}</mat-option>

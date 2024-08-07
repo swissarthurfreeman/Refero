@@ -3,6 +3,10 @@
   <div class="d-flex" style="gap: 20px;">
     <input #uploadFile (change)="upload($event)" type='file' class="form-control"
            style="width: 40%; margin-right: auto">
+
+    <button mat-raised-button color="warn" style="width: 14em; margin-left: auto;"
+            (click)="DeleteRef(Ref)">Supprimer
+    </button>
     <button mat-raised-button color="primary" (click)="EditInjections()" style="width: 20%">
       Configurer Injection
     </button>

@@ -13,6 +13,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { RecEditModule } from "../rec-edit/rec-edit.module";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
     declarations: [
@@ -31,6 +32,7 @@ import { RecEditModule } from "../rec-edit/rec-edit.module";
         MatIconModule,
         MatGridListModule,
         MatInputModule,
+        MatCheckboxModule,
         RecEditModule // imports key pair edit
     ]
 })

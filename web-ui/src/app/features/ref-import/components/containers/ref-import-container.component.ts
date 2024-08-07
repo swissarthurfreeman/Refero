@@ -11,6 +11,7 @@ import {
 } from "../../../rec-edit/components/containers/rec-edit-container.component";
 import {firstValueFrom, Observable, Subject} from "rxjs";
 import {v4 as uuid} from 'uuid';
+import {EntryPutErrorTypeEnum} from "../../../../shared/enums/entryputerrortype.enum";
 
 @Component({
   selector: 'app-ref-import-container',
@@ -62,7 +63,7 @@ export class RefImportContainerComponent implements OnInit {
   EntryErrorMap: Record = {};
   DestinationEntryForm!: FormGroup<EntryFormGroup>;
   IncomingEntryForm!: FormGroup<EntryFormGroup>;
-  isDupEntryError: boolean = false;
+  errType!: EntryPutErrorTypeEnum;
 
   async importEntries(rawRecords: Record[]) {
     const entries: Entry[] = [];
@@ -78,13 +79,12 @@ export class RefImportContainerComponent implements OnInit {
           this.resetEntryForms();
           this.EntryErrorMap = response.error.fields;
 
-          let isDupEntryError: boolean = false;
-          this.isDupEntryError = false;
           let DupEntry!: Entry;
 
-          if (response.error.dupEntry) {
-            isDupEntryError = true;
-            this.isDupEntryError = true;
+          this.errType = response.error['errType'] as EntryPutErrorTypeEnum;
+          console.log(this.errType);
+
+          if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
             DupEntry = response.error.dupEntry;
             this.createDestinationEntryForm(DupEntry);
           }
@@ -95,16 +95,25 @@ export class RefImportContainerComponent implements OnInit {
           this.decision = new Subject<String>();
           const choice: String = await firstValueFrom(this.decision);
 
+          console.log("choice :", choice);
+          console.log(this.errType == EntryPutErrorTypeEnum.DuplicateBk);
+          console.log(typeof this.errType);
+          console.log(typeof EntryPutErrorTypeEnum.DuplicateBk);
           // read values from incoming entry form (might have been manually updated)
           // put updated record (with dupEntry id if it's a BK conflict) until there's no error.
           if (choice == "takeIncoming") {
-            if (isDupEntryError) {
+            console.log("Take incoming !");
+            if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
+
+              console.log("patch :", this.decision);
               this.patchIncomingEntryFormTo(DupEntry);
               response = await firstValueFrom(this.es.putEntry(DupEntry.id, DupEntry));
             } else {    // dateFormat, required value, foreign key invalidity...
               this.patchIncomingEntryFormTo(incomingEntry);
               response = await firstValueFrom(this.es.putEntry(incomingEntry.id, incomingEntry));
             }
+          } else {
+            break;
           }
         }
         this.resetEntryForms();
@@ -116,11 +125,15 @@ export class RefImportContainerComponent implements OnInit {
     }
   }
 
+  ApplyUpdateByBkTAllDuplicates(completed: boolean) {
+
+  }
+
   async noThrowPut(eObs: Observable<Entry>) {
     try {
       let response: any = await firstValueFrom(eObs);
       return response;
-    } catch(err) {
+    } catch (err) {
       return err;
     }
   }
@@ -178,21 +191,25 @@ export class RefImportContainerComponent implements OnInit {
 
   createIncomingEntryForm(incomingEntry: Entry) {
     for (let colfig of this.Ref.columns) {
-      const keyPairForm = new FormGroup<KeyPairFormGroup>({
-        colId: new FormControl(colfig.id, {nonNullable: true}),
-        value: new FormControl(incomingEntry.fields[colfig.id]),
-      });
-      this.IncomingEntryForm.controls.keypairs.push(keyPairForm);
+      if (colfig.name != "") {
+        const keyPairForm = new FormGroup<KeyPairFormGroup>({
+          colId: new FormControl(colfig.id, {nonNullable: true}),
+          value: new FormControl(incomingEntry.fields[colfig.id]),
+        });
+        this.IncomingEntryForm.controls.keypairs.push(keyPairForm);
+      }
     }
   }
 
   createDestinationEntryForm(destinationEntry: Entry) {
     for (let colfig of this.Ref.columns) {
-      const keyPairFormGroup = new FormGroup<KeyPairFormGroup>({
-        colId: new FormControl(colfig.id, {nonNullable: true}),
-        value: new FormControl(destinationEntry.fields[colfig.id]),
-      });
-      this.DestinationEntryForm.controls.keypairs.push(keyPairFormGroup);
+      if (colfig.name != "") {
+        const keyPairFormGroup = new FormGroup<KeyPairFormGroup>({
+          colId: new FormControl(colfig.id, {nonNullable: true}),
+          value: new FormControl(destinationEntry.fields[colfig.id]),
+        });
+        this.DestinationEntryForm.controls.keypairs.push(keyPairFormGroup);
+      }
     }
   }
 
@@ -273,143 +290,9 @@ export class RefImportContainerComponent implements OnInit {
     return true;
   }
 
-
   isEmpty(rec: Record) {
     return Object.keys(rec).length === 0;
   }
 
-  /*
-    decision!: Subject<String>;
-
-      async importEntries(rawRecords: Record[]) {
-        for (let rawEntry of rawRecords) {
-          this.resetForms();
-          const incomingEntry: Entry = new Entry();
-          incomingEntry.refid = this.Ref.id;
-          incomingEntry.fields = {};
-
-          for (let colfig of this.Ref.columns) // TODO : deal with case when fileColName is empty (for example, column that only exists in Refero)
-            incomingEntry.fields[colfig.id] = rawEntry[colfig.filecolname]; // re-use the import mapping
-
-          while(true) {
-            console.log("incomingEntry :", incomingEntry);
-            const response: any = await firstValueFrom(this.es.putEntry(incomingEntry.id, incomingEntry)).catch((err) => { return err; });
-            console.log("response :", response);    // response could be the created entry or an error
-
-            if('error' in response) {               // handle error
-              this.errorReport = JSON.parse(response.error.message);
-              this.createIncomingEntryForm(incomingEntry);
-
-              this.decision = new Subject<String>();
-
-              if('dupEntry' in this.errorReport) {  // if it's a BK conflict, retrieve conflicting entry, else it's a required / FK conflict
-                var dupEntry: Entry = JSON.parse(this.errorReport['dupEntry']);
-                this.createDestinationEntryForm(dupEntry);
-
-                const choice: String = await firstValueFrom(this.decision);
-                if(choice === 'keepDest') {
-                  console.log("We keep do not import the entry.");
-                  break;
-                }
-
-                if(choice === 'takeIncoming') {
-                  await this.updateIncomingForm(incomingEntry, dupEntry);    // modifies incomingEntry if user chooses keep incoming
-                  continue;
-                }
-              } else {
-                // deal with required field error or TODO invalid FK error
-                console.log("No flow to deal with this.");
-                const choice: String = await firstValueFrom(this.decision);
-                if(choice === 'takeIncoming') {
-                  await this.updateIncomingFormForRequiredFields(incomingEntry);
-                  continue;
-                }
-              }
-            }
-            break;  // no error happened, return to next entry
-          }
-        }
-        this.resetForms();
-        console.log("Import done.");
-      }
-
-    async updateIncomingFormForRequiredFields(incomingEntry: Entry) {
-      for (let mapFormControl of this.IncomingKeypairs.controls) {
-        const keypair = mapFormControl.getRawValue();
-        const colId = keypair['colId'];
-        const value = keypair['value'];
-        incomingEntry.fields[colId] = value;
-      }
-      return;
-    }
-
-    async updateIncomingForm(incomingEntry: Entry, dupEntry: Entry) {
-      incomingEntry.id = dupEntry.id;
-      for (let mapFormControl of this.IncomingKeypairs.controls) {
-        const keypair = mapFormControl.getRawValue();
-        const colId = keypair['colId'];
-        const value = keypair['value'];
-        incomingEntry.fields[colId] = value;
-      }
-      return;
-    }
-
-    resetForms() {
-      this.IncomingEntryForm = this.fb.group({
-        keypairs: this.fb.array([])
-      });
-
-      this.DestinationEntryForm = this.fb.group({
-        keypairs: this.fb.array([])
-      });
-
-      this.errorReport = {};
-    }
-
-    emitChoice(choice: String) {
-      this.decision.next(choice);
-    }
-
-
-
-    get IncomingKeypairs() {
-      return this.IncomingEntryForm.controls["keypairs"] as FormArray;
-    }
-
-    createIncomingEntryForm(incomingEntry: Entry) {
-      this.IncomingEntryForm = this.fb.group({
-        keypairs: this.fb.array([])
-      });
-
-      for (let colfig of this.Ref.columns) {
-        const mapForm = this.fb.group({
-          colId: colfig.id,
-          value: incomingEntry.fields[colfig.id],
-        });
-        mapForm.controls.colId.markAsTouched();
-        mapForm.markAsTouched();
-        this.IncomingKeypairs.push(mapForm);
-      }
-    }
-
-
-    get DestinationKeyPairs() {
-      return this.DestinationEntryForm.controls["keypairs"] as FormArray;
-    }
-
-    createDestinationEntryForm(destinationEntry: Entry) {
-      this.DestinationEntryForm = this.fb.group({
-        keypairs: this.fb.array([])
-      });
-
-      for (let colfig of this.Ref.columns) {
-        const mapForm = this.fb.group({
-          colId: colfig.id,
-          value: destinationEntry.fields[colfig.id],
-        });
-        mapForm.controls.colId.markAsTouched();
-        mapForm.markAsTouched();
-        this.DestinationKeyPairs.push(mapForm);
-      }
-    }*/
+  protected readonly EntryPutErrorTypeEnum = EntryPutErrorTypeEnum;
 }

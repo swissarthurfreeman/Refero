@@ -11,6 +11,7 @@ import {ColfigService} from '../../../../shared/services/colfig.service';
 import {EntryService} from '../../../../shared/services/entry.service';
 import {ViewService} from '../../../../shared/services/view.service';
 import { v4 as uuid } from 'uuid';
+import {Location} from "@angular/common";
 
 export interface ColfigConfigForm {
   dateformat: FormControl<string | null>
@@ -60,7 +61,7 @@ export class RefConfigEditContainerComponent implements OnInit {
 
   constructor(private rs: RefService, private router: Router, private route: ActivatedRoute,
               public cs: ColfigService, public es: EntryService,
-              public vs: ViewService) {
+              public vs: ViewService, public location: Location) {
   }
 
   ngOnInit(): void {
@@ -96,7 +97,7 @@ export class RefConfigEditContainerComponent implements OnInit {
     colfig.dateformat = colfigFormGroup.controls.dateformat.getRawValue()!;
     colfig.coltype = colfigFormGroup.controls.coltype.getRawValue()!;
     colfig.filecolname = colfigFormGroup.controls.filecolname.getRawValue()!;
-    colfig.name = colfigFormGroup.controls.name.getRawValue()!;
+    colfig.name = colfigFormGroup.controls.name.getRawValue() || "";
     colfig.pointedrefid = colfigFormGroup.controls.pointedrefid.getRawValue()!;
     colfig.pointedrefcolid = colfigFormGroup.controls.pointedrefcolid.getRawValue()!;
     colfig.pointedrefcollabelid = colfigFormGroup.controls.pointedrefcollabelid.getRawValue()!;
@@ -258,6 +259,17 @@ export class RefConfigEditContainerComponent implements OnInit {
 
   EditInjections() {
     this.router.navigate(['injections'], {relativeTo: this.route});
+  }
+
+  DeleteRef(ref: Referential) {
+    if (confirm(
+      `Êtes vous sur de vouloir supprimer le référentiel suivant ? \n ${ref.name}
+      \nCette action supprimera toutes les lignes, vues, injections et colonnes du référentiel et est irréversible !\n
+      Veuillez faire les sauvegardes appropriées.`)) {
+      this.rs.delReferential(ref.id).subscribe(() => {
+        this.router.navigate(["/"]);
+      })
+    }
   }
 }
 

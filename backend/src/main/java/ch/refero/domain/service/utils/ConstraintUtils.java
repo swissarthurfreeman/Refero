@@ -1,5 +1,6 @@
 package ch.refero.domain.service.utils;
 
+import ch.refero.domain.error.EntryPutErrorType;
 import ch.refero.domain.model.ColType;
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.model.Entry;
@@ -55,6 +56,7 @@ public class ConstraintUtils {
         for (var c : colfigs) {
           errorMap.put(c.id, "BK already present");
         }
+        errorMap.put("errType", EntryPutErrorType.DuplicateBk);
         return Optional.of(entries.get(bkSlices.indexOf(entryBkSlice)));
       }
     }
@@ -106,6 +108,7 @@ public class ConstraintUtils {
         LocalDate.parse(entry.fields.get(col.id), formatter);
       } catch (DateTimeParseException e) {
         errorMap.put(col.id, "Invalid date format");
+        errorMap.put("errType", EntryPutErrorType.InvalidDateFormat);
       }
     }
   }
@@ -155,6 +158,7 @@ public class ConstraintUtils {
     for (var col : colfigs) {
       if (entry.fields.get(col.id) == null || entry.fields.get(col.id).isBlank()) {
         errorMap.put(col.id, "missing required value");
+        errorMap.put("errType", EntryPutErrorType.RequiredColumnMissing);
       }
     }
   }

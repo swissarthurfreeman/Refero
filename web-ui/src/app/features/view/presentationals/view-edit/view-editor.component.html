@@ -37,8 +37,10 @@
           <mat-label>Add Search Field</mat-label>
           <mat-select [(ngModel)]="searchColIdToAdd">
             @for (colfig of Ref.columns; track $index) {
-              @if (!View.searchcolids.includes(colfig.id)) {
-                <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+              @if (colfig.name != "") {
+                @if (!View.searchcolids.includes(colfig.id)) {
+                  <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+                }
               }
             }
           </mat-select>
@@ -55,8 +57,10 @@
           <mat-label>Add Table Column</mat-label>
           <mat-select [(ngModel)]="dispColIdToAdd">
             @for (colfig of Ref.columns; track $index) {
-              @if (!View.dispcolids.includes(colfig.id)) {
-                <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+              @if (colfig.name != "") {
+                @if (!View.dispcolids.includes(colfig.id)) {
+                  <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+                }
               }
             }
           </mat-select>

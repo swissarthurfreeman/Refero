@@ -69,11 +69,13 @@ export class RecEditContainerComponent implements OnInit {
 
   AddKeyPairs() {
     for (let colfig of this.CurrentRef.columns) {
-      const keypairFormGroup = new FormGroup<KeyPairFormGroup>({
-        colId: new FormControl(colfig.id, {nonNullable: true}),
-        value: new FormControl(this.CurrentEntry.fields[colfig.id]),
-      });
-      this.EntryFormGroup.controls.keypairs.push(keypairFormGroup);
+      if (colfig.name != "") {  // if column is just import restriction, don't display
+        const keypairFormGroup = new FormGroup<KeyPairFormGroup>({
+          colId: new FormControl(colfig.id, {nonNullable: true}),
+          value: new FormControl(this.CurrentEntry.fields[colfig.id]),
+        });
+        this.EntryFormGroup.controls.keypairs.push(keypairFormGroup);
+      }
     }
   }
 
@@ -99,7 +101,7 @@ export class RecEditContainerComponent implements OnInit {
   }
 
   DeleteEntry() {
-    if(confirm(`Êtes-vous sûr de vouloir supprimer l'enregistrement suivant ?`)) {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer l'enregistrement suivant ?`)) {
       this.es.delEntry(this.CurrentEntry.id).subscribe(() => {
         this.location.back();
       });

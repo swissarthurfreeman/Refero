@@ -79,6 +79,7 @@ public class EntryController {
         Map<String, Object> errorMap = new HashMap<>();
         errorMap.put("fields", exception.fieldsErrorMap);
         errorMap.put("incomingEntry", exception.incomingEntry);
+        errorMap.put("errType", exception.errType);
 
         if(exception.dupEntry.isPresent()) {
             errorMap.put("dupEntry", exception.dupEntry.get());

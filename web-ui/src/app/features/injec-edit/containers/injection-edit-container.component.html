@@ -1,7 +1,7 @@
 <div [formGroup]="InjectionConfigFormGroup">
   <div class="d-flex" style="gap: 20px">
     <mat-form-field subscriptSizing="dynamic" style="width:40%">
-      <mat-label>From Source Ref.</mat-label>
+      <mat-label>Référentiel Source.</mat-label>
       <mat-select formControlName="srcid" (valueChange)="SelectSource($event)">
         @for (srcRef of Refs; track $index) {
           @if (HasInjectionTowardsDest(srcRef)) {
@@ -18,7 +18,7 @@
               (click)="DeleteInjection()">Supprimer
       </button>
       <button mat-raised-button color="primary" style="width: 8em; height:4em"
-              (click)="CreateInjection()">Créer
+              (click)="CreateInjection()">Enregistrer
       </button>
     }
   </div>

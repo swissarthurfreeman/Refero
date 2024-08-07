@@ -16,7 +16,7 @@ import {SetInjectionMode} from "../../../shared/stores/rec-edit/rec-edit.action"
   styleUrl: './view-container.component.scss'
 })
 export class ViewContainerComponent implements OnInit {
-  constructor(public rs: RefService, public store: Store, public location: Location, public router: Router, private cd: ChangeDetectorRef) {
+  constructor(public rs: RefService, public store: Store, public router: Router, public location: Location, private cd: ChangeDetectorRef) {
   }
 
   @Select(RefViewState.getCurrentRef) currRef$!: Observable<Referential>;
@@ -50,15 +50,5 @@ export class ViewContainerComponent implements OnInit {
 
   exportReferential() {
     this.table.exportTable();
-  }
-
-  DeleteRef(ref: Referential) {
-    if (confirm(
-      `Êtes vous sur de vouloir supprimer le référentiel suivant ? \n ${ref.name}
-      \nCette action supprimera toutes les lignes et colonnes du référentiel et est irréversible !  Veuillez faire les sauvegardes appropriées.`)) {
-      this.rs.delReferential(ref.id).subscribe(() => {
-        this.location.back();
-      })
-    }
   }
 }

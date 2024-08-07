@@ -14,34 +14,36 @@
         <mat-error>{{ ColfigErrorMap['name'] }}</mat-error>
       </ng-container>
     </mat-form-field>
-    <mat-form-field subscriptSizing="dynamic">
-      <mat-label>Format Date</mat-label>
-      <input matInput formControlName="dateformat">
-      <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['dateformat']">
-        <mat-error>{{ ColfigErrorMap['dateformat'] }}</mat-error>
-      </ng-container>
-    </mat-form-field>
-    <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
-      <mat-label>Non Nulle</mat-label>
-      <mat-select formControlName="required">
-        <mat-option [value]="false">No</mat-option>
-        <mat-option [value]="true">Yes</mat-option>
-      </mat-select>
-      <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['required']">
-        <mat-error>{{ ColfigErrorMap['required'] }}</mat-error>
-      </ng-container>
-    </mat-form-field>
-    <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
-      <mat-label>Type Clef</mat-label>
-      <mat-select formControlName="coltype" (selectionChange)="ClearFkConfig()">
-        <mat-option value="NONE">NONE</mat-option>
-        <mat-option value="FK">FK</mat-option>
-        <mat-option value="BK">BK</mat-option>
-      </mat-select>
-      <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['coltype']">
-        <mat-error>{{ ColfigErrorMap['coltype'] }}</mat-error>
-      </ng-container>
-    </mat-form-field>
+    @if(colfigConfigForm.controls.name.getRawValue() && colfigConfigForm.controls.name.getRawValue().trim() != "") {
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>Format Date</mat-label>
+        <input matInput formControlName="dateformat">
+        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['dateformat']">
+          <mat-error>{{ ColfigErrorMap['dateformat'] }}</mat-error>
+        </ng-container>
+      </mat-form-field>
+      <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
+        <mat-label>Non Nulle</mat-label>
+        <mat-select formControlName="required">
+          <mat-option [value]="false">Non</mat-option>
+          <mat-option [value]="true">Oui</mat-option>
+        </mat-select>
+        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['required']">
+          <mat-error>{{ ColfigErrorMap['required'] }}</mat-error>
+        </ng-container>
+      </mat-form-field>
+      <mat-form-field style="width: 8em;" subscriptSizing="dynamic">
+        <mat-label>Type Clef</mat-label>
+        <mat-select formControlName="coltype" (selectionChange)="ClearFkConfig()">
+          <mat-option value="NONE">Aucun</mat-option>
+          <mat-option value="FK">FK</mat-option>
+          <mat-option value="BK">BK</mat-option>
+        </mat-select>
+        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['coltype']">
+          <mat-error>{{ ColfigErrorMap['coltype'] }}</mat-error>
+        </ng-container>
+      </mat-form-field>
+    }
   </div>
   <div class="d-flex" style="gap: 10px;">
     @if (colfigConfigForm.controls.coltype.getRawValue() == 'FK') {
