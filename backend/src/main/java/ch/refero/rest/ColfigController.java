@@ -67,8 +67,8 @@ public class ColfigController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> delete(@PathVariable String id) {
-        // TODO : add delete logic to service and call here.
-        return null;
+        colfigService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ExceptionHandler({

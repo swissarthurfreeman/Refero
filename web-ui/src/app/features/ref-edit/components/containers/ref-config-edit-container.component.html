@@ -41,6 +41,9 @@
   <ng-container formArrayName="colfigs">
     @for (colfigForm of this.RefConfigForm.controls.colfigs.controls; track $index) {
       <div class="d-flex border rounded m-2">
+        <div class="p-2">
+          <mat-icon class="delete-btn" (click)="deleteColumn(colfigForm.controls.id.getRawValue(), $index)">delete_forever</mat-icon>
+        </div>
         <!-- <mat-icon class="delete-btn" (click)="deleteColumn($index)">delete_forever</mat-icon> -->
         <!-- render column configuration fields -->
         <app-col-config-presentational [colfigConfigForm]="colfigForm"

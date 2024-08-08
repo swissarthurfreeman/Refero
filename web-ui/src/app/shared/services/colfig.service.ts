@@ -36,4 +36,8 @@ export class ColfigService {
   putColfig(id: String, colfig: Colfig): Observable<Colfig> {
     return this.http.put<Colfig>(`api/cols/${id}`, colfig);
   }
+
+  delColfig(id: String): Observable<Colfig> {
+    return this.http.delete<Colfig>(`api/cols/${id}`);
+  }
 }

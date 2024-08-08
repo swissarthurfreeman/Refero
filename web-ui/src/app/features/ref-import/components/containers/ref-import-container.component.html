@@ -1,4 +1,4 @@
-<h1>Import into {{ Ref.name }}</h1>
+<h1>Importer vers : {{ Ref.name }} ({{Ref.code}})</h1>
 
 <div class="d-flex" style="gap:20px">
   <input (change)="upload($event)" type='file' class="form-control">
@@ -8,15 +8,17 @@
 <div class="jumbotron bg-dark text-white" style="background-color:#ffffff !important;">
   <ul>
     <li>
-      <mat-checkbox (change)="CheckUpdateExisingEntriesBasedOnBk($event.checked)">
+      <mat-checkbox (change)="CheckUpdateExisingEntriesBasedOnBk($event.checked)" [checked]="this.UpdateExisingEntriesBasedOnBk">
         Mettre à jour les enregistrements sur la base des BK
       </mat-checkbox>
     </li>
-    <li>
-      <mat-checkbox (change)="CheckDropEntriesWithDuplicateBKs($event.checked)">
-        Abandonner les données entrante lors de BK à double
-      </mat-checkbox>
-    </li>
+    @if(!UpdateExisingEntriesBasedOnBk) {
+      <li>
+        <mat-checkbox (change)="CheckDropEntriesWithDuplicateBKs($event.checked)">
+          Abandonner les données entrante lors de BK à double
+        </mat-checkbox>
+      </li>
+    }
     <li>
       <mat-checkbox (change)="CheckDropEntriesWithInvalidDateFormats($event.checked)">
         Abandonner les données entrante lors de format de date invalide
@@ -77,5 +79,17 @@
   </mat-grid-list>
 }
 @if (done) {
-  <h2>Done importing all entries.</h2>
+  <h2>Compte Rendu de l'Import :</h2>
+  <ul>
+    <li> Nombre de mises à jour :{{ this.n_updated }}</li>
+    <li> Nombre d'insertions : {{ this.n_inserted }} </li>
+    <li> Nombre de rejets : {{ this.n_discarded }} </li>
+  </ul>
+  <h3>Détail des Rejets</h3>
+  <ul>
+    <li> Par valeur requise manquante : {{ this.n_discarded_missing_req_value }} </li>
+    <li> Par format de date invalide : {{ this.n_discarded_invalid_dateformat }} </li>
+    <li> Par FK invalide : {{ this.n_discarded_invalid_fk_value }} </li>
+    <li> Par BK dupliquée : {{ this.n_discarded_duplicate_bk }} </li>
+  </ul>
 }

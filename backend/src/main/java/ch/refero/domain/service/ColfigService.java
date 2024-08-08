@@ -4,6 +4,9 @@ package ch.refero.domain.service;
 import ch.refero.domain.model.ColType;
 import ch.refero.domain.model.Colfig;
 import ch.refero.domain.repository.ColfigRepository;
+import ch.refero.domain.repository.EntryRepository;
+import ch.refero.domain.repository.InjectionRepository;
+import ch.refero.domain.repository.ViewRepository;
 import ch.refero.domain.service.business.ColfigDoesNotExistException;
 import ch.refero.domain.service.business.ColfigUpdateConstraintViolationException;
 import ch.refero.domain.service.utils.ConstraintUtils;
@@ -20,6 +23,8 @@ public class ColfigService {
 
   @Autowired
   private ColfigRepository colRepo;
+  @Autowired
+  private ColfigRepository colfigRepository;
 
   public List<Colfig> findAll(Optional<String> refid) {
     if (refid.isPresent()) {
@@ -123,7 +128,50 @@ public class ColfigService {
     return save(col);
   }
 
+
+  @Autowired
+  private ViewRepository viewRepository;
+
+  @Autowired
+  private InjectionRepository injectionRepository;
+
+  @Autowired
+  private EntryRepository entryRepository;
+  /**
+   * Delete a colfig.
+   * Will be deleted from every view, injection and entry before being deleted from the
+   * referential itself.
+   * */
   public void delete(String colfigId) {
     // TODO : implement column deletion. Delete from all entries, injections and views.
+    var colfig = findById(colfigId);
+
+    // remove from views
+    for(var view: viewRepository.findByRefid(colfig.refid)) {
+      view.getDispcolids().remove(colfigId);
+      view.getSearchcolids().remove(colfigId);
+      viewRepository.save(view);
+    }
+
+    // remove from injections
+    for(var injection: injectionRepository.findAll()) {
+      if(injection.refid.equals(colfig.refid) || injection.srcid.equals(colfig.refid)) {
+        injection.getMappings().remove(colfigId);
+        for(var key: injection.getMappings().keySet()) {
+          if(injection.getMappings().get(key).equals(colfigId)) {
+            injection.getMappings().remove(key);
+          }
+        }
+      }
+      injectionRepository.save(injection);
+    }
+
+    // remove from entries
+    for(var entry: entryRepository.findByRefid(colfig.refid)) {
+      entry.fields.remove(colfigId);
+      entryRepository.save(entry);
+    }
+
+    colfigRepository.delete(colfig);
   }
 }

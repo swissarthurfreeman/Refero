@@ -49,7 +49,14 @@ export class RefImportContainerComponent implements OnInit {
           this.resetEntryForms();
           this.EntryErrorMap = {};
           this.done = true;
-          console.log(this.n_updated, this.n_inserted);
+          console.log(
+            "n_updated :", this.n_updated, "n_inserted", this.n_inserted,
+            "n_discarded_duplicate_bk :", this.n_discarded_duplicate_bk,
+            "n_discarded_invalid_dateformat :", this.n_discarded_invalid_dateformat,
+            "n_discarded_missing_req_value", this.n_discarded_missing_req_value,
+            "n_discarded_invalid_fk_value", this.n_discarded_invalid_fk_value,
+            "n_discarded :", this.n_discarded
+          );
         });
       } else {
         console.log(
@@ -73,6 +80,7 @@ export class RefImportContainerComponent implements OnInit {
   n_discarded_missing_req_value: number = 0;
   n_discarded_invalid_dateformat: number = 0;
   n_discarded_invalid_fk_value: number = 0;
+  n_discarded_duplicate_bk: number = 0;
 
   async importEntries(rawRecords: Record[]) {
     const entries: Entry[] = [];
@@ -97,12 +105,30 @@ export class RefImportContainerComponent implements OnInit {
           let DupEntry!: Entry;
           this.errType = response.error['errType'] as EntryPutErrorTypeEnum;
 
-          if ((this.errType === EntryPutErrorTypeEnum.RequiredColumnMissing && this.DropEntriesWithMissingRequiredColumns)
-            || (this.errType === EntryPutErrorTypeEnum.InvalidFk && this.DropEntriesWithInvalidFks)
-            || (this.errType === EntryPutErrorTypeEnum.InvalidDateFormat && this.DropEntriesWithInvalidDateFormats)
-            || (this.errType === EntryPutErrorTypeEnum.DuplicateBk && this.DropEntriesWithDuplicateBKs)
-          )
+          console.log("errType :", this.errType, this.errType === EntryPutErrorTypeEnum.RequiredColumnMissing, this.DropEntriesWithMissingRequiredColumns);
+          if(this.errType === EntryPutErrorTypeEnum.RequiredColumnMissing && this.DropEntriesWithMissingRequiredColumns) {
+            this.n_discarded_missing_req_value++;
+            this.n_discarded++;
             break;
+          }
+
+          if(this.errType === EntryPutErrorTypeEnum.InvalidFk && this.DropEntriesWithInvalidFks) {
+            this.n_discarded_invalid_fk_value++;
+            this.n_discarded++;
+            break;
+          }
+
+          if(this.errType === EntryPutErrorTypeEnum.InvalidDateFormat && this.DropEntriesWithInvalidDateFormats) {
+            this.n_discarded_invalid_dateformat++;
+            this.n_discarded++;
+            break;
+          }
+
+          if(this.errType === EntryPutErrorTypeEnum.DuplicateBk && this.DropEntriesWithDuplicateBKs) {
+            this.n_discarded_duplicate_bk++;
+            this.n_discarded++;
+            break;
+          }
 
           if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
             DupEntry = response.error.dupEntry;
@@ -154,7 +180,9 @@ export class RefImportContainerComponent implements OnInit {
     }
   }
 
-  UpdateExisingEntriesBasedOnBk: boolean = false;
+  // true means dup BK error then, dup entry is patched with incoming entry and updated.
+  // if false, it means the user will have to decide what to do. (incoming / dupEntry forms)
+  UpdateExisingEntriesBasedOnBk: boolean = true;
 
   CheckUpdateExisingEntriesBasedOnBk(choice: boolean) {
     this.UpdateExisingEntriesBasedOnBk = choice;
@@ -175,9 +203,10 @@ export class RefImportContainerComponent implements OnInit {
   DropEntriesWithMissingRequiredColumns: boolean = false;
 
   CheckDropEntriesWithMissingRequiredColumns(choice: boolean) {
-    this.DropEntriesWithDuplicateBKs = choice;
+    this.DropEntriesWithMissingRequiredColumns = choice;
   }
 
+  // true means, if a BK error happens, then the incoming entry is abandoned.
   DropEntriesWithDuplicateBKs: boolean = false;
 
   CheckDropEntriesWithDuplicateBKs(choice: boolean) {

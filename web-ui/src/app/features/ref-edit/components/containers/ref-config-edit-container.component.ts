@@ -274,5 +274,23 @@ export class RefConfigEditContainerComponent implements OnInit {
       })
     }
   }
+
+  deleteColumn(colId: string, index: number) {
+    if(confirm(`Ẽtes vous sûr de vouloir supprimer cette colonne ? \n
+    Cette action est irréversible, et enlevera la colonne de chaque vue, injection et entrée y faisant référence.`)) {
+      this.cs.delColfig(colId).subscribe({
+        next: () => {
+          this.RefConfigForm.controls.colfigs.removeAt(index);
+        },
+        error: (err) => {
+          if(err.status != 404) {
+            throw err;
+          } else {
+            this.RefConfigForm.controls.colfigs.removeAt(index);
+          }
+        }
+      });
+    }
+  }
 }
 
