@@ -83,4 +83,8 @@ public class EntryService {
     public void delete(String id) {
         entryRepo.deleteById(id);
     }
+
+    public boolean exists(String id) {
+        return entryRepo.existsById(id);
+    }
 }

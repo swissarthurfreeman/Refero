@@ -12,13 +12,14 @@ import {
 import {firstValueFrom, Observable, Subject} from "rxjs";
 import {v4 as uuid} from 'uuid';
 import {EntryPutErrorTypeEnum} from "../../../../shared/enums/entryputerrortype.enum";
+import {HttpClient, HttpResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-ref-import-container',
   templateUrl: './ref-import-container.component.html'
 })
 export class RefImportContainerComponent implements OnInit {
-  constructor(private es: EntryService, private rs: RefService, private fb: FormBuilder) {
+  constructor(private es: EntryService, private rs: RefService, private fb: FormBuilder, private http: HttpClient) {
   }
 
 
@@ -48,6 +49,7 @@ export class RefImportContainerComponent implements OnInit {
           this.resetEntryForms();
           this.EntryErrorMap = {};
           this.done = true;
+          console.log(this.n_updated, this.n_inserted);
         });
       } else {
         console.log(
@@ -65,6 +67,13 @@ export class RefImportContainerComponent implements OnInit {
   IncomingEntryForm!: FormGroup<EntryFormGroup>;
   errType!: EntryPutErrorTypeEnum;
 
+  n_inserted: number = 0;
+  n_updated: number = 0;
+  n_discarded: number = 0;
+  n_discarded_missing_req_value: number = 0;
+  n_discarded_invalid_dateformat: number = 0;
+  n_discarded_invalid_fk_value: number = 0;
+
   async importEntries(rawRecords: Record[]) {
     const entries: Entry[] = [];
 
@@ -74,6 +83,12 @@ export class RefImportContainerComponent implements OnInit {
 
     for (let putObservable of this.getImportObservableOf(entries)) {
       let response: any = await this.noThrowPut(putObservable);
+      if(response.status == 200) {
+        this.n_updated++;
+      }
+      if(response.status == 201) {
+        this.n_inserted++;
+      }
       if (response.error) {
         while (response.error) {
           this.resetEntryForms();
@@ -100,8 +115,7 @@ export class RefImportContainerComponent implements OnInit {
 
 
           let choice: String;
-          console.log("errType :", this.errType);
-          if(this.errType == EntryPutErrorTypeEnum.DuplicateBk && this.UpdateExisingEntriesBasedOnBk) {
+          if (this.errType == EntryPutErrorTypeEnum.DuplicateBk && this.UpdateExisingEntriesBasedOnBk) {
             choice = "takeIncoming";
           } else {
             this.decision = new Subject<String>();
@@ -111,13 +125,22 @@ export class RefImportContainerComponent implements OnInit {
           // read values from incoming entry form (might have been manually updated)
           // put updated record (with dupEntry id if it's a BK conflict) until there's no error.
           if (choice == "takeIncoming") {
-            console.log("Here", this.errType == EntryPutErrorTypeEnum.DuplicateBk);
             if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
               this.patchIncomingEntryFormTo(DupEntry);
-              response = await firstValueFrom(this.es.putEntry(DupEntry.id, DupEntry));
+              response = await firstValueFrom(
+                this.http.put<Entry>(`api/entries/${DupEntry.id}`, DupEntry, {observe: "response"})
+              );
+              if(response.status == 200) {
+                this.n_updated++;
+              }
             } else {    // dateFormat, required value, foreign key invalidity...
               this.patchIncomingEntryFormTo(incomingEntry);
-              response = await firstValueFrom(this.es.putEntry(incomingEntry.id, incomingEntry));
+              response = await firstValueFrom(
+                this.http.put<Entry>(`api/entries/${incomingEntry.id}`, incomingEntry, {observe: "response"})
+              );
+              if(response.status == 201) {
+                this.n_inserted++;
+              }
             }
           } else {
             break;
@@ -125,7 +148,6 @@ export class RefImportContainerComponent implements OnInit {
         }
         this.resetEntryForms();
       } else {
-        console.log("Created entry :", response);
         this.resetEntryForms();
         this.EntryErrorMap = {};
       }
@@ -162,11 +184,13 @@ export class RefImportContainerComponent implements OnInit {
     this.DropEntriesWithDuplicateBKs = choice;
   }
 
-  async noThrowPut(eObs: Observable<Entry>) {
+  async noThrowPut(eObs: Observable<HttpResponse<Entry>>) {
     try {
       let response: any = await firstValueFrom(eObs);
+      console.log("Response :", response);
       return response;
     } catch (err) {
+      console.log("Response Error :", err);
       return err;
     }
   }
@@ -188,10 +212,10 @@ export class RefImportContainerComponent implements OnInit {
   }
 
 
-  getImportObservableOf(entries: Entry[]): Observable<Entry>[] {
-    let udpatedEntryObservables: Observable<Entry>[] = [];
+  getImportObservableOf(entries: Entry[]): Observable<HttpResponse<Entry>>[] {
+    let udpatedEntryObservables: Observable<HttpResponse<Entry>>[] = [];
     for (let entry of entries) {
-      udpatedEntryObservables.push(this.es.putEntry(uuid().toString(), entry));
+      udpatedEntryObservables.push(this.http.put<Entry>(`api/entries/${uuid().toString()}`, entry, {observe: "response"}));
     }
     return udpatedEntryObservables;
   }

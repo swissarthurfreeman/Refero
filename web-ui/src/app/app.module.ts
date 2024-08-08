@@ -12,7 +12,7 @@ import { RefViewState } from './shared/stores/ref-view/ref-view.state';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { RefConfigState } from './shared/stores/ref-config-edit/ref-config.state';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import {provideHttpClient, withFetch, withInterceptors} from '@angular/common/http';
 import { RecEditState } from './shared/stores/rec-edit/rec-edit.state';
 import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 

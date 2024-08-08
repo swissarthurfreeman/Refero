@@ -61,7 +61,11 @@ public class EntryController {
     @PutMapping("{id}")
     @CrossOrigin
     public HttpEntity<Entry> put(@PathVariable String id, @RequestBody @Valid  Entry entry) {
-        return new ResponseEntity<>(this.entryService.update(id, entry), HttpStatus.OK);
+        if(this.entryService.exists(id)) {  // distinguish update from creation via HttpStatusCode.
+            return new ResponseEntity<>(this.entryService.update(id, entry), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(this.entryService.update(id, entry), HttpStatus.CREATED);
+        }
     }
 
     @DeleteMapping("{id}")
