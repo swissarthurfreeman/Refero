@@ -1,5 +1,5 @@
 <div [formGroup]="colfigConfigForm">
-  <div class="d-flex" style="gap: 10px;">
+  <div class="d-flex flex-wrap" style="gap: 10px;">
     <mat-form-field subscriptSizing="dynamic">
       <mat-label>Col. Source.</mat-label>
       <input matInput formControlName="filecolname">
@@ -14,7 +14,8 @@
         <mat-error>{{ ColfigErrorMap['name'] }}</mat-error>
       </ng-container>
     </mat-form-field>
-    @if(colfigConfigForm.controls.name.getRawValue() && colfigConfigForm.controls.name.getRawValue().trim() != "") {
+    @if (colfigConfigForm.controls.name.getRawValue()
+    && colfigConfigForm.controls.name.getRawValue().trim() != "") {
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>Format Date</mat-label>
         <input matInput formControlName="dateformat">
@@ -44,11 +45,10 @@
         </ng-container>
       </mat-form-field>
     }
-  </div>
-  <div class="d-flex" style="gap: 10px;">
+    <!-- FK configuration -->
     @if (colfigConfigForm.controls.coltype.getRawValue() == 'FK') {
       <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
-        <mat-label>Ref. Cible</mat-label> <!-- retrieve all needed refs -->
+        <mat-label>Ref. Cible</mat-label> <!-- Pointed Ref selection -->
         <mat-select formControlName="pointedrefid" (valueChange)="SelectPointedRef($event)">
           <ng-container *ngIf="refs$ | async as Refs">
             @for (ref of Refs; track $index) {
@@ -60,10 +60,10 @@
           </ng-container>
         </mat-select>
       </mat-form-field>
-      <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
-        <mat-label>Clef. Cible</mat-label>
-        <mat-select formControlName="pointedrefcolid">
-          <ng-container *ngIf="pointedRef$ | async as PointedRef">
+      <ng-container *ngIf="pointedRef$ | async as PointedRef">
+        <mat-form-field style="width: 16em;" subscriptSizing="dynamic"> <!-- Pointed Ref key -->
+          <mat-label>Clef. Cible</mat-label>
+          <mat-select formControlName="pointedrefcolid" [value]="this.colfigConfigForm.controls.pointedrefcolid.getRawValue()">
             @if (!hasComposedBk(PointedRef)) {
               @for (colfig of PointedRef.columns; track $index) {
                 @if (colfig.coltype === "BK") {
@@ -72,22 +72,32 @@
               }
             }
             <mat-option [value]="'PK'">PK</mat-option>
+          </mat-select>
+          <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['pointedrefcolid']">
+            <mat-error>{{ ColfigErrorMap['pointedrefcolid'] }}</mat-error>
+            <!-- should never happen, unless someone removes a BK in background -->
           </ng-container>
-        </mat-select>
-        <ng-container *ngIf="ColfigErrorMap && ColfigErrorMap['pointedrefcolid']">
-          <mat-error>{{ ColfigErrorMap['pointedrefcolid'] }}</mat-error>
+        </mat-form-field>
+      </ng-container>
+      <ng-container *ngIf="pointedRef$ | async as PointedRef">
+        <ng-container formArrayName="pointedrefcollabelids">
+          @for (pointedrefcollabelid of this.colfigConfigForm.controls.pointedrefcollabelids.controls; track $index) {
+            <mat-icon class="delete-btn" (click)="this.deleteFkLabelAt($index)">delete_forever
+            </mat-icon>
+            <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
+              <mat-label>Col. Libelé</mat-label>
+              <mat-select [formControl]="pointedrefcollabelid" [value]="pointedrefcollabelid">
+                @for (colfig of PointedRef.columns; track $index) {
+                  <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          }
         </ng-container>
-      </mat-form-field>
-      <mat-form-field style="width: 16em;" subscriptSizing="dynamic">
-        <mat-label>Col. Libelé</mat-label>
-        <mat-select formControlName="pointedrefcollabelid">
-          <ng-container *ngIf="pointedRef$ | async as PointedRef">
-            @for (colfig of PointedRef.columns; track $index) {
-              <mat-option [value]="colfig.id">{{ colfig.name }}</mat-option>
-            }
-          </ng-container>
-        </mat-select>
-      </mat-form-field>
+      </ng-container>
+      <button mat-mini-fab (click)="AddFkLabelToFkColfigConfig('')">
+        <mat-icon class="add-course-btn">add</mat-icon>
+      </button>
     }
   </div>
 </div>

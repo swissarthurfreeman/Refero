@@ -32,4 +32,12 @@ export class KeyValuePresentationalComponent {
   @Input() KeyPairFormGroup!: FormGroup<KeyPairFormGroup>; // contains colId and value
   @Input() KeyPairError!: string;
   @Input() readOnly: boolean = false;
+
+  getForeignLabelFor(e: Entry, withColIds: string[]): string {
+    let label: string = "";
+    for(let colId of withColIds) {
+      label += e.fields[colId] + ", ";
+    }
+    return label;
+  }
 }

@@ -21,6 +21,10 @@ export class ColConfigPresentationalComponent implements OnInit {
 
   ngOnInit(): void {
     this.refs$ = this.rs.getReferentials();
+
+    if(this.colfigConfigForm.controls.pointedrefid.getRawValue()) {
+      this.SelectPointedRef(this.colfigConfigForm.controls.pointedrefid.getRawValue()!);
+    }
   }
 
   refs$!: Observable<Referential[]>;
@@ -28,6 +32,9 @@ export class ColConfigPresentationalComponent implements OnInit {
 
   SelectPointedRef(refid: string) {
     this.pointedRef$ = this.rs.getReferentialBy(refid);
+    if(this.colfigConfigForm.controls.pointedrefcollabelids.controls.length == 0) {
+      this.AddFkLabelToFkColfigConfig(this.Ref.columns[0].id);
+    }
   }
 
   hasComposedBk(PointedRef: Referential): boolean {
@@ -44,6 +51,21 @@ export class ColConfigPresentationalComponent implements OnInit {
     console.log("Clear fields");
     this.colfigConfigForm.controls.pointedrefid.setValue('');
     this.colfigConfigForm.controls.pointedrefcolid.setValue('');
-    this.colfigConfigForm.controls.pointedrefcollabelid.setValue('');
+    this.colfigConfigForm.controls.pointedrefcollabelids.setValue([]);
+  }
+
+  Debug() {
+    console.log(this.colfigConfigForm.getRawValue());
+  }
+
+  AddFkLabelToFkColfigConfig(colId: string) {
+    console.log("Add :", colId);
+    this.colfigConfigForm.controls.pointedrefcollabelids.controls.push(
+      new FormControl(colId, {nonNullable: true})
+    )
+  }
+
+  deleteFkLabelAt(idx: number) {
+    this.colfigConfigForm.controls.pointedrefcollabelids.removeAt(idx);
   }
 }

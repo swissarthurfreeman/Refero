@@ -13,12 +13,12 @@
         }
       }
       @if (Colfig.coltype === 'FK') {
-        <mat-select formControlName="value" [disabled]="readOnly">
+        <mat-select formControlName="value" [disabled]="readOnly" panelWidth="">
           <!-- test with REE DATA and STATUT -->
           <ng-container *ngIf="foreignEntries$ | async as ForeignEntries">
             @for (e of ForeignEntries; track $index) {
               <mat-option
-                [value]="e.fields[Colfig.pointedrefcolid]">{{ e.fields[Colfig.pointedrefcollabelid] }}
+                [value]="e.fields[Colfig.pointedrefcolid]">{{ this.getForeignLabelFor(e, Colfig.pointedrefcollabelids) }}
               </mat-option>
             }
           </ng-container>

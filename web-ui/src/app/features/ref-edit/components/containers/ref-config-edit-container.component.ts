@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormControlDirective, FormGroup} from '@angular/forms';
 import Papa from 'papaparse';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Referential} from '../../../../shared/models/referential.model';
@@ -19,7 +19,7 @@ export interface ColfigConfigForm {
   coltype: FormControl<string>
   name: FormControl<string>
   filecolname: FormControl<string | null>
-  pointedrefcollabelid: FormControl<string | null>
+  pointedrefcollabelids: FormArray<FormControl<string>>,
   id: FormControl<string>
   refid: FormControl<string>
   required: FormControl<boolean>
@@ -85,8 +85,16 @@ export class RefConfigEditContainerComponent implements OnInit {
       filecolname: new FormControl(col.filecolname),
       pointedrefid: new FormControl(col.pointedrefid),
       pointedrefcolid: new FormControl(col.pointedrefcolid),
-      pointedrefcollabelid: new FormControl(col.pointedrefcollabelid),
+      pointedrefcollabelids: new FormArray<FormControl<string>>(this.getFormControlArrayOf(col.pointedrefcollabelids)),
     })
+  }
+
+  private getFormControlArrayOf(pointedrefcollabelids: string[]): FormControl<string>[] {
+    const controls: FormControl<string>[] = [];
+    for(let val of pointedrefcollabelids) {
+      controls.push(new FormControl(val, {nonNullable: true}))
+    }
+    return controls;
   }
 
   private getColfigOf(colfigFormGroup: FormGroup<ColfigConfigForm>): Colfig {
@@ -100,7 +108,11 @@ export class RefConfigEditContainerComponent implements OnInit {
     colfig.name = colfigFormGroup.controls.name.getRawValue() || "";
     colfig.pointedrefid = colfigFormGroup.controls.pointedrefid.getRawValue()!;
     colfig.pointedrefcolid = colfigFormGroup.controls.pointedrefcolid.getRawValue()!;
-    colfig.pointedrefcollabelid = colfigFormGroup.controls.pointedrefcollabelid.getRawValue()!;
+
+    colfig.pointedrefcollabelids = [];
+    for(let val of colfigFormGroup.controls.pointedrefcollabelids.controls) {
+      colfig.pointedrefcollabelids.push(val.getRawValue());
+    }
     return colfig;
   }
 

@@ -200,7 +200,7 @@ public class ConstraintUtils {
    * 2. The pointedrefcolid is either the string '0' or the id of a colfig marked as BK.
    * 3. If pointedrefcolid is an id, the pointed colfig must be a BK
    * 4. If pointedrefcolid the pointed ref cannot have a composed BK.
-   * 5. The pointedrefcollabelid must be valid.
+   * 5. The pointedrefcollabelids list must be valid.
    * @param colfig the column configured as a foreign key
    * @param errorMap the error map containing all the things
    */
@@ -221,15 +221,17 @@ public class ConstraintUtils {
       return;
     }
 
-    if (colfig.pointedrefcollabelid == null) {
-      errorMap.put("pointedrefcollabelid", "value is required");
+    if (colfig.pointedrefcollabelids == null) {
+      errorMap.put("pointedrefcollabelids", "value is required");
       return;
     }
 
-    var pointedRefColLabel = colfigRepo.findById(colfig.pointedrefcollabelid);
-    if (pointedRefColLabel.isEmpty()) {
-      errorMap.put("pointedrefcollabelid", "invalid colfig id");
-      return;
+    for(var pointedRefColLabelId: colfig.pointedrefcollabelids) {
+      var pointedRefColLabel = colfigRepo.findById(pointedRefColLabelId);
+      if (pointedRefColLabel.isEmpty()) {
+        errorMap.put("pointedrefcollabelids", "invalid colfig id");
+        return;
+      }
     }
 
     // if we're not pointing towards the PK, make sure pointed column exists

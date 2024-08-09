@@ -8,5 +8,5 @@ export class Colfig {
     dateformat!: string;
     pointedrefid!: string;
     pointedrefcolid!: string;
-    pointedrefcollabelid!: string;
+    pointedrefcollabelids!: string[];
 }
