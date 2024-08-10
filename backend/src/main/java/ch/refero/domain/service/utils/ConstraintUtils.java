@@ -318,8 +318,43 @@ public class ConstraintUtils {
       CheckEntriesHaveValidFkValuesWhenPointedColIsBk(colfig, errorMap);
     }
 
-    // TODO : validate foreign col label syntax when we'll have decided on how to implement it.
   }
 
-  // TODO : check validity of foreign key field when adding an entry.
+
+  public void CheckFkValueValidityWhenAddingA(Entry entry, Map<String, Object> errorMap) {
+    var foreignColfigsOfRef = colfigRepo.findByRefidAndColtype(entry.refid, ColType.FK);
+
+    for(var foreignCol: foreignColfigsOfRef) {
+      String foreignValue = entry.fields.get(foreignCol.id);
+
+      if( (foreignValue == null || foreignValue.isBlank()) && !foreignCol.required)  {
+        continue;
+      }
+
+      if(foreignCol.pointedrefcolid.equals("PK")) {
+        Optional<Entry> foreignEntry = entryRepo.findById(foreignValue);
+        if(foreignEntry.isEmpty()) {
+          errorMap.put(foreignCol.id, "invalid FK value, no entry with that PK exists");
+          errorMap.put("errType", EntryPutErrorType.InvalidFk);
+          continue;
+        }
+        if(!foreignEntry.get().refid.equals(foreignCol.pointedrefid)) {
+          errorMap.put(foreignCol.id, "invalid FK value, no entry in pointed ref has a PK with that value.");
+          errorMap.put("errType", EntryPutErrorType.InvalidFk);
+        }
+      } else {  // normal case, value is a BK.
+        var foreignEntries = entryRepo.findByRefid(foreignCol.pointedrefid);
+        boolean found = false;
+        for(var foreignEntry: foreignEntries) {
+          if(foreignEntry.fields.get(foreignCol.pointedrefcolid).equals(foreignValue)) {
+            found = true;
+          }
+        }
+        if(!found) {
+          errorMap.put(foreignCol.id, "invalid FK value, no entry in pointed ref has a BK with that value.");
+          errorMap.put("errType", EntryPutErrorType.InvalidFk);
+        }
+      }
+    }
+  }
 }

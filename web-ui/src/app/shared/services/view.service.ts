@@ -49,12 +49,4 @@ export class ViewService {
 
     return view;
   }
-
-  getFileColNamesFor(ref: Referential): Array<String> {
-    let fileColNames = []
-    for (let colfig of ref.columns) {
-      fileColNames.push(colfig.filecolname);
-    }
-    return fileColNames;
-  }
 }

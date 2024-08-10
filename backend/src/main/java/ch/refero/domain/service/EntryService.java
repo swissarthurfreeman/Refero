@@ -49,11 +49,10 @@ public class EntryService {
         var errorMap = new HashMap<String, Object>();
         cUtils.CheckDateFormatConstraintOn(entry, errorMap);
         cUtils.CheckRequiredConstraintOn(entry, errorMap);
-
+        cUtils.CheckFkValueValidityWhenAddingA(entry, errorMap);
         // error type priority for Duplicate conflicts
         var dupEntry = cUtils.CheckBkUnicityWhenUpdatingOrAddingAn(entry, errorMap);
 
-        // TODO : check foreign key constraint
         if(!errorMap.isEmpty()) throw new EntryUpdateConstraintViolationException(errorMap, entry, dupEntry);
     }
 

@@ -17,6 +17,8 @@ import {
 import {EntryService} from '../../../../shared/services/entry.service';
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Location} from '@angular/common';
+import {RefViewState} from "../../../../shared/stores/ref-view/ref-view.state";
+import {Colfig} from "../../../../shared/models/Colfig.model";
 
 
 export interface KeyPairFormGroup {
@@ -67,22 +69,28 @@ export class RecEditContainerComponent implements OnInit {
     this.AddKeyPairs();
   }
 
+  @Select(RefViewState.getCurrentView) CurrView$!: Observable<View>;
+
   AddKeyPairs() {
-    for (let colfig of this.CurrentRef.columns) {
-      if (colfig.name != "") {  // if column is just import restriction, don't display
-        const keypairFormGroup = new FormGroup<KeyPairFormGroup>({
-          colId: new FormControl(colfig.id, {nonNullable: true}),
-          value: new FormControl(this.CurrentEntry.fields[colfig.id]),
-        });
-        this.EntryFormGroup.controls.keypairs.push(keypairFormGroup);
+    this.CurrView$.subscribe((view) => {
+      for (let colId of view.dispcolids) {
+        const colfig: Colfig = this.rs.getRefColById(this.CurrentRef, colId)!;
+        if (colfig.name != "") {  // if column is just import restriction, don't display
+          const keypairFormGroup = new FormGroup<KeyPairFormGroup>({
+            colId: new FormControl(colfig.id, {nonNullable: true}),
+            value: new FormControl(this.CurrentEntry.fields[colfig.id]),
+          });
+          this.EntryFormGroup.controls.keypairs.push(keypairFormGroup);
+        }
       }
-    }
+    });
   }
 
   EntryErrorMap: Record = {};
 
   SaveEntry() {
-    this.EntryErrorMap = {};      // reset error map.
+    this.EntryErrorMap = {};      // reset error map
+    // update only displayed keypairs
     for (let keypair of this.EntryFormGroup.controls.keypairs.controls)
       this.CurrentEntry.fields[keypair.controls.colId.getRawValue()] = keypair.controls.value.getRawValue() || '';
 

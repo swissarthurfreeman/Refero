@@ -40,7 +40,7 @@
 <hr>
 @if (!isEmpty(EntryErrorMap)) {
   <mat-grid-list cols="2" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
-    <mat-grid-tile colspan="1" [rowspan]="Ref!.columns.length*1.05">
+    <mat-grid-tile colspan="1" [rowspan]="Ref!.columns.length*1.25">
       <div [formGroup]="IncomingEntryForm">
         <h1>Donnée Entrante</h1>
         <ng-container formArrayName="keypairs">
@@ -58,13 +58,12 @@
       </div>
     </mat-grid-tile>
     @if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
-      <mat-grid-tile colspan="1" [rowspan]="Ref.columns.length * 1.05">
+      <mat-grid-tile colspan="1" [rowspan]="Ref.columns.length * 1.25">
         <div [formGroup]="DestinationEntryForm">
           <h1>Donnée Présente</h1>
           <ng-container formArrayName="keypairs">
             @for (keyPairFormGroup of DestinationEntryForm.controls.keypairs.controls; track $index) {
               <app-key-value-presentational
-                [KeyPairError]="EntryErrorMap[keyPairFormGroup.controls.colId.getRawValue()]"
                 [KeyPairFormGroup]="keyPairFormGroup"
                 [readOnly]="true">
               </app-key-value-presentational>

@@ -6,6 +6,7 @@ import * as jsonRefOfsReeType from '../../../assets/mock-data/REF_OFS_REE_TYPE.j
 import { ViewService } from './view.service';
 import { HttpClient } from "@angular/common/http";
 import { Observable } from 'rxjs';
+import {Colfig} from "../models/Colfig.model";
 
 
 @Injectable({
@@ -43,5 +44,14 @@ export class RefService {
 
   delReferential(id: String): Observable<Object> {
     return this.http.delete<Object>(`api/refs/${id}`);
+  }
+
+  getRefColById(ref: Referential, colId: String): Colfig | undefined {
+    for(let col of ref.columns) {
+      if(col.id == colId) {
+        return col;
+      }
+    }
+    return undefined;
   }
 }

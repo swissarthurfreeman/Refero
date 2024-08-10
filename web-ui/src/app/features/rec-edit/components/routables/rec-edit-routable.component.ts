@@ -7,6 +7,9 @@ import { EntryService } from '../../../../shared/services/entry.service';
 import { Entry, Record } from '../../../../shared/models/record.model';
 import { Colfig } from '../../../../shared/models/Colfig.model';
 import { v4 as uuid } from 'uuid';
+import {RefViewState} from "../../../../shared/stores/ref-view/ref-view.state";
+import {View} from "../../../../shared/models/view.model";
+import {SetCurrentView} from "../../../../shared/stores/ref-view/ref-view.action";
 
 @Component({
   selector: 'app-rec-edit-routable',
@@ -22,6 +25,16 @@ export class RecEditRoutableComponent implements OnInit {
 
   ngOnInit(): void {
     this.CurrentRef$ = this.rs.getReferentialBy(this.refid);
+    this.CurrentRef$.subscribe((ref) => {
+      // if there's a current view
+      if(this.store.snapshot()['refView']['currView']) {
+        console.log("Using previous view.");
+      } else {
+        console.log("Set current view.");
+        this.store.dispatch(new SetCurrentView(ref.views[0]));
+      }
+    })
+
     if(this.RecId === 'new') {
       console.log("RecId is empty, new Rec time");
       // create a new Entry wrapped in an observable

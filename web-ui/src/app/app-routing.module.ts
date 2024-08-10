@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule) },  
+  { path: '', loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule) },
   { path: 'view', loadChildren: () => import('./features/view/view.module').then(m => m.ViewModule) },
   { path: 'entry/:refid/:RecId', loadChildren: () => import('./features/rec-edit/rec-edit.module').then(m => m.RecEditModule) },
   { path: 'entry/:refid', loadChildren: () => import('./features/rec-edit/rec-edit.module').then(m => m.RecEditModule) },

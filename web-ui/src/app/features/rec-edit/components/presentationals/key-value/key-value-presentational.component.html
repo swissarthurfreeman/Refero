@@ -17,9 +17,16 @@
           <!-- test with REE DATA and STATUT -->
           <ng-container *ngIf="foreignEntries$ | async as ForeignEntries">
             @for (e of ForeignEntries; track $index) {
-              <mat-option
-                [value]="e.fields[Colfig.pointedrefcolid]">{{ this.getForeignLabelFor(e, Colfig.pointedrefcollabelids) }}
-              </mat-option>
+              @if(Colfig.pointedrefcolid != "PK") {
+                <mat-option
+                  [value]="e.fields[Colfig.pointedrefcolid]">{{ this.getForeignLabelFor(e, Colfig.pointedrefcollabelids) }}
+                </mat-option>
+              }
+              @if(Colfig.pointedrefcolid == "PK") {
+                <mat-option [value]="e.id"> <!-- If we're pointing at PK, value of option is the entry id. -->
+                  {{ this.getForeignLabelFor(e, Colfig.pointedrefcollabelids) }}
+                </mat-option>
+              }
             }
           </ng-container>
         </mat-select>

@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormControlDirective, FormGroup} from '@angular/forms';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import Papa from 'papaparse';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Referential} from '../../../../shared/models/referential.model';
@@ -10,7 +10,7 @@ import {concat, Observable} from 'rxjs';
 import {ColfigService} from '../../../../shared/services/colfig.service';
 import {EntryService} from '../../../../shared/services/entry.service';
 import {ViewService} from '../../../../shared/services/view.service';
-import { v4 as uuid } from 'uuid';
+import {v4 as uuid} from 'uuid';
 import {Location} from "@angular/common";
 
 export interface ColfigConfigForm {
@@ -61,7 +61,8 @@ export class RefConfigEditContainerComponent implements OnInit {
 
   constructor(private rs: RefService, private router: Router, private route: ActivatedRoute,
               public cs: ColfigService, public es: EntryService,
-              public vs: ViewService, public location: Location) {
+              public vs: ViewService, public location: Location,
+              private cd: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -85,13 +86,13 @@ export class RefConfigEditContainerComponent implements OnInit {
       filecolname: new FormControl(col.filecolname),
       pointedrefid: new FormControl(col.pointedrefid),
       pointedrefcolid: new FormControl(col.pointedrefcolid),
-      pointedrefcollabelids: new FormArray<FormControl<string>>(this.getFormControlArrayOf(col.pointedrefcollabelids)),
+      pointedrefcollabelids: new FormArray<FormControl<string>>(this.getFormControlArrayOf(col.pointedrefcollabelids || [])),
     })
   }
 
   private getFormControlArrayOf(pointedrefcollabelids: string[]): FormControl<string>[] {
     const controls: FormControl<string>[] = [];
-    for(let val of pointedrefcollabelids) {
+    for (let val of pointedrefcollabelids) {
       controls.push(new FormControl(val, {nonNullable: true}))
     }
     return controls;
@@ -110,7 +111,7 @@ export class RefConfigEditContainerComponent implements OnInit {
     colfig.pointedrefcolid = colfigFormGroup.controls.pointedrefcolid.getRawValue()!;
 
     colfig.pointedrefcollabelids = [];
-    for(let val of colfigFormGroup.controls.pointedrefcollabelids.controls) {
+    for (let val of colfigFormGroup.controls.pointedrefcollabelids.controls) {
       colfig.pointedrefcollabelids.push(val.getRawValue());
     }
     return colfig;
@@ -165,14 +166,14 @@ export class RefConfigEditContainerComponent implements OnInit {
       },                                          // TODO : to be able to implement DATE issue completely, we need to be able to update columns.
       error: (err) => {                     // TODO : Add PUT endpoint for updating / posting columns. This will handle the cases of
         // checking unicity of column we set as unique afterward, or column we set as date afterward (when lines are already present)
-        this.ColfigErrorMap[ (err['url']! as string)!.split('/').pop()! ] = err.error;
+        this.ColfigErrorMap[(err['url']! as string)!.split('/').pop()!] = err.error;
         console.log(this.ColfigErrorMap);
       },
       complete: () => {
 
         console.log("Done posting all columns.");
         // create default view, which then posts all new entries, won't do anything if ref already exists.
-        if(Object.keys(this.ColfigErrorMap).length == 0) {
+        if (Object.keys(this.ColfigErrorMap).length == 0) {
           this.PostDefaultViewForRef();
         }
       }
@@ -202,7 +203,7 @@ export class RefConfigEditContainerComponent implements OnInit {
           this.PutCSVEntriesOf(uRef);      // does nothing if no file was read.
         },
         error: httpError => {
-          if(!httpError.error.name) {
+          if (!httpError.error.name) {
             throw httpError;
           }
         }
@@ -234,7 +235,11 @@ export class RefConfigEditContainerComponent implements OnInit {
         error: err => {
           throw err
         },
-        complete: () => {}
+        complete: () => {
+          this.router.navigate(['/']).then(() => {
+            window.location.reload();
+          })
+        }
       });
     } // this.router.navigate([this.Ref.id], {relativeTo: this.route}).then(() => window.location.reload())
     // TODO : concat all entry observables into a single observable and navigate away once it's completed (use concat)
@@ -276,6 +281,16 @@ export class RefConfigEditContainerComponent implements OnInit {
     this.router.navigate(['injections'], {relativeTo: this.route});
   }
 
+  getFileColNamesOfConfig(): Array<String> {
+    let fileColNames = [];
+    for (let colfigForm of this.RefConfigForm.controls.colfigs.controls) {
+      if (colfigForm.controls.filecolname.getRawValue()) {
+        fileColNames.push(colfigForm.controls.filecolname.getRawValue()!);
+      }
+    }
+    return fileColNames;
+  }
+
   DeleteRef(ref: Referential) {
     if (confirm(
       `Êtes vous sur de vouloir supprimer le référentiel suivant ? \n ${ref.name}
@@ -288,14 +303,15 @@ export class RefConfigEditContainerComponent implements OnInit {
   }
 
   deleteColumn(colId: string, index: number) {
-    if(confirm(`Ẽtes vous sûr de vouloir supprimer cette colonne ? \n
+    if (confirm(`Ẽtes vous sûr de vouloir supprimer cette colonne ? \n
     Cette action est irréversible, et enlevera la colonne de chaque vue, injection et entrée y faisant référence.`)) {
       this.cs.delColfig(colId).subscribe({
         next: () => {
           this.RefConfigForm.controls.colfigs.removeAt(index);
+          this.cd.detectChanges();
         },
         error: (err) => {
-          if(err.status != 404) {
+          if (err.status != 404) {
             throw err;
           } else {
             this.RefConfigForm.controls.colfigs.removeAt(index);

@@ -42,10 +42,8 @@ export class RefImportContainerComponent implements OnInit {
       const fileHeader: Set<string> = new Set(parsedCSV.meta.fields!);
 
       if (this.validImportHeader(fileHeader)) {
-        console.log("Valid header.");
         this.done = false;
         this.importEntries(rawRecords).then(() => {
-          console.log("Successfully imported all entries.");
           this.resetEntryForms();
           this.EntryErrorMap = {};
           this.done = true;
@@ -81,6 +79,7 @@ export class RefImportContainerComponent implements OnInit {
   n_discarded_invalid_dateformat: number = 0;
   n_discarded_invalid_fk_value: number = 0;
   n_discarded_duplicate_bk: number = 0;
+  n_tries: number = 0;    // track the number of times we've tried to update/create the entry being imported
 
   async importEntries(rawRecords: Record[]) {
     const entries: Entry[] = [];
@@ -93,19 +92,21 @@ export class RefImportContainerComponent implements OnInit {
       let response: any = await this.noThrowPut(putObservable);
       if(response.status == 200) {
         this.n_updated++;
-      }
-      if(response.status == 201) {
+        this.n_tries = 0;
+      } else if(response.status == 201) {
         this.n_inserted++;
+        this.n_tries = 0;
       }
       if (response.error) {
         while (response.error) {
+          console.log("Enter while");
+          this.n_tries++;
           this.resetEntryForms();
           this.EntryErrorMap = response.error.fields;
 
           let DupEntry!: Entry;
           this.errType = response.error['errType'] as EntryPutErrorTypeEnum;
 
-          console.log("errType :", this.errType, this.errType === EntryPutErrorTypeEnum.RequiredColumnMissing, this.DropEntriesWithMissingRequiredColumns);
           if(this.errType === EntryPutErrorTypeEnum.RequiredColumnMissing && this.DropEntriesWithMissingRequiredColumns) {
             this.n_discarded_missing_req_value++;
             this.n_discarded++;
@@ -135,15 +136,16 @@ export class RefImportContainerComponent implements OnInit {
             this.createDestinationEntryForm(DupEntry);
           }
 
-
           const incomingEntry: Entry = response.error.incomingEntry;
           this.createIncomingEntryForm(incomingEntry);
-
+          console.log("Create incoming form");
+          console.log("Condition", (this.errType == EntryPutErrorTypeEnum.DuplicateBk && this.UpdateExisingEntriesBasedOnBk) && (this.n_tries < 2));
 
           let choice: String;
-          if (this.errType == EntryPutErrorTypeEnum.DuplicateBk && this.UpdateExisingEntriesBasedOnBk) {
+          if ( (this.errType == EntryPutErrorTypeEnum.DuplicateBk && this.UpdateExisingEntriesBasedOnBk) && (this.n_tries < 2)) {
             choice = "takeIncoming";
           } else {
+            console.log("Await choice");
             this.decision = new Subject<String>();
             choice = await firstValueFrom(this.decision);
           }
@@ -153,15 +155,16 @@ export class RefImportContainerComponent implements OnInit {
           if (choice == "takeIncoming") {
             if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
               this.patchIncomingEntryFormTo(DupEntry);
-              response = await firstValueFrom(
+              response = await this.noThrowPut(
                 this.http.put<Entry>(`api/entries/${DupEntry.id}`, DupEntry, {observe: "response"})
               );
               if(response.status == 200) {
                 this.n_updated++;
               }
+              console.log("Updating existing, response :", response);
             } else {    // dateFormat, required value, foreign key invalidity...
               this.patchIncomingEntryFormTo(incomingEntry);
-              response = await firstValueFrom(
+              response = await this.noThrowPut(
                 this.http.put<Entry>(`api/entries/${incomingEntry.id}`, incomingEntry, {observe: "response"})
               );
               if(response.status == 201) {
@@ -172,6 +175,7 @@ export class RefImportContainerComponent implements OnInit {
             break;
           }
         }
+        this.n_tries = 0;
         this.resetEntryForms();
       } else {
         this.resetEntryForms();
@@ -216,10 +220,8 @@ export class RefImportContainerComponent implements OnInit {
   async noThrowPut(eObs: Observable<HttpResponse<Entry>>) {
     try {
       let response: any = await firstValueFrom(eObs);
-      console.log("Response :", response);
       return response;
     } catch (err) {
-      console.log("Response Error :", err);
       return err;
     }
   }
@@ -237,6 +239,7 @@ export class RefImportContainerComponent implements OnInit {
 
   /** Either drop incoming record or update existing with the provided fields of the incoming one. */
   emitChoice(choice: String) {
+    console.log(this.n_tries);
     this.decision.next(choice);
   }
 
