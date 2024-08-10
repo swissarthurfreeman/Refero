@@ -89,99 +89,80 @@ export class RefImportContainerComponent implements OnInit {
     }
 
     for (let putObservable of this.getImportObservableOf(entries)) {
+      this.resetEntryForms();
+      this.EntryErrorMap = {};
       let response: any = await this.noThrowPut(putObservable);
-      if(response.status == 200) {
-        this.n_updated++;
-        this.n_tries = 0;
-      } else if(response.status == 201) {
-        this.n_inserted++;
-        this.n_tries = 0;
-      }
       if (response.error) {
+        const errType: EntryPutErrorTypeEnum = response.error.errType as EntryPutErrorTypeEnum;
+
+        if (errType == EntryPutErrorTypeEnum.DuplicateBk && this.UpdateExisingEntriesBasedOnBk) {
+          const dupEntry: Entry = response.error.dupEntry;
+          this.patchIncomingEntryTo(response.error.incomingEntry, dupEntry);
+          response = await this.noThrowPut(this.http.put<Entry>(`api/entries/${dupEntry.id}`, dupEntry, {observe: "response"}));
+        }
+
         while (response.error) {
-          console.log("Enter while");
-          this.n_tries++;
           this.resetEntryForms();
-          this.EntryErrorMap = response.error.fields;
+          this.EntryErrorMap = {};
+          const errType: EntryPutErrorTypeEnum = response.error.errType as EntryPutErrorTypeEnum;
 
-          let DupEntry!: Entry;
-          this.errType = response.error['errType'] as EntryPutErrorTypeEnum;
-
-          if(this.errType === EntryPutErrorTypeEnum.RequiredColumnMissing && this.DropEntriesWithMissingRequiredColumns) {
-            this.n_discarded_missing_req_value++;
-            this.n_discarded++;
+          if (this.CheckIfUserImportConfigDropsEntry(errType)) {
             break;
-          }
-
-          if(this.errType === EntryPutErrorTypeEnum.InvalidFk && this.DropEntriesWithInvalidFks) {
-            this.n_discarded_invalid_fk_value++;
-            this.n_discarded++;
-            break;
-          }
-
-          if(this.errType === EntryPutErrorTypeEnum.InvalidDateFormat && this.DropEntriesWithInvalidDateFormats) {
-            this.n_discarded_invalid_dateformat++;
-            this.n_discarded++;
-            break;
-          }
-
-          if(this.errType === EntryPutErrorTypeEnum.DuplicateBk && this.DropEntriesWithDuplicateBKs) {
-            this.n_discarded_duplicate_bk++;
-            this.n_discarded++;
-            break;
-          }
-
-          if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
-            DupEntry = response.error.dupEntry;
-            this.createDestinationEntryForm(DupEntry);
           }
 
           const incomingEntry: Entry = response.error.incomingEntry;
           this.createIncomingEntryForm(incomingEntry);
-          console.log("Create incoming form");
-          console.log("Condition", (this.errType == EntryPutErrorTypeEnum.DuplicateBk && this.UpdateExisingEntriesBasedOnBk) && (this.n_tries < 2));
+          this.EntryErrorMap = response.error.fields;
 
-          let choice: String;
-          if ( (this.errType == EntryPutErrorTypeEnum.DuplicateBk && this.UpdateExisingEntriesBasedOnBk) && (this.n_tries < 2)) {
-            choice = "takeIncoming";
-          } else {
-            console.log("Await choice");
-            this.decision = new Subject<String>();
-            choice = await firstValueFrom(this.decision);
+
+          if (errType == EntryPutErrorTypeEnum.DuplicateBk) {
+            this.createDestinationEntryForm(response.error.dupEntry);
           }
 
-          // read values from incoming entry form (might have been manually updated)
-          // put updated record (with dupEntry id if it's a BK conflict) until there's no error.
-          if (choice == "takeIncoming") {
-            if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
-              this.patchIncomingEntryFormTo(DupEntry);
-              response = await this.noThrowPut(
-                this.http.put<Entry>(`api/entries/${DupEntry.id}`, DupEntry, {observe: "response"})
-              );
-              if(response.status == 200) {
-                this.n_updated++;
-              }
-              console.log("Updating existing, response :", response);
-            } else {    // dateFormat, required value, foreign key invalidity...
+          this.decision = new Subject<String>();
+          let choice = await firstValueFrom(this.decision);
+
+          if (choice == 'takeIncoming') {
+            if (errType == EntryPutErrorTypeEnum.DuplicateBk) {
+              const dupEntry: Entry = response.error.dupEntry;
+              this.patchIncomingEntryFormTo(dupEntry);
+              response = await this.noThrowPut(this.http.put<Entry>(`api/entries/${dupEntry.id}`, dupEntry, {observe: "response"}));
+            } else {
               this.patchIncomingEntryFormTo(incomingEntry);
-              response = await this.noThrowPut(
-                this.http.put<Entry>(`api/entries/${incomingEntry.id}`, incomingEntry, {observe: "response"})
-              );
-              if(response.status == 201) {
-                this.n_inserted++;
-              }
+              response = await this.noThrowPut(this.http.put<Entry>(`api/entries/${incomingEntry.id}`, incomingEntry, {observe: "response"}));
             }
           } else {
-            break;
+            this.n_discarded++;
           }
         }
-        this.n_tries = 0;
-        this.resetEntryForms();
-      } else {
-        this.resetEntryForms();
-        this.EntryErrorMap = {};
+      }
+      if (response.status == 201) {
+        this.n_inserted++;
+      } else if (response.status == 200) {
+        this.n_updated++;
       }
     }
+  }
+
+  CheckIfUserImportConfigDropsEntry(errType: EntryPutErrorTypeEnum) {
+    if (errType === EntryPutErrorTypeEnum.DuplicateBk && this.DropEntriesWithDuplicateBKs) {
+      this.n_discarded_duplicate_bk++;
+      this.n_discarded++;
+      return true;
+    } else if (errType === EntryPutErrorTypeEnum.RequiredColumnMissing && this.DropEntriesWithMissingRequiredColumns) {
+      this.n_discarded_missing_req_value++;
+      this.n_discarded++;
+      return true;
+    } else if (errType === EntryPutErrorTypeEnum.InvalidFk && this.DropEntriesWithInvalidFks) {
+      this.n_discarded_invalid_fk_value++;
+      this.n_discarded++;
+      return true;
+    } else if (errType === EntryPutErrorTypeEnum.InvalidDateFormat && this.DropEntriesWithInvalidDateFormats) {
+      this.n_discarded_invalid_dateformat++;
+      this.n_discarded++;
+      return true;
+    }
+    return false;
   }
 
   // true means dup BK error then, dup entry is patched with incoming entry and updated.
@@ -226,6 +207,15 @@ export class RefImportContainerComponent implements OnInit {
     }
   }
 
+  /** Patch non empty values of incomingEntry to */
+  patchIncomingEntryTo(incomingEntry: Entry, to: Entry) {
+    for(let colId of Object.keys(incomingEntry.fields)) {
+      if(incomingEntry.fields[colId]) {
+        to.fields[colId] = incomingEntry.fields[colId];
+      }
+    }
+  }
+
   /** Take all non blank (colId, value) keypairs from the IncomingEntryForm and patch them to */
   patchIncomingEntryFormTo(to: Entry): void {
     for (let keypair of this.IncomingEntryForm.controls.keypairs.controls) {
@@ -239,7 +229,7 @@ export class RefImportContainerComponent implements OnInit {
 
   /** Either drop incoming record or update existing with the provided fields of the incoming one. */
   emitChoice(choice: String) {
-    console.log(this.n_tries);
+    console.log("Emit");
     this.decision.next(choice);
   }
 
