@@ -51,12 +51,17 @@ export class ViewEditorComponent implements OnInit {
   newViewName = new FormControl('AWESOME_VIEW');
 
   saveCurrentView(view: View) {
+    console.log("save Current view", view);
     // get a copy of the current (soon to be persisted new view)
     const newView: View = JSON.parse(JSON.stringify(view));
     newView.name = this.newViewName.getRawValue()!;
     // if it's a new view, assign a new id to it.
     if (newView.name != view.name) {
       newView.id = uuid().toString();
+    } else {
+      if (!confirm(`La vue ${newView.name} existe déjà \n Êtes-vous sûr de vouloir la remplacer ?`)) {
+        return;
+      }
     }
 
     this.vs.putView(newView.id, newView).subscribe(() => {
@@ -78,17 +83,6 @@ export class ViewEditorComponent implements OnInit {
         window.location.reload();
       });
   }
-
-  /*reloadCurrentRoute(newView: View) {
-    let currUrl = this.router.url;
-    this.store.dispatch(new SetCurrentView(newView)).subscribe((value) => {
-      this.router.navigate([]).then(() => {
-        this.router.navigate([currUrl]).then(() => {
-          console.log("Done");
-        });
-      })
-    });
-  }*/
 
   searchColIdToAdd!: string;
 
