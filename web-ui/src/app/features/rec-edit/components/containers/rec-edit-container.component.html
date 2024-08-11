@@ -26,7 +26,7 @@
 <mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
   <!-- Display the list of (key, value) pairs. -->
   <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length*1.25">
-    <div [formGroup]="EntryFormGroup">
+    <div [formGroup]="EntryFormGroup" *ngIf="EntryFormGroup">
       <ng-container formArrayName="keypairs">
         @for (keyPairFormGroup of EntryFormGroup.controls.keypairs.controls; track $index) {
           <!-- We provide the error string (undefined if there's none) to the keypair component to

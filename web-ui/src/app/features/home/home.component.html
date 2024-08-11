@@ -9,7 +9,7 @@
     </div>
   </div>
   <hr>
-  <div [formGroup]="$any(filterGroup)">
+  <div [formGroup]="$any(filterGroup)" *ngIf="$any(filterGroup)">
     <div class="d-flex flex-column" style="width:50%">
       <div class="p-2">
         <mat-form-field style="width:20em" subscriptSizing="dynamic">

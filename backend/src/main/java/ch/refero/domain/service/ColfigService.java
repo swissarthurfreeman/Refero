@@ -144,6 +144,7 @@ public class ColfigService {
    * */
   public void delete(String colfigId) {
     // TODO : implement column deletion. Delete from all entries, injections and views.
+    // TODO : if column is a BK, make sure that no foreign keys are pointing at it.
     var colfig = findById(colfigId);
 
     // remove from views

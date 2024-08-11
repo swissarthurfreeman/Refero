@@ -1,5 +1,5 @@
 <ng-container *ngIf="colfig$ | async as Colfig">
-  <div [formGroup]="KeyPairFormGroup">
+  <div [formGroup]="KeyPairFormGroup" *ngIf="KeyPairFormGroup">
     <mat-form-field [id]="Colfig.id">
       <mat-label>{{ Colfig.name }}</mat-label>
       @if (Colfig.coltype !== 'FK') {

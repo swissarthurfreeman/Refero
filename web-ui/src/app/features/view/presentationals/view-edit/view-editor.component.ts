@@ -30,7 +30,7 @@ export class ViewEditorComponent implements OnInit {
     private store: Store,
     private appRef: ApplicationRef,
     private router: Router,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
   ) {
   }
 
@@ -86,8 +86,10 @@ export class ViewEditorComponent implements OnInit {
   searchColIdToAdd!: string;
 
   addSearchCol() {
-    if (!this.View.searchcolids.includes(this.searchColIdToAdd))
+    if (!this.View.searchcolids.includes(this.searchColIdToAdd)) {
       this.View.searchcolids.push(this.searchColIdToAdd);
+      this.store.dispatch(new SetCurrentView(JSON.parse(JSON.stringify(this.View))));
+    }
   }
 
   dispColIdToAdd!: string;

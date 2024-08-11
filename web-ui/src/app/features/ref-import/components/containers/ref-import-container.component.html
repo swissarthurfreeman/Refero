@@ -41,7 +41,7 @@
 @if (!isEmpty(EntryErrorMap)) {
   <mat-grid-list cols="2" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
     <mat-grid-tile colspan="1" [rowspan]="Ref!.columns.length*1.25">
-      <div [formGroup]="IncomingEntryForm">
+      <div [formGroup]="IncomingEntryForm" *ngIf="IncomingEntryForm">
         <h1>Donnée Entrante</h1>
         <ng-container formArrayName="keypairs">
           @for (keyPairFormGroup of IncomingEntryForm.controls.keypairs.controls; track $index) {
@@ -59,7 +59,7 @@
     </mat-grid-tile>
     @if (this.errType == EntryPutErrorTypeEnum.DuplicateBk) {
       <mat-grid-tile colspan="1" [rowspan]="Ref.columns.length * 1.25">
-        <div [formGroup]="DestinationEntryForm">
+        <div [formGroup]="DestinationEntryForm" *ngIf="DestinationEntryForm">
           <h1>Donnée Présente</h1>
           <ng-container formArrayName="keypairs">
             @for (keyPairFormGroup of DestinationEntryForm.controls.keypairs.controls; track $index) {

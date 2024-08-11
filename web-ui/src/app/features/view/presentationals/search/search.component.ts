@@ -3,7 +3,7 @@ import {Referential} from '../../../../shared/models/referential.model';
 import {View} from '../../../../shared/models/view.model';
 import {RefService} from '../../../../shared/services/ref.service';
 import {ColfigService} from '../../../../shared/services/colfig.service';
-import {Form, FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Store} from '@ngxs/store';
 import {SetSearchFilterValue} from '../../../../shared/stores/ref-view/ref-view.action';
 
@@ -28,13 +28,14 @@ export class SearchComponent implements OnInit {
   @Input() isInjectionMode!: boolean;
   @Input() View!: View;
 
+
   searchFormGroup!: FormGroup<SearchForm>;
 
   filter: any = {};
 
   ngOnChanges(changes: SimpleChanges) {
     //console.log("Search Changes :", changes);
-    this.ngOnInit();
+    this.ngOnInit();    // when view changes, we reinitialize the component to make sure we instantiate the right number of fields.
   }
 
   ngOnInit(): void {
@@ -57,9 +58,9 @@ export class SearchComponent implements OnInit {
 
           this.searchFormGroup.controls.searchFieldFilters.push(SearchFilterFormGroup);
         }
+      this.cd.detectChanges();
       }
     )
-    this.cd.detectChanges();
   }
 
   rmSearchColId(colId: string) {

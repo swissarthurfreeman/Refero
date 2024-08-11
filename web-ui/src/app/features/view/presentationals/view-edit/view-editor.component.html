@@ -21,7 +21,7 @@
         <div class="p-2" style="padding-left: 0 !important;">
           <mat-form-field style="width:20em" subscriptSizing="dynamic">
             <mat-label>Save Current View</mat-label>
-            <input matInput placeholder="Awesome View" [formControl]="newViewName">
+            <input matInput placeholder="Awesome View" [formControl]="newViewName" *ngIf="newViewName">
           </mat-form-field>
         </div>
         <div class="p-2">

@@ -1,20 +1,23 @@
 <!-- Render Search Field -->
-<div [formGroup]="searchFormGroup">
+<div [formGroup]="searchFormGroup" *ngIf="searchFormGroup">
+  <p>searchFormGroup = {{searchFormGroup}}</p>
   <ng-container formArrayName="searchFieldFilters">
     <div class="row">
       <div class="col">
-        @for(colId of View.searchcolids; track $index) {
-          @if(this.rs.getRefColById(this.Ref, colId)!.name != "") {
+        @for (colId of View.searchcolids; track $index) {
+          @if (this.rs.getRefColById(this.Ref, colId)!.name != "") {
             <div class="row">
               <div class="input-group mb-3"
-                   [formGroup]="searchFormGroup.controls.searchFieldFilters.at($index)">
+                   [formGroup]="searchFormGroup.controls.searchFieldFilters.at($index)" *ngIf="searchFormGroup.controls.searchFieldFilters.at($index)">
                 @if (!isInjectionMode) {
                   <button mat-mini-fab color="warn" style="height: 95%; margin-top: 0.075%;"
                           (click)="rmSearchColId(colId)">
                     <mat-icon>remove</mat-icon>
                   </button>
                 }
-                <span class="input-group-text" style="color:white">{{ this.rs.getRefColById(this.Ref, colId)!.name }}</span>
+                <span class="input-group-text" style="color:white">{{
+                    this.rs.getRefColById(this.Ref, colId)!.name
+                  }}</span>
                 <input type="text" class="form-control" formControlName="searchFieldValue">
               </div>
             </div>
