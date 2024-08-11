@@ -70,6 +70,8 @@ public class ConstraintUtils {
    *
    * @param colfig the column to update or add to the referential.
    */
+  // TODO : fix bug in the case where we're updating a ref config to a composed BK, where the columns
+  // individually are not BKs but joint are.
   public void CheckBkUnicityWhenUpdatingOrAddingA(Colfig colfig, Map<String, Object> errorMap) {
     var entries = entryRepo.findByRefid(colfig.refid);
     // get all colfigs which are BKs, belong to the ref but are not the parameter colfig.

@@ -2,9 +2,9 @@
 <div class="d-flex flex-column">
   <div class="p-2 me-auto">
     <mat-form-field subscriptSizing="dynamic" style="margin-right: 20px">
-      <mat-select [ngModel]="View.id" (valueChange)="SelectView($event)">
-        @for (refViews of Ref.views; track $index) {
-          <mat-option [value]="refViews.id">{{ refViews.name }}</mat-option>
+      <mat-select [value]="View.id" (valueChange)="SelectView($event)">
+        @for (refView of Ref.views; track $index) {
+          <mat-option [value]="refView.id">{{ refView.name }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
