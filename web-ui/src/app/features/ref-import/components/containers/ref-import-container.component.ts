@@ -105,6 +105,7 @@ export class RefImportContainerComponent implements OnInit {
           this.resetEntryForms();
           this.EntryErrorMap = {};
           const errType: EntryPutErrorTypeEnum = response.error.errType as EntryPutErrorTypeEnum;
+          this.errType = errType;
 
           if (this.CheckIfUserImportConfigDropsEntry(errType)) {
             break;
@@ -133,6 +134,7 @@ export class RefImportContainerComponent implements OnInit {
             }
           } else {
             this.n_discarded++;
+            break;
           }
         }
       }

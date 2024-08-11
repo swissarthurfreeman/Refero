@@ -293,7 +293,7 @@ export class RefConfigEditContainerComponent implements OnInit {
 
   DeleteRef(ref: Referential) {
     if (confirm(
-      `Êtes vous sur de vouloir supprimer le référentiel suivant ? \n ${ref.name}
+      `Êtes vous sûr de vouloir supprimer le référentiel suivant ? \n ${ref.name}
       \nCette action supprimera toutes les lignes, vues, injections et colonnes du référentiel et est irréversible !\n
       Veuillez faire les sauvegardes appropriées.`)) {
       this.rs.delReferential(ref.id).subscribe(() => {
