@@ -3,12 +3,13 @@ import {Referential} from '../../../../shared/models/referential.model';
 import {View} from '../../../../shared/models/view.model';
 import {RefService} from '../../../../shared/services/ref.service';
 import {ColfigService} from '../../../../shared/services/colfig.service';
-import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {Form, FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Store} from '@ngxs/store';
 import {SetSearchFilterValue} from '../../../../shared/stores/ref-view/ref-view.action';
 
 export interface SearchFilter {
-  searchFieldValue: FormControl<string | null>;
+  searchFieldColId: FormControl<string>;
+  searchFieldValue: FormControl<string | null>; // TODO : add column id here !
 }
 
 export interface SearchForm {
@@ -42,13 +43,14 @@ export class SearchComponent implements OnInit {
           searchFieldFilters: new FormArray<FormGroup<SearchFilter>>([])
         });
 
-        for (let colfig of this.Ref.columns) {
+        for (let colfigId of this.View.searchcolids) {
           const SearchFilterFormGroup: FormGroup<SearchFilter> = new FormGroup<SearchFilter>({
+            searchFieldColId: new FormControl(colfigId, {nonNullable: true}),
             searchFieldValue: new FormControl('')
           });
 
           SearchFilterFormGroup.valueChanges.subscribe((filterValue) => {
-            this.filter[colfig.id] = filterValue.searchFieldValue;
+            this.filter[filterValue.searchFieldColId!] = filterValue.searchFieldValue;
             //console.log("Dispatch =", this.filter);                                     // emitted to table component to do filtering.
             this.store.dispatch(new SetSearchFilterValue(JSON.stringify(this.filter))); // stringify because DataSource.filter is a string
           })

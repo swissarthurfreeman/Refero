@@ -51,7 +51,6 @@ export class ViewEditorComponent implements OnInit {
   newViewName = new FormControl('AWESOME_VIEW');
 
   saveCurrentView(view: View) {
-    console.log("save Current view", view);
     // get a copy of the current (soon to be persisted new view)
     const newView: View = JSON.parse(JSON.stringify(view));
     newView.name = this.newViewName.getRawValue()!;
