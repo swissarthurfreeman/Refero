@@ -1,6 +1,7 @@
 package ch.refero.rest;
 
 import ch.refero.domain.error.ReferoRuntimeException;
+import ch.refero.domain.service.business.EntryIsPointedToByOtherRefFkException;
 import ch.refero.domain.service.business.EntryUpdateConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,5 +93,18 @@ public class EntryController {
         return new ResponseEntity<>(
             errorMap,
             HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({
+        EntryIsPointedToByOtherRefFkException.class
+    })
+    @ResponseBody
+    public HttpEntity<Object> handleBusinessRuntimeException(Exception exception) {
+        Map<String, Object> errorMap = new HashMap<>();
+        errorMap.put("delete", exception.getMessage());
+        return new ResponseEntity<>(
+            errorMap,
+            HttpStatus.BAD_REQUEST
+        );
     }
 }

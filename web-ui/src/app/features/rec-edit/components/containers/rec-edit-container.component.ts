@@ -108,11 +108,21 @@ export class RecEditContainerComponent implements OnInit {
     })
   }
 
+  DeleteEntryError: any = {};
+
   DeleteEntry() {
     if (confirm(`Êtes-vous sûr de vouloir supprimer l'enregistrement suivant ?`)) {
-      this.es.delEntry(this.CurrentEntry.id).subscribe(() => {
-        this.location.back();
+      this.es.delEntry(this.CurrentEntry.id).subscribe({
+        next: () => {
+          this.location.back();
+        },
+        error: (err) => {
+          this.DeleteEntryError = err.error;
+          console.log(err);
+        }
       });
     }
   }
+
+  protected readonly Object = Object;
 }

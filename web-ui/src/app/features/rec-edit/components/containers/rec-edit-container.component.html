@@ -20,6 +20,9 @@
   </button>
 </div>
 <hr>
+@if(Object.keys(this.DeleteEntryError).length > 0) {
+  <mat-error>{{this.DeleteEntryError['delete']}}</mat-error>
+}
 <mat-grid-list cols="5" style="width: 100%;" rowHeight="6em" class="grid-layout-custom">
   <!-- Display the list of (key, value) pairs. -->
   <mat-grid-tile colspan="1" [rowspan]="CurrentRef!.columns.length*1.25">
