@@ -16,7 +16,7 @@ public class Application {
 	@RequestMapping("/")
 	ResponseEntity<Void> authenticate() {
 		return ResponseEntity.status(HttpStatus.FOUND)
-				.location(URI.create("http://localhost:4200"))
+				.location(URI.create("http://refero.unige.ch:4200"))
 				.build();
 	}
 
@@ -29,7 +29,7 @@ public class Application {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/greeting-javaconfig").allowedOrigins("http://localhost:4200");
+				registry.addMapping("/greeting-javaconfig").allowedOrigins("http://refero.unige.ch:4200");
 			}
 		};
 	}

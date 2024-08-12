@@ -31,7 +31,7 @@ public class WebSecurityConfig {
         .userDnPatterns("uid={0},ou=people")
         .groupSearchBase("ou=groups")
         .contextSource()
-        .url("ldap://localhost:8389/dc=unige,dc=ch")
+        .url("ldap://localhost:8389/dc=unige,dc=ch")  // localhost here is the refero-backend container, do not change.
         .and()
         .passwordCompare()
         .passwordEncoder(new BCryptPasswordEncoder())
