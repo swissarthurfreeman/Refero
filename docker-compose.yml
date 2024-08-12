@@ -27,7 +27,7 @@ services:
     image: refero:refero-web-ui
     container_name: refero-web-ui
     environment:
-      - DOMAIN_NAME=localhost
+      - DOMAIN_NAME=refero.unige.ch
     ports:
       - 80:80
     networks:
