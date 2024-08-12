@@ -20,7 +20,7 @@ public class WebSecurityConfig {
         .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
         .formLogin(Customizer.withDefaults());
 
-    //http.csrf().disable();
+    http.csrf().disable();
     return http.build();
   }
 

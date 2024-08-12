@@ -2,16 +2,10 @@ version: '3'
 
 services:
   refero-backend:
-    image: refero-backend
+    image: refero:refero-backend
     container_name: refero-backend
     ports:
       - 8080:8080
-    environment:
-    - POSTGRES_USER=sample
-    - POSTGRES_PASSWORD=secret
-    - POSTGRES_DB=refero
-    - POSTGRES_HOST=postgres-database
-    - POSTGRES_PORT=5432
     networks:
       - net
 
@@ -24,20 +18,21 @@ services:
       - POSTGRES_USER=sample
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=refero
-#    networks:
-#      - net
-    #volumes:
-    #  - data:/var/lib/postgresql/data
-
-  refero-web-ui:
-    image: refero-web-ui
-    container_name: refero-web-ui
-    ports:
-      - 80:80
-    environment:
-      - API_HOST=http://localhost:8080/
     networks:
       - net
+    volumes:
+      - data:/var/lib/postgresql/data
+
+  refero-web-ui:
+    image: refero:refero-web-ui
+    container_name: refero-web-ui
+    environment:
+      - DOMAIN_NAME=localhost
+    ports:
+      - 80:80
+    networks:
+      - net
+
 volumes:
   data:
 
