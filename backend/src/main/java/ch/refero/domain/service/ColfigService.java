@@ -49,8 +49,10 @@ public class ColfigService {
 
     for (var col : cols) // 1. if another column with a different name exists, error.
     {
-      if (col.name.equals(colfig.name) && !colfig.id.equals(col.id)) {
-        errorMap.put("name", "Column with same name already exists for this referential.");
+      if(!col.name.isEmpty()) {
+        if (col.name.equals(colfig.name) && !colfig.id.equals(col.id)) {
+          errorMap.put("name", "Column with same name already exists for this referential.");
+        }
       }
     }
   }

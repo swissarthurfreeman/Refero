@@ -13,11 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table(
-    uniqueConstraints = @UniqueConstraint(
-        columnNames = {"refid", "name"}
-    )
-)
 @Entity
 @Setter
 @Getter
