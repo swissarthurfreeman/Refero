@@ -11,35 +11,17 @@ docker compose up refero-backend
 docker compose up refero-web-ui
 ```
 
-## To Build the Project
+## Build the Project
 
 Make sure your .m2 configuration is correct. Backup the previous .xml settings file, and delete
-.m2 repository, then run `mvn clean && mvn spring-boot:run`. 
+.m2 repository, then run `mvn clean && mvn spring-boot:run`. Build the backend jar artefact using 
+`mvn clean && mvn compile && mvn package` and rebuild the docker images in `backend/Dockerfile`
+and `web-ui/Dockerfile` using docker build -t `refero:refero-backend` and 
+`docker build -t refero:refero-web-ui` from inside `backend/` and `web-ui/` folders respectively. 
 
 
 ## Deploy
 
-To deploy to the VM make sure to build the backend jar with the appropriate application.properties
-of the VM environment on the host machine. 
+To deploy this to your own domain, insert said domain instead of `localhost` inside `Application.java` and `nginx.conf`, then
+rebuild everything.
 
-Local properties : 
-
-spring.jpa.show-sql=false
-spring.jpa.generate-ddl=true
-logging.level.org.springframework.web=DEBUG
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/refero
-spring.datasource.username=sample
-spring.datasource.password=secret
-spring.datasource.driver-class-name=org.postgresql.Driver
-
-Server properties : 
-
-spring.jpa.show-sql=false
-spring.jpa.generate-ddl=true
-logging.level.org.springframework.web=DEBUG
-
-spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-spring.datasource.username=${POSTGRES_USER}
-spring.datasource.password=${POSTGRES_PASSWORD}
-spring.datasource.driver-class-name=org.postgresql.Driver
