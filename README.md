@@ -11,6 +11,10 @@ docker compose up refero-backend
 docker compose up refero-web-ui
 ```
 
+## Authentication
+
+The default user is `ben`, his password is `benspassword`. 
+
 ## Build the Project
 
 Make sure your .m2 configuration is correct. Backup the previous .xml settings file, and delete
